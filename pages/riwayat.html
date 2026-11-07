@@ -1,0 +1,132 @@
+<!-- =========================================
+     TEACHLY - RIWAYAT LAPORAN GURU
+========================================= -->
+
+<div class="riwayat-page">
+  <!-- HEADER -->
+  <header class="riwayat-header">
+    <div class="riwayat-header__top">
+      <div class="riwayat-brand">
+        <div class="riwayat-brand__icon">
+          <i data-lucide="graduation-cap"></i>
+        </div>
+        <span>Teachly</span>
+      </div>
+    </div>
+
+    <div class="riwayat-header__title">
+      <span class="riwayat-eyebrow">ARSIP PEMBELAJARAN</span>
+      <h1>Riwayat Laporan</h1>
+      <p>Lihat seluruh laporan kegiatan pembelajaran Anda.</p>
+    </div>
+
+    <div class="riwayat-header__decoration"></div>
+  </header>
+
+  <!-- KONTEN UTAMA -->
+  <main class="riwayat-content">
+    <!-- RINGKASAN -->
+    <section class="riwayat-summary">
+      <div class="riwayat-summary__icon">
+        <i data-lucide="files"></i>
+      </div>
+
+      <div class="riwayat-summary__info">
+        <span>Total Laporan Tersimpan</span>
+        <strong data-riwayat-total>-</strong>
+      </div>
+    </section>
+
+    <!-- FILTER -->
+    <section class="riwayat-filter">
+      <div class="riwayat-section-heading">
+        <div>
+          <span class="riwayat-eyebrow">PENCARIAN</span>
+          <h2>Filter Laporan</h2>
+        </div>
+      </div>
+
+      <div class="riwayat-filter__fields">
+        <div class="riwayat-filter__field">
+          <label for="riwayatBulan">Bulan</label>
+
+          <select id="riwayatBulan" data-filter-bulan>
+            <option value="">Semua Bulan</option>
+            <option value="1">Januari</option>
+            <option value="2">Februari</option>
+            <option value="3">Maret</option>
+            <option value="4">April</option>
+            <option value="5">Mei</option>
+            <option value="6">Juni</option>
+            <option value="7">Juli</option>
+            <option value="8">Agustus</option>
+            <option value="9">September</option>
+            <option value="10">Oktober</option>
+            <option value="11">November</option>
+            <option value="12">Desember</option>
+          </select>
+        </div>
+
+        <div class="riwayat-filter__field">
+          <label for="riwayatTahun">Tahun</label>
+
+          <select id="riwayatTahun" data-filter-tahun>
+            <option value="">Semua Tahun</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- DAFTAR LAPORAN -->
+    <section class="riwayat-list-section">
+      <div class="riwayat-section-heading">
+        <div>
+          <span class="riwayat-eyebrow">ARSIP ANDA</span>
+          <h2>Daftar Laporan</h2>
+        </div>
+
+        <span class="riwayat-list-count" data-riwayat-count>0 laporan</span>
+      </div>
+
+      <!-- LIST DARI BACKEND -->
+      <div class="riwayat-list" data-riwayat-list>
+        <!-- EMPTY STATE -->
+        <div class="riwayat-empty">
+          <div class="riwayat-empty__icon">
+            <i data-lucide="file-search"></i>
+          </div>
+
+          <h3>Belum Ada Laporan</h3>
+
+          <p>
+            Laporan pembelajaran yang sudah Anda simpan akan ditampilkan di
+            sini.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav class="dashboard-bottom-nav" aria-label="Navigasi utama">
+    <button type="button" class="dashboard-nav-item" data-page="dashboard">
+      <i data-lucide="house"></i>
+      <span>Beranda</span>
+    </button>
+
+    <button
+      type="button"
+      class="dashboard-nav-item active"
+      data-page="riwayat"
+      aria-current="page"
+    >
+      <i data-lucide="files"></i>
+      <span>Riwayat</span>
+    </button>
+
+    <button type="button" class="dashboard-nav-item" data-page="jadwal">
+      <i data-lucide="calendar-days"></i>
+      <span>Jadwal</span>
+    </button>
+  </nav>
+</div>

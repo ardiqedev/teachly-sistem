@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#2C368B" />
+    <meta
+      name="description"
+      content="Teachly - Sistem Laporan Harian Guru MI Muhammadiyah Plus Leksono."
+    />
+
+    <title>Teachly | Laporan Harian Guru</title>
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Global CSS -->
+    <link rel="stylesheet" href="assets/css/style.css" />
+
+    <!-- Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+  </head>
+
+  <body>
+    <main id="app" aria-live="polite">
+      <div class="app-startup">
+        <p>Menyiapkan Teachly...</p>
+      </div>
+    </main>
+
+    <!-- Global containers -->
+    <div id="toast" aria-live="polite" aria-atomic="true"></div>
+    <div id="modalContainer"></div>
+
+    <!-- =====================================
+         QEDEV CORE ENGINE
+    ====================================== -->
+
+    <script src="assets/js/core/config.js"></script>
+    <script src="assets/js/core/storage.js"></script>
+    <script src="assets/js/core/state.js"></script>
+    <script src="assets/js/core/api.js"></script>
+    <script src="assets/js/core/auth.js"></script>
+    <script src="assets/js/core/router.js"></script>
+    <script src="assets/js/core/engine-modal.js"></script>
+
+    <!-- =====================================
+         MODULES DAN PAGES
+    ====================================== -->
+
+    <script src="assets/js/modules/dashboard/dashboardRepository.js"></script>
+    <script src="assets/js/modules/dashboard/dashboardService.js"></script>
+    <script src="assets/js/modules/dashboard/dashboard.js"></script>
+
+    <!-- PUBLIC MODULES -->
+    <script src="assets/js/public/login.js"></script>
+
+    <!-- =====================================
+         APPLICATION
+    ====================================== -->
+
+    <script src="assets/js/core/app.js"></script>
+  </body>
+</html>

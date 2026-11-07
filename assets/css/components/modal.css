@@ -1,0 +1,491 @@
+/* =========================================
+   MODAL
+========================================= */
+
+.modal {
+  position: fixed;
+
+  inset: 0;
+
+  display: none;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 24px;
+
+  background: rgba(15, 23, 42, 0.45);
+
+  backdrop-filter: blur(6px);
+
+  z-index: 9999;
+}
+
+.modal.show {
+  display: flex;
+}
+
+/* =========================================
+   DIALOG
+========================================= */
+
+.modal-dialog {
+  width: 100%;
+
+  max-width: 640px;
+
+  max-height: 90vh;
+
+  display: flex;
+
+  flex-direction: column;
+
+  background: #fff;
+
+  border-radius: 20px;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 24px 60px rgba(15, 23, 42, 0.18),
+    0 8px 24px rgba(15, 23, 42, 0.08);
+
+  animation: modalShow 0.25s ease;
+}
+
+/* =========================================
+   SIZE
+========================================= */
+
+.modal-sm {
+  max-width: 420px;
+}
+
+.modal-md {
+  max-width: 640px;
+}
+
+.modal-lg {
+  max-width: 900px;
+}
+
+.modal-xl {
+  max-width: 1180px;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.modal-header {
+  flex-shrink: 0;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 22px 28px;
+
+  border-bottom: 1px solid var(--border);
+
+  background: #fff;
+}
+
+.modal-title {
+  font-size: 24px;
+
+  font-weight: 700;
+
+  color: var(--text);
+}
+
+/* =========================================
+   CLOSE
+========================================= */
+
+#modalClose {
+  width: 42px;
+
+  height: 42px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  border: 1px solid var(--border);
+
+  border-radius: 12px;
+
+  background: #fff;
+
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+#modalClose:hover {
+  background: #f8fafc;
+
+  border-color: var(--primary);
+
+  color: var(--primary);
+}
+
+/* =========================================
+   BODY
+========================================= */
+
+.modal-body {
+  flex: 1;
+
+  overflow-y: auto;
+
+  padding: 28px;
+}
+
+/* Scrollbar */
+
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+
+  border-radius: 999px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* =========================================
+   FOOTER
+========================================= */
+
+.modal-footer {
+  flex-shrink: 0;
+
+  display: flex;
+
+  justify-content: flex-end;
+
+  gap: 12px;
+
+  padding: 20px 28px;
+
+  border-top: 1px solid var(--border);
+
+  background: #fff;
+}
+
+/* =========================================
+   ANIMATION
+========================================= */
+
+@keyframes modalShow {
+  from {
+    opacity: 0;
+
+    transform: translateY(24px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
+
+@media (max-width: 768px) {
+  .modal {
+    padding: 16px;
+  }
+
+  .modal-dialog {
+    max-height: 95vh;
+
+    border-radius: 18px;
+  }
+
+  .modal-header {
+    padding: 18px 20px;
+  }
+
+  .modal-body {
+    padding: 20px;
+  }
+
+  .modal-footer {
+    padding: 18px 20px;
+
+    flex-direction: column-reverse;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+
+  .modal-title {
+    font-size: 20px;
+  }
+}
+
+/* =========================================
+   TEACHLY - FORM LAPORAN HARIAN
+========================================= */
+
+.report-modal-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.report-modal-heading span {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.report-modal-heading small {
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-muted);
+}
+
+/* FORM LAYOUT */
+
+.report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.report-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.report-form-group > label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.report-form-group > small {
+  font-size: 11px;
+  line-height: 1.5;
+  color: var(--text-muted);
+}
+
+/* INPUT */
+
+.report-form input:not([type="file"]),
+.report-form select,
+.report-form textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  color: var(--text);
+  font-family: inherit;
+  font-size: 13px;
+  outline: none;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+}
+
+.report-form input:focus,
+.report-form select:focus,
+.report-form textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(44, 54, 139, 0.1);
+}
+
+.report-form input[readonly] {
+  background: #f5f6fb;
+  color: #64748b;
+  cursor: default;
+}
+
+.report-form textarea {
+  min-height: 130px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* TWO COLUMN */
+
+.report-form-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* DATE AND DAY */
+
+.report-form input[type="date"] {
+  cursor: pointer;
+}
+
+/* UPLOAD */
+
+.report-upload-area {
+  min-height: 130px;
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 2px dashed #cbd2f0;
+  border-radius: 14px;
+  background: #f7f8ff;
+  color: var(--primary);
+  text-align: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.report-upload-area:hover {
+  border-color: var(--primary);
+  background: #f0f2ff;
+}
+
+.report-upload-area i {
+  width: 28px;
+  height: 28px;
+}
+
+.report-upload-area strong {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.report-upload-area small {
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* IMAGE PREVIEW */
+
+.report-upload-preview {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.report-upload-preview__image {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+
+/* FOOTER BUTTONS */
+
+.modal-footer .btn {
+  min-height: 44px;
+  padding: 11px 20px;
+  border-radius: 10px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.modal-footer .btn-outline {
+  background: #fff;
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+.modal-footer .btn-outline:hover {
+  background: #f8fafc;
+}
+
+.modal-footer .btn-primary {
+  background: var(--primary);
+  color: #fff;
+  border: 1px solid var(--primary);
+}
+
+.modal-footer .btn-primary:hover {
+  filter: brightness(1.08);
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 768px) {
+  .modal {
+    padding: 12px;
+  }
+
+  .modal-dialog.modal-lg {
+    max-width: 100%;
+    max-height: 94vh;
+    border-radius: 18px;
+  }
+
+  .modal-header {
+    padding: 17px 18px;
+  }
+
+  .modal-title {
+    font-size: 18px;
+  }
+
+  .report-modal-heading span {
+    font-size: 17px;
+  }
+
+  .modal-body {
+    padding: 20px 18px;
+  }
+
+  .report-form {
+    gap: 17px;
+  }
+
+  .report-form-row {
+    grid-template-columns: 1fr;
+    gap: 17px;
+  }
+
+  .modal-footer {
+    padding: 14px 18px;
+    gap: 9px;
+  }
+}
+
+@media (max-width: 380px) {
+  .modal-body {
+    padding: 16px 14px;
+  }
+
+  .modal-header {
+    padding: 15px 14px;
+  }
+
+  .modal-footer {
+    padding: 12px 14px;
+  }
+}

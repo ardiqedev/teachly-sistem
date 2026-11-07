@@ -1,0 +1,184 @@
+<!-- =========================================
+     TEACHLY - DASHBOARD GURU
+========================================= -->
+
+<div class="dashboard-page">
+  <!-- HEADER GURU -->
+  <header class="dashboard-header">
+    <div class="dashboard-header__top">
+      <div class="dashboard-brand">
+        <div class="dashboard-brand__icon">
+          <i data-lucide="graduation-cap"></i>
+        </div>
+        <span>Teachly</span>
+      </div>
+
+      <button
+        type="button"
+        class="dashboard-logout"
+        data-action="logout"
+        aria-label="Keluar dari aplikasi"
+      >
+        <i data-lucide="log-out"></i>
+      </button>
+    </div>
+
+    <div class="dashboard-welcome">
+      <div class="dashboard-welcome__identity">
+        <div class="dashboard-avatar">
+          <i data-lucide="user-round"></i>
+        </div>
+
+        <div class="dashboard-welcome__text">
+          <span class="dashboard-eyebrow">DASHBOARD GURU</span>
+
+          <h1>
+            Selamat datang,
+            <span data-guru-nama>Guru</span>
+          </h1>
+
+          <p>
+            <span data-guru-jenis>Jenis Guru</span>
+            <span class="dashboard-separator">•</span>
+            NBM <span data-guru-nbm>-</span>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="dashboard-header__decoration"></div>
+  </header>
+
+  <!-- KONTEN UTAMA -->
+  <main class="dashboard-content">
+    <!-- TANGGAL DAN TAHUN AJARAN -->
+    <section class="dashboard-date-card">
+      <div class="dashboard-date-card__icon">
+        <i data-lucide="calendar-days"></i>
+      </div>
+
+      <div class="dashboard-date-card__info">
+        <span>Hari ini</span>
+
+        <strong data-dashboard-date>-</strong>
+
+        <small>
+          Tahun Ajaran
+          <span data-tahun-ajaran>-</span>
+        </small>
+      </div>
+    </section>
+
+    <!-- RINGKASAN LAPORAN -->
+    <section class="dashboard-section">
+      <div class="dashboard-section__heading">
+        <div>
+          <span class="dashboard-eyebrow">AKTIVITAS ANDA</span>
+          <h2>Ringkasan Laporan</h2>
+        </div>
+      </div>
+
+      <div class="dashboard-stat-grid">
+        <!-- TOTAL LAPORAN -->
+        <article class="dashboard-stat-card dashboard-stat-card--blue">
+          <div class="dashboard-stat-card__icon">
+            <i data-lucide="file-text"></i>
+          </div>
+
+          <div class="dashboard-stat-card__value" data-stat-total>-</div>
+
+          <div class="dashboard-stat-card__label">Total Laporan</div>
+        </article>
+
+        <!-- LAPORAN BULAN INI -->
+        <article class="dashboard-stat-card dashboard-stat-card--green">
+          <div class="dashboard-stat-card__icon">
+            <i data-lucide="calendar-check"></i>
+          </div>
+
+          <div class="dashboard-stat-card__value" data-stat-bulan>-</div>
+
+          <div class="dashboard-stat-card__label">Laporan Bulan Ini</div>
+        </article>
+      </div>
+    </section>
+
+    <!-- BUAT LAPORAN HARIAN -->
+    <section class="dashboard-create-report">
+      <div class="dashboard-create-report__content">
+        <div class="dashboard-create-report__icon">
+          <i data-lucide="file-plus-2"></i>
+        </div>
+
+        <div>
+          <h2>Buat Laporan Harian</h2>
+          <p>Catat kegiatan pembelajaran hari ini.</p>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="dashboard-create-report__button"
+        data-action="create-report"
+      >
+        Buat Laporan
+        <i data-lucide="arrow-right"></i>
+      </button>
+    </section>
+
+    <!-- JADWAL MENGAJAR HARI INI -->
+    <section class="dashboard-section">
+      <div class="dashboard-section__heading">
+        <div>
+          <span class="dashboard-eyebrow">AGENDA HARIAN</span>
+          <h2>Jadwal Mengajar Hari Ini</h2>
+        </div>
+
+        <button type="button" class="dashboard-text-button" data-page="jadwal">
+          Lihat Semua
+          <i data-lucide="arrow-right"></i>
+        </button>
+      </div>
+
+      <!-- LIST JADWAL DARI BACKEND -->
+      <div class="dashboard-schedule-list" data-dashboard-schedules>
+        <!-- EMPTY STATE -->
+        <div class="dashboard-empty">
+          <div class="dashboard-empty__icon">
+            <i data-lucide="calendar-clock"></i>
+          </div>
+
+          <h3>Jadwal belum tersedia</h3>
+
+          <p>Jadwal mengajar hari ini akan ditampilkan di bagian ini.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- BOTTOM NAVIGATION -->
+  <nav class="dashboard-bottom-nav" aria-label="Navigasi utama">
+    <!-- BERANDA -->
+    <button
+      type="button"
+      class="dashboard-nav-item active"
+      data-page="dashboard"
+      aria-current="page"
+    >
+      <i data-lucide="house"></i>
+      <span>Beranda</span>
+    </button>
+
+    <!-- RIWAYAT -->
+    <button type="button" class="dashboard-nav-item" data-page="riwayat">
+      <i data-lucide="files"></i>
+      <span>Riwayat</span>
+    </button>
+
+    <!-- JADWAL -->
+    <button type="button" class="dashboard-nav-item" data-page="jadwal">
+      <i data-lucide="calendar-days"></i>
+      <span>Jadwal</span>
+    </button>
+  </nav>
+</div>

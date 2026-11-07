@@ -1,0 +1,32 @@
+/* =========================================================
+   TEACHLY - GLOBAL STYLESHEET
+   ========================================================= */
+
+@import url("templateLayout/variables.css");
+@import url("templateLayout/base.css");
+
+@import url("templateLayout/layout.css");
+@import url("templateLayout/sidebar.css");
+@import url("templateLayout/navbar.css");
+
+@import url("components/button.css");
+@import url("components/card.css");
+@import url("components/badge.css");
+@import url("components/form.css");
+@import url("components/modal.css");
+@import url("components/detail.css");
+@import url("components/table.css");
+@import url("components/pagination.css");
+@import url("components/loading.css");
+@import url("components/skeleton.css");
+@import url("components/toast.css");
+@import url("components/confirm.css");
+@import url("components/upload.css");
+@import url("components/stat.css");
+
+/* Teachly pages */
+@import url("pages/login.css");
+@import url("pages/dashboard.css");
+@import url("pages/riwayat.css");
+
+@import url("templateLayout/responsive.css");

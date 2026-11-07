@@ -1,0 +1,89 @@
+/* =========================================================
+   TEACHLY DESIGN SYSTEM
+   Muhammadiyah-inspired palette | Mobile First
+   ========================================================= */
+
+:root {
+  color-scheme: light;
+
+  /* Brand */
+  --primary: #2C368B;
+  --primary-rgb: 44, 54, 139;
+  --primary-dark: #202968;
+  --primary-deep: #182052;
+  --primary-light: #EEF0FF;
+  --primary-soft: #F5F6FF;
+
+  /* Muhammadiyah identity accents */
+  --success: #01A54D;
+  --success-rgb: 1, 165, 77;
+  --success-light: #EAF8F0;
+  --accent: #FAED21;
+  --accent-soft: #FFFBE0;
+  --danger: #E8242A;
+  --danger-light: #FFF0F0;
+  --warning: #D99A16;
+  --warning-light: #FFF7E5;
+  --info: #3977C9;
+  --info-light: #EDF5FF;
+
+  /* Surfaces */
+  --bg: #F5F7FC;
+  --bg-soft: #F8FAFF;
+  --card: #FFFFFF;
+  --surface: #FFFFFF;
+  --surface-muted: #F1F3FA;
+  --border: #E3E7F0;
+  --border-strong: #CDD4E3;
+
+  /* Text */
+  --text: #20243A;
+  --text-light: #69718A;
+  --text-muted: #9299AD;
+  --text-inverse: #FFFFFF;
+
+  /* Shape & elevation */
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 28px;
+  --radius-pill: 999px;
+
+  --shadow-xs: 0 2px 8px rgba(31, 42, 100, 0.04);
+  --shadow: 0 8px 24px rgba(31, 42, 100, 0.07);
+  --shadow-lg: 0 16px 40px rgba(31, 42, 100, 0.12);
+
+  /* Layout */
+  --container-width: 1200px;
+  --content-gutter: 16px;
+  --navbar-height: 64px;
+  --bottom-nav-height: 68px;
+  --sidebar-width: 264px;
+
+  /* Motion */
+  --transition-fast: 150ms ease;
+  --transition: 220ms ease;
+  --transition-slow: 320ms ease;
+
+  /* Compatibility aliases for existing components */
+  --primary-color: var(--primary);
+  --border-color: var(--border);
+  --public-border: var(--border);
+  --public-text: var(--text);
+  --public-muted: var(--text-light);
+  --public-white: #FFFFFF;
+  --public-dark: var(--primary-deep);
+  --public-dark-soft: var(--primary-dark);
+  --public-radius-sm: var(--radius-sm);
+  --public-transition: var(--transition);
+  --public-gutter: var(--content-gutter);
+  --public-container: var(--container-width);
+}
+
+@media (min-width: 768px) {
+  :root {
+    --content-gutter: 24px;
+    --navbar-height: 72px;
+  }
+}

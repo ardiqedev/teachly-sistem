@@ -1,0 +1,108 @@
+<!-- =====================================================
+     TEACHLY - LOGIN PAGE
+     Mobile-first | Muhammadiyah-inspired blue identity
+     ===================================================== -->
+
+<section class="login-page" aria-labelledby="loginTitle">
+  <div
+    class="login-page__ornament login-page__ornament--top"
+    aria-hidden="true"
+  >
+    <span class="login-page__ornament-ring"></span>
+    <span class="login-page__ornament-grid"></span>
+  </div>
+  <div
+    class="login-page__ornament login-page__ornament--bottom"
+    aria-hidden="true"
+  >
+    <span class="login-page__ornament-wave"></span>
+    <span class="login-page__ornament-dot"></span>
+  </div>
+
+  <div class="login-shell">
+    <header class="login-brand">
+      <div class="login-brand__mark" aria-hidden="true">
+        <i data-lucide="graduation-cap"></i>
+      </div>
+      <div class="login-brand__copy">
+        <p class="login-brand__eyebrow">MI MUHAMMADIYAH PLUS LEKSONO</p>
+        <p class="login-brand__name">TEACHLY</p>
+        <p class="login-brand__tagline">Teacher's Daily Report</p>
+      </div>
+    </header>
+
+    <main class="login-card">
+      <div class="login-card__heading">
+        <span class="login-card__welcome">SELAMAT DATANG</span>
+        <h1 id="loginTitle">Masuk ke Teachly</h1>
+        <p>Silakan masuk menggunakan akun guru untuk melanjutkan.</p>
+      </div>
+
+      <form class="login-form" id="loginForm" autocomplete="on">
+        <div class="login-field">
+          <label for="loginUsername">Username</label>
+          <div class="login-input-wrap">
+            <i data-lucide="user-round" aria-hidden="true"></i>
+            <input
+              id="loginUsername"
+              name="username"
+              type="text"
+              placeholder="Masukkan username"
+              autocomplete="username"
+              autocapitalize="none"
+              spellcheck="false"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="login-field">
+          <label for="loginPassword">Password</label>
+          <div class="login-input-wrap">
+            <i data-lucide="lock-keyhole" aria-hidden="true"></i>
+            <input
+              id="loginPassword"
+              name="password"
+              type="password"
+              placeholder="Masukkan password"
+              autocomplete="current-password"
+              required
+            />
+            <button
+              class="login-password-toggle"
+              id="togglePassword"
+              type="button"
+              aria-label="Tampilkan password"
+              aria-pressed="false"
+            >
+              <i data-lucide="eye" aria-hidden="true"></i>
+            </button>
+          </div>
+        </div>
+
+        <p
+          class="login-form__message"
+          id="loginMessage"
+          role="alert"
+          hidden
+        ></p>
+
+        <button class="login-submit" id="loginSubmit" type="submit">
+          <span>Masuk</span>
+          <i data-lucide="arrow-right" aria-hidden="true"></i>
+        </button>
+      </form>
+
+      <div class="login-card__security">
+        <i data-lucide="shield-check" aria-hidden="true"></i>
+        <span>Akses khusus akun guru yang terdaftar</span>
+      </div>
+    </main>
+
+    <footer class="login-footer">
+      <span class="login-footer__accent" aria-hidden="true"></span>
+      <p>Mendidik dengan ilmu, menginspirasi dengan akhlak.</p>
+      <small>Teachly · MI Muhammadiyah Plus Leksono</small>
+    </footer>
+  </div>
+</section>

@@ -1,0 +1,557 @@
+/* =========================================
+   TEACHLY - RIWAYAT LAPORAN GURU
+   Mobile First
+========================================= */
+
+.riwayat-page {
+  --riwayat-primary: #2c368b;
+  --riwayat-primary-dark: #202a70;
+  --riwayat-orange: #ffb547;
+  --riwayat-green: #01a54d;
+  --riwayat-bg: #f5f7fc;
+  --riwayat-white: #ffffff;
+  --riwayat-text: #20243a;
+  --riwayat-muted: #747b91;
+  --riwayat-border: #e8eaf2;
+
+  min-height: 100vh;
+  padding-bottom: 100px;
+  color: var(--riwayat-text);
+  background: var(--riwayat-bg);
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: 16px;
+}
+
+/* =========================================
+   HEADER
+========================================= */
+
+.riwayat-header {
+  position: relative;
+  overflow: hidden;
+  padding: 20px 22px 32px;
+  color: #ffffff;
+  background: linear-gradient(135deg, #2c368b 0%, #27317f 55%, #1d286b 100%);
+  border-radius: 0 0 28px 28px;
+}
+
+.riwayat-header__top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+}
+
+.riwayat-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.riwayat-brand__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  color: var(--riwayat-primary);
+  background: #ffffff;
+  border-radius: 12px;
+}
+
+.riwayat-brand__icon svg {
+  width: 23px;
+  height: 23px;
+}
+
+/* HEADER TITLE */
+
+.riwayat-header__title {
+  position: relative;
+  z-index: 2;
+  margin-top: 30px;
+}
+
+.riwayat-eyebrow {
+  display: block;
+  margin-bottom: 7px;
+  color: var(--riwayat-orange);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.1px;
+}
+
+.riwayat-header__title h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(23px, 5vw, 28px);
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.riwayat-header__title p {
+  max-width: 330px;
+  margin: 8px 0 0;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* DECORATION */
+
+.riwayat-header__decoration {
+  position: absolute;
+  right: -65px;
+  bottom: -105px;
+  width: 220px;
+  height: 220px;
+  border: 1px solid rgba(255, 255, 255, 0.09);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.riwayat-header__decoration::before,
+.riwayat-header__decoration::after {
+  position: absolute;
+  content: "";
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 50%;
+}
+
+.riwayat-header__decoration::before {
+  inset: 22px;
+}
+
+.riwayat-header__decoration::after {
+  inset: 45px;
+}
+
+/* =========================================
+   MAIN CONTENT
+========================================= */
+
+.riwayat-content {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 22px 18px 30px;
+}
+
+/* =========================================
+   SUMMARY
+========================================= */
+
+.riwayat-summary {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 18px;
+  background: linear-gradient(135deg, #eef0ff 0%, #ffffff 100%);
+  border: 1px solid #d9deff;
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(31, 43, 90, 0.035);
+}
+
+.riwayat-summary__icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  color: var(--riwayat-primary);
+  background: #dde2ff;
+  border-radius: 15px;
+}
+
+.riwayat-summary__icon svg {
+  width: 26px;
+  height: 26px;
+}
+
+.riwayat-summary__info {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.riwayat-summary__info span {
+  color: var(--riwayat-muted);
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.riwayat-summary__info strong {
+  color: var(--riwayat-primary);
+  font-size: 29px;
+  font-weight: 800;
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums;
+}
+
+/* =========================================
+   SECTION HEADING
+========================================= */
+
+.riwayat-section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.riwayat-section-heading h2 {
+  margin: 0;
+  color: var(--riwayat-text);
+  font-size: 19px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.riwayat-section-heading .riwayat-eyebrow {
+  margin-bottom: 5px;
+  font-size: 11px;
+}
+
+/* =========================================
+   FILTER
+========================================= */
+
+.riwayat-filter {
+  margin-top: 26px;
+  padding: 19px;
+  background: #ffffff;
+  border: 1px solid var(--riwayat-border);
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(31, 43, 90, 0.035);
+}
+
+.riwayat-filter__fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.riwayat-filter__field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.riwayat-filter__field label {
+  color: var(--riwayat-text);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.riwayat-filter__field select {
+  width: 100%;
+  min-width: 0;
+  min-height: 49px;
+  padding: 10px 32px 10px 12px;
+  color: var(--riwayat-text);
+  background-color: #f8f9fd;
+  border: 1px solid #dde1ec;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.riwayat-filter__field select:focus {
+  outline: none;
+  border-color: var(--riwayat-primary);
+  box-shadow: 0 0 0 3px rgba(44, 54, 139, 0.1);
+}
+
+/* =========================================
+   REPORT LIST
+========================================= */
+
+.riwayat-list-section {
+  margin-top: 28px;
+}
+
+.riwayat-list-count {
+  flex-shrink: 0;
+  padding: 7px 11px;
+  color: var(--riwayat-primary);
+  background: #eef0ff;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.riwayat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+/* =========================================
+   REPORT CARD
+   Untuk data yang nantinya dirender JS
+========================================= */
+
+.riwayat-card {
+  padding: 17px;
+  background: #ffffff;
+  border: 1px solid var(--riwayat-border);
+  border-radius: 18px;
+  box-shadow: 0 4px 15px rgba(31, 43, 90, 0.035);
+}
+
+.riwayat-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.riwayat-card__date {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--riwayat-primary);
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.riwayat-card__date svg {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+}
+
+.riwayat-card__status {
+  flex-shrink: 0;
+  padding: 6px 10px;
+  color: #008c42;
+  background: #e7f8ef;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.riwayat-card__title {
+  margin: 15px 0 0;
+  color: var(--riwayat-text);
+  font-size: 17px;
+  font-weight: 800;
+  line-height: 1.5;
+}
+
+.riwayat-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px 15px;
+  margin-top: 10px;
+  color: var(--riwayat-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.riwayat-card__meta-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.riwayat-card__meta-item svg {
+  width: 16px;
+  height: 16px;
+}
+
+.riwayat-card__divider {
+  height: 1px;
+  margin: 16px 0;
+  background: var(--riwayat-border);
+}
+
+.riwayat-card__action {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.riwayat-card__detail-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 45px;
+  padding: 10px 16px;
+  color: #ffffff;
+  background: var(--riwayat-primary);
+  border: none;
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.riwayat-card__detail-button svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* =========================================
+   EMPTY STATE
+========================================= */
+
+.riwayat-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 34px 20px;
+  text-align: center;
+  background: #ffffff;
+  border: 1px dashed #d8dcec;
+  border-radius: 18px;
+}
+
+.riwayat-empty__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 65px;
+  height: 65px;
+  margin-bottom: 15px;
+  color: var(--riwayat-primary);
+  background: #eef0ff;
+  border-radius: 20px;
+}
+
+.riwayat-empty__icon svg {
+  width: 30px;
+  height: 30px;
+}
+
+.riwayat-empty h3 {
+  margin: 0;
+  color: var(--riwayat-text);
+  font-size: 17px;
+  font-weight: 800;
+}
+
+.riwayat-empty p {
+  max-width: 310px;
+  margin: 9px 0 0;
+  color: var(--riwayat-muted);
+  font-size: 14px;
+  line-height: 1.7;
+}
+
+/* =========================================
+   INTERACTION
+========================================= */
+
+.riwayat-page button:focus-visible,
+.riwayat-page select:focus-visible {
+  outline: 3px solid rgba(44, 54, 139, 0.3);
+  outline-offset: 3px;
+}
+
+.riwayat-page button:active {
+  transform: scale(0.98);
+}
+
+/* =========================================
+   TABLET
+========================================= */
+
+@media (min-width: 600px) {
+  .riwayat-header {
+    padding: 24px 32px 38px;
+  }
+
+  .riwayat-content {
+    padding: 28px;
+  }
+
+  .riwayat-filter {
+    padding: 22px;
+  }
+
+  .riwayat-card {
+    padding: 21px;
+  }
+}
+
+/* =========================================
+   DESKTOP
+========================================= */
+
+@media (min-width: 900px) {
+  .riwayat-page {
+    padding-bottom: 30px;
+  }
+
+  .riwayat-header {
+    border-radius: 0 0 32px 32px;
+  }
+
+  .riwayat-content {
+    padding-top: 32px;
+  }
+
+  .riwayat-list {
+    gap: 16px;
+  }
+}
+
+/* =========================================
+   SMALL SCREEN
+========================================= */
+
+@media (max-width: 360px) {
+  .riwayat-header {
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+
+  .riwayat-content {
+    padding-right: 14px;
+    padding-left: 14px;
+  }
+
+  .riwayat-filter {
+    padding: 15px;
+  }
+
+  .riwayat-filter__fields {
+    gap: 8px;
+  }
+
+  .riwayat-filter__field select {
+    font-size: 13px;
+  }
+
+  .riwayat-section-heading h2 {
+    font-size: 17px;
+  }
+
+  .riwayat-card {
+    padding: 14px;
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .riwayat-page *,
+  .riwayat-page *::before,
+  .riwayat-page *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}
