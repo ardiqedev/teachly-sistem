@@ -364,9 +364,9 @@ const Dashboard = {
             </div>
 
             <div class="report-form-group">
-              <label for="idKelompokLaporan">Kelompok Ngaji</label>
+              <label for="idKelompokLaporan">Kelompok Ngaji / Tingkat</label>
               <select id="idKelompokLaporan">
-                <option value="">Pilih kelompok ngaji</option>
+                <option value="">Pilih Tingkat</option>
               </select>
             </div>
 
