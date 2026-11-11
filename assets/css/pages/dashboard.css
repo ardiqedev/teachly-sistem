@@ -835,3 +835,99 @@
   width: 18px;
   height: 18px;
 }
+
+/* =========================================================
+   REPORT - SELECTED KELOMPOK NGAJI
+========================================================= */
+
+.report-selected-groups {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+/* Item kelompok / tingkat */
+.report-selected-groups .selected-group-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+
+  width: 100%;
+  padding: 12px 14px;
+
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #c49a45;
+  border-radius: 10px;
+
+  transition: all 0.2s ease;
+}
+
+.report-selected-groups .selected-group-item:hover {
+  background: #f1f5f9;
+  border-color: #cbd5e1;
+}
+
+/* Informasi kelompok */
+.report-selected-groups .selected-group-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.report-selected-groups .selected-group-name {
+  color: #172554;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.report-selected-groups .selected-group-level {
+  color: #64748b;
+  font-size: 11px;
+}
+
+/* Tombol hapus */
+.report-selected-groups .selected-group-remove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 30px;
+  height: 30px;
+
+  border: none;
+  border-radius: 8px;
+
+  background: #fee2e2;
+  color: #dc2626;
+
+  font-size: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.report-selected-groups .selected-group-remove:hover {
+  background: #dc2626;
+  color: #ffffff;
+}
+
+/* Tampilan ketika belum ada kelompok */
+.report-selected-groups:empty {
+  display: none;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+  .report-selected-groups {
+    gap: 8px;
+  }
+
+  .report-selected-groups .selected-group-item {
+    padding: 11px 12px;
+  }
+}
