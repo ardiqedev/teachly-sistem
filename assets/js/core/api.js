@@ -1,5 +1,6 @@
 /* =========================================
    QEDEV API
+   TEACHLY - TOKENLESS VERSION
 ========================================= */
 
 const API = {};
@@ -14,19 +15,16 @@ API.baseUrl = CONFIG.API.URL;
    REQUEST
 ===================================== */
 
-API.request = async function (action, data = {}) {
+API.request = async function (endpoint, payload = {}) {
   try {
-    const token =
-      typeof Auth !== "undefined" && Auth.getToken ? Auth.getToken() || "" : "";
+    if (!this.baseUrl) {
+      throw new Error("URL API belum dikonfigurasi.");
+    }
 
-    /*
-     * Format sesuai Request.gs
-     */
-    const payload = new URLSearchParams({
-      action: action,
-      token: token,
-      params: JSON.stringify(data),
-    });
+    const requestBody = {
+      endpoint: endpoint,
+      payload: payload,
+    };
 
     const controller = new AbortController();
 
@@ -39,7 +37,10 @@ API.request = async function (action, data = {}) {
     try {
       response = await fetch(this.baseUrl, {
         method: "POST",
-        body: payload,
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8",
+        },
+        body: JSON.stringify(requestBody),
         signal: controller.signal,
       });
     } finally {
@@ -59,9 +60,7 @@ API.request = async function (action, data = {}) {
     } catch (parseError) {
       console.error("[API] Invalid JSON response:", text);
 
-      throw new Error(
-        `Server mengembalikan response tidak valid (${response.status}).`,
-      );
+      throw new Error(`Respons server tidak valid (${response.status}).`);
     }
 
     /* =================================
@@ -73,12 +72,18 @@ API.request = async function (action, data = {}) {
     }
 
     /* =================================
-       APPLICATION ERROR
+       VALIDATE RESPONSE
     ================================= */
 
-    if (result.success === false) {
-      throw new Error(result.message || "Request gagal.");
+    if (!result || typeof result.success !== "boolean") {
+      throw new Error("Format respons server tidak valid.");
     }
+
+    /*
+     * Jangan throw ketika success === false.
+     * Auth.login membutuhkan response.message
+     * untuk menampilkan pesan kegagalan login.
+     */
 
     return result;
   } catch (error) {
@@ -96,6 +101,6 @@ API.request = async function (action, data = {}) {
    POST
 ===================================== */
 
-API.post = function (action, data = {}) {
-  return this.request(action, data);
+API.post = function (endpoint, payload = {}) {
+  return this.request(endpoint, payload);
 };

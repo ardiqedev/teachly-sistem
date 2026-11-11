@@ -1,0 +1,403 @@
+<!-- =========================================
+     TEACHLY - ADMIN DASHBOARD
+     PREMIUM RESPONSIVE LAYOUT
+========================================= -->
+
+<div class="admin-layout" id="adminLayout">
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-brand">
+      <div class="admin-brand-icon">
+        <img
+          src="assets/images/logo.webp"
+          alt="Logo Teachly"
+          class="admin-brand-logo"
+        />
+      </div>
+
+      <div class="admin-brand-text">
+        <strong>Teachly</strong>
+        <span>MI Muh. Plus Leksono</span>
+      </div>
+
+      <button
+        type="button"
+        class="admin-sidebar-close"
+        data-admin-sidebar-close
+        aria-label="Tutup menu"
+      >
+        <i data-lucide="x"></i>
+      </button>
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav class="admin-nav">
+      <div class="admin-nav-group">
+        <span class="admin-nav-label">MENU UTAMA</span>
+
+        <button
+          type="button"
+          class="admin-nav-item active"
+          data-admin-page="dashboard"
+        >
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </button>
+      </div>
+
+      <div class="admin-nav-group">
+        <span class="admin-nav-label">DATA SEKOLAH</span>
+
+        <button type="button" class="admin-nav-item" data-admin-page="guru">
+          <i data-lucide="users"></i>
+          <span>Data Guru</span>
+          <i data-lucide="chevron-right" class="admin-nav-arrow"></i>
+        </button>
+
+        <button type="button" class="admin-nav-item" data-admin-page="kelas">
+          <i data-lucide="book-open"></i>
+          <span>Data Kelas</span>
+          <i data-lucide="chevron-right" class="admin-nav-arrow"></i>
+        </button>
+
+        <!-- <button
+          type="button"
+          class="admin-nav-item"
+          data-admin-page="mata-pelajaran"
+        >
+          <i data-lucide="layers"></i>
+          <span>Mata Pelajaran</span>
+        </button> -->
+
+        <!-- <button
+          type="button"
+          class="admin-nav-item"
+          data-admin-page="kelompok-ngaji"
+        >
+          <i data-lucide="book-marked"></i>
+          <span>Kelompok Ngaji</span>
+        </button> -->
+
+        <!-- <button
+          type="button"
+          class="admin-nav-item"
+          data-admin-page="sesi-ngaji"
+        >
+          <i data-lucide="calendar-days"></i>
+          <span>Sesi Ngaji</span>
+        </button> -->
+
+        <!-- <button
+          type="button"
+          class="admin-nav-item"
+          data-admin-page="tahun-ajaran"
+        >
+          <i data-lucide="calendar-range"></i>
+          <span>Tahun Ajaran</span>
+        </button> -->
+      </div>
+
+      <div class="admin-nav-group">
+        <span class="admin-nav-label">LAPORAN</span>
+
+        <button type="button" class="admin-nav-item" data-admin-page="laporan">
+          <i data-lucide="chart-no-axes-column-increasing"></i>
+          <span>Laporan Guru</span>
+          <i data-lucide="chevron-right" class="admin-nav-arrow"></i>
+        </button>
+      </div>
+
+      <div class="admin-nav-group">
+        <span class="admin-nav-label">PENGATURAN</span>
+
+        <button type="button" class="admin-nav-item" data-admin-page="pengguna">
+          <i data-lucide="users-round"></i>
+          <span>Pengguna Admin</span>
+        </button>
+
+        <button
+          type="button"
+          class="admin-nav-item"
+          data-admin-page="profil-sekolah"
+        >
+          <i data-lucide="school"></i>
+          <span>Profil Sekolah</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- SIDEBAR FOOTER -->
+    <div class="admin-sidebar-footer">
+      <div class="admin-sidebar-footer-icon">
+        <i data-lucide="graduation-cap"></i>
+      </div>
+
+      <div>
+        <strong>Teachly</strong>
+        <span>School Management System</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- SIDEBAR OVERLAY -->
+  <div class="admin-sidebar-overlay" data-admin-sidebar-close></div>
+
+  <!-- MAIN AREA -->
+  <main class="admin-main">
+    <!-- TOPBAR -->
+    <header class="admin-topbar">
+      <div class="admin-topbar-left">
+        <button
+          type="button"
+          class="admin-menu-toggle"
+          data-admin-sidebar-toggle
+          aria-label="Buka menu"
+        >
+          <i data-lucide="menu"></i>
+        </button>
+
+        <div class="admin-page-heading">
+          <strong id="adminPageTitle">Dashboard</strong>
+          <span>Sistem Manajemen Pembelajaran</span>
+        </div>
+      </div>
+
+      <div class="admin-topbar-right">
+        <button
+          type="button"
+          class="admin-notification-button"
+          aria-label="Notifikasi"
+        >
+          <i data-lucide="bell"></i>
+          <span class="admin-notification-indicator"></span>
+        </button>
+
+        <div class="admin-profile">
+          <div class="admin-profile-avatar">
+            <i data-lucide="user-round"></i>
+          </div>
+
+          <div class="admin-profile-info">
+            <strong id="adminNama">Administrator</strong>
+            <span id="adminRole">Admin Sekolah</span>
+          </div>
+
+          <i data-lucide="chevron-down"></i>
+        </div>
+      </div>
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <div class="admin-content" id="adminContent">
+      <!-- DASHBOARD PAGE -->
+
+      <!-- DASHBOARD PAGE -->
+      <section class="admin-dashboard-page" data-admin-view="dashboard">
+        <!-- WELCOME BANNER -->
+        <section class="admin-welcome-banner">
+          <div class="admin-welcome-content">
+            <div class="admin-welcome-icon">
+              <i data-lucide="crown"></i>
+            </div>
+
+            <div>
+              <span class="admin-welcome-label"> DASHBOARD ADMIN </span>
+
+              <h1>
+                Selamat datang,
+                <span id="adminWelcomeName">Administrator</span>
+              </h1>
+
+              <p>
+                Kelola data sekolah, pembelajaran, dan kegiatan ngaji dalam satu
+                sistem.
+              </p>
+            </div>
+          </div>
+
+          <div class="admin-welcome-decoration">
+            <i data-lucide="school"></i>
+          </div>
+        </section>
+
+        <!-- STATISTICS -->
+
+        <!-- STATISTICS -->
+        <section class="admin-statistics">
+          <article class="admin-stat-card admin-stat-guru">
+            <div class="admin-stat-icon">
+              <i data-lucide="clipboard-list"></i>
+            </div>
+
+            <div class="admin-stat-info">
+              <span>Laporan Guru Kelas</span>
+              <strong id="statLaporanGuruKelas">0</strong>
+            </div>
+          </article>
+
+          <article class="admin-stat-card admin-stat-kelas">
+            <div class="admin-stat-icon">
+              <i data-lucide="book-open"></i>
+            </div>
+
+            <div class="admin-stat-info">
+              <span>Laporan Guru Mapel</span>
+              <strong id="statLaporanGuruMapel">0</strong>
+            </div>
+          </article>
+
+          <article class="admin-stat-card admin-stat-mapel">
+            <div class="admin-stat-icon">
+              <i data-lucide="book-marked"></i>
+            </div>
+
+            <div class="admin-stat-info">
+              <span>Laporan Guru Ngaji</span>
+              <strong id="statLaporanGuruNgaji">0</strong>
+            </div>
+          </article>
+
+          <article class="admin-stat-card admin-stat-ngaji">
+            <div class="admin-stat-icon">
+              <i data-lucide="chart-no-axes-column-increasing"></i>
+            </div>
+
+            <div class="admin-stat-info">
+              <span>Total Seluruh Laporan</span>
+              <strong id="statTotalSeluruhLaporan">0</strong>
+            </div>
+          </article>
+        </section>
+
+        <!-- DASHBOARD GRID -->
+        <section class="admin-dashboard-grid">
+          <!-- STATISTIK GURU -->
+          <div class="admin-dashboard-column">
+            <article class="admin-panel admin-teacher-stat">
+              <div class="admin-panel-heading">
+                <div>
+                  <h2>Statistik Guru</h2>
+                  <p>Distribusi guru berdasarkan peran</p>
+                </div>
+
+                <i data-lucide="chart-no-axes-column-increasing"></i>
+              </div>
+
+              <div class="admin-teacher-stat-content">
+                <div class="admin-chart-placeholder" id="adminTeacherChart">
+                  <div class="admin-chart-circle">
+                    <strong id="statChartTotal">0</strong>
+                    <span>Guru</span>
+                  </div>
+                </div>
+
+                <div class="admin-chart-legend">
+                  <div class="admin-legend-item">
+                    <span class="admin-legend-dot guru-kelas"></span>
+                    <span>Guru Kelas</span>
+                    <strong id="statGuruKelas">0</strong>
+                  </div>
+
+                  <div class="admin-legend-item">
+                    <span class="admin-legend-dot guru-mapel"></span>
+                    <span>Guru Mapel</span>
+                    <strong id="statGuruMapel">0</strong>
+                  </div>
+
+                  <div class="admin-legend-item">
+                    <span class="admin-legend-dot guru-ngaji"></span>
+                    <span>Guru Ngaji</span>
+                    <strong id="statGuruNgaji">0</strong>
+                  </div>
+                </div>
+              </div>
+            </article>
+          </div>
+
+          <!-- AKSI CEPAT -->
+          <div class="admin-dashboard-column">
+            <article class="admin-panel admin-quick-actions">
+              <div class="admin-panel-heading">
+                <div>
+                  <h2>Aksi Cepat</h2>
+                  <p>Akses menu penting dengan cepat</p>
+                </div>
+
+                <i data-lucide="zap"></i>
+              </div>
+
+              <div class="admin-quick-action-grid">
+                <button
+                  type="button"
+                  class="admin-quick-action action-blue"
+                  data-admin-page="guru"
+                >
+                  <i data-lucide="user-plus"></i>
+                  <span>Data Guru</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="admin-quick-action action-purple"
+                  data-admin-page="kelas"
+                >
+                  <i data-lucide="school"></i>
+                  <span>Data Kelas</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="admin-quick-action action-green"
+                  data-admin-page="mata-pelajaran"
+                >
+                  <i data-lucide="book-open"></i>
+                  <span>Data Mapel</span>
+                </button>
+
+                <button
+                  type="button"
+                  class="admin-quick-action action-gold"
+                  data-admin-page="kelompok-ngaji"
+                >
+                  <i data-lucide="book-marked"></i>
+                  <span>Kelompok Ngaji</span>
+                </button>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- SCHOOL INFORMATION -->
+        <section class="admin-school-status">
+          <div class="admin-school-year">
+            <div class="admin-school-status-icon">
+              <i data-lucide="calendar-days"></i>
+            </div>
+
+            <div>
+              <span>Tahun Ajaran Aktif</span>
+              <strong id="adminActiveAcademicYear">Belum diatur</strong>
+            </div>
+          </div>
+
+          <div class="admin-system-status">
+            <div class="admin-system-status-icon">
+              <i data-lucide="check-circle-2"></i>
+            </div>
+
+            <div>
+              <span>Status Sistem</span>
+              <strong>Siap Digunakan</strong>
+            </div>
+          </div>
+        </section>
+      </section>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="admin-footer">
+      <span>Teachly &copy; <span id="adminCurrentYear"></span></span>
+      <span>Sistem Manajemen Pembelajaran</span>
+    </footer>
+  </main>
+</div>

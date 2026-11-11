@@ -1,33 +1,69 @@
-/* =========================================
-   TEACHLY - DASHBOARD SERVICE
-========================================= */
-
 const DashboardService = {
-  async getSummary() {
-    const data = await DashboardRepository.getSummary();
+  /**
+   * Mengambil ringkasan Dashboard.
+   *
+   * @param {string} nbm
+   * @returns {Promise<Object>}
+   */
+  async getSummary(nbm) {
+    try {
+      const response = await DashboardRepository.getSummary(nbm);
 
-    if (!data || !data.guru || !data.statistik) {
-      throw new Error("Format data dashboard tidak valid.");
+      if (!response || response.success !== true) {
+        return {
+          success: false,
+          message: response?.message || "Gagal mengambil ringkasan Dashboard.",
+          data: null,
+        };
+      }
+
+      return {
+        success: true,
+        message: response.message || "Ringkasan Dashboard berhasil dimuat.",
+        data: response.data || {},
+      };
+    } catch (error) {
+      console.error("[DashboardService.getSummary]", error);
+
+      return {
+        success: false,
+        message: error.message || "Terjadi kesalahan saat mengambil ringkasan.",
+        data: null,
+      };
     }
+  },
 
-    return {
-      guru: {
-        idGuru: data.guru.idGuru || "",
-        namaGuru: data.guru.namaGuru || "Guru",
-        nbm: data.guru.nbm || "-",
-        jenisGuru: String(data.guru.jenisGuru || "").trim(),
-      },
+  /**
+   * Mengambil tahun ajaran aktif.
+   *
+   * @returns {Promise<Object>}
+   */
+  async getActiveAcademicYear() {
+    try {
+      const response = await DashboardRepository.getActiveAcademicYear();
 
-      tanggal: data.tanggal || "",
+      if (!response || response.success !== true) {
+        return {
+          success: false,
+          message: response?.message || "Gagal mengambil tahun ajaran aktif.",
+          data: null,
+        };
+      }
 
-      tahunAjaran: data.tahunAjaran
-        ? data.tahunAjaran.namaTahunAjaran || "-"
-        : "-",
+      return {
+        success: true,
+        message: response.message || "Tahun ajaran berhasil dimuat.",
+        data: response.data || {},
+      };
+    } catch (error) {
+      console.error("[DashboardService.getActiveAcademicYear]", error);
 
-      statistik: {
-        totalLaporan: Number(data.statistik.totalLaporan) || 0,
-        laporanBulanIni: Number(data.statistik.laporanBulanIni) || 0,
-      },
-    };
+      return {
+        success: false,
+        message:
+          error.message || "Terjadi kesalahan saat mengambil tahun ajaran.",
+        data: null,
+      };
+    }
   },
 };

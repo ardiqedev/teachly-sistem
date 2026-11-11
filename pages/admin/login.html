@@ -1,0 +1,138 @@
+<!-- =====================================================
+     TEACHLY - ADMIN LOGIN PAGE
+     Mobile-first | Admin Authentication
+     ===================================================== -->
+
+<section class="login-page admin-login-page" aria-labelledby="adminLoginTitle">
+  <div
+    class="login-page__ornament login-page__ornament--top"
+    aria-hidden="true"
+  >
+    <span class="login-page__ornament-ring"></span>
+    <span class="login-page__ornament-grid"></span>
+  </div>
+
+  <div
+    class="login-page__ornament login-page__ornament--bottom"
+    aria-hidden="true"
+  >
+    <span class="login-page__ornament-wave"></span>
+    <span class="login-page__ornament-dot"></span>
+  </div>
+
+  <div class="login-shell">
+    <!-- BRAND -->
+    <header class="login-brand">
+      <div class="login-brand__mark" aria-hidden="true">
+        <i data-lucide="graduation-cap"></i>
+      </div>
+
+      <div class="login-brand__copy">
+        <p class="login-brand__eyebrow">MI MUHAMMADIYAH PLUS LEKSONO</p>
+
+        <p class="login-brand__name">TEACHLY</p>
+
+        <p class="login-brand__tagline">Teacher's Daily Report</p>
+      </div>
+    </header>
+
+    <!-- ADMIN LOGIN CARD -->
+    <main class="login-card">
+      <div class="login-card__heading">
+        <span class="login-card__welcome"> AREA ADMINISTRATOR </span>
+
+        <h1 id="adminLoginTitle">Login Admin</h1>
+
+        <p>Silakan masuk menggunakan akun administrator.</p>
+      </div>
+
+      <!-- ACCESS SWITCH -->
+      <div class="login-access">
+        <a href="#" class="login-access__button" data-page="login">
+          <i data-lucide="graduation-cap" aria-hidden="true"></i>
+          <span>Login Guru</span>
+        </a>
+
+        <div
+          class="login-access__button login-access__button--active"
+          aria-current="page"
+        >
+          <i data-lucide="shield-check" aria-hidden="true"></i>
+          <span>Login Admin</span>
+        </div>
+      </div>
+
+      <!-- ADMIN FORM -->
+      <form
+        class="login-form"
+        id="adminLoginForm"
+        method="post"
+        autocomplete="on"
+      >
+        <div class="login-field">
+          <label for="adminUsername"> Username </label>
+
+          <div class="login-input-wrap">
+            <i data-lucide="user-round" aria-hidden="true"></i>
+
+            <input
+              id="adminUsername"
+              name="username"
+              type="text"
+              placeholder="Masukkan username"
+              autocomplete="username"
+              autocapitalize="none"
+              spellcheck="false"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="login-field">
+          <label for="adminPassword"> Password </label>
+
+          <div class="login-input-wrap">
+            <i data-lucide="lock-keyhole" aria-hidden="true"></i>
+
+            <input
+              id="adminPassword"
+              name="password"
+              type="password"
+              placeholder="Masukkan password"
+              autocomplete="current-password"
+              required
+            />
+          </div>
+        </div>
+
+        <p
+          class="login-form__message"
+          id="adminLoginMessage"
+          role="alert"
+          hidden
+        ></p>
+
+        <button class="login-submit" id="adminLoginSubmit" type="submit">
+          <span>Masuk sebagai Admin</span>
+
+          <i data-lucide="arrow-right" aria-hidden="true"></i>
+        </button>
+      </form>
+
+      <div class="login-card__security">
+        <i data-lucide="shield-check" aria-hidden="true"></i>
+
+        <span>Akses khusus administrator yang berwenang</span>
+      </div>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="login-footer">
+      <span class="login-footer__accent" aria-hidden="true"></span>
+
+      <p>Mendidik dengan ilmu, menginspirasi dengan akhlak.</p>
+
+      <small> Teachly · MI Muhammadiyah Plus Leksono </small>
+    </footer>
+  </div>
+</section>

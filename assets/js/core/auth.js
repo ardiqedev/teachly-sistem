@@ -1,248 +1,208 @@
 /* =========================================
-   TEACHLY - QEDEV AUTH
+   QEDEV AUTH ENGINE
+   TEACHLY - TOKENLESS VERSION
 ========================================= */
 
-const Auth = {};
+const Auth = {
+  /* =====================================
+     CONFIG
+  ===================================== */
 
-/* =====================================
-   CONFIG
-===================================== */
+  config: {
+    userKey: "user",
+    guruKey: "guru",
+    sessionKey: "session",
+  },
 
-Auth.config = {
-  tokenKey: "token",
-  userKey: "user",
-  guruKey: "guru",
-  sessionKey: "session",
-  expiresKey: "session_expires_at",
-};
+  user: null,
+  guru: null,
+  session: null,
+  initialized: false,
 
-/* =====================================
-   INIT
-===================================== */
+  /* =====================================
+     INITIALIZE
+  ===================================== */
 
-Auth.init = function () {
-  const token = Storage.get(this.config.tokenKey);
-  const user = Storage.get(this.config.userKey);
-  const guru = Storage.get(this.config.guruKey);
-  const session = Storage.get(this.config.sessionKey);
-  const expiresAt = Storage.get(this.config.expiresKey);
+  init() {
+    if (this.initialized) return;
 
-  if (token) State.set("token", token);
-  if (user) State.set("user", user);
-  if (guru) State.set("guru", guru);
-  if (session) State.set("session", session);
-  if (expiresAt) State.set("sessionExpiresAt", expiresAt);
+    try {
+      this.user = Storage.get(this.config.userKey) || null;
+      this.guru = Storage.get(this.config.guruKey) || null;
+      this.session = Storage.get(this.config.sessionKey) || null;
 
-  // Periksa masa berlaku session lokal.
-  if (token && expiresAt) {
-    if (new Date(expiresAt).getTime() <= Date.now()) {
-      this.destroy();
+      this.initialized = true;
+
+      console.log("[Auth] Authentication initialized.");
+    } catch (error) {
+      console.error("[Auth] Initialization failed:", error);
+
+      this.clearSession();
+      this.initialized = true;
     }
-  }
-};
+  },
 
-/* =====================================
-   LOGIN
-===================================== */
+  /* =====================================
+     LOGIN
+  ===================================== */
 
-Auth.login = async function (username, password) {
-  try {
-    const response = await API.post("auth.login", {
-      username: String(username || "").trim(),
-      password: String(password || ""),
-    });
+  async login(nbm) {
+    const normalizedNBM = String(nbm || "").trim();
 
-    if (!response || !response.success) {
-      return (
-        response || {
-          success: false,
-          message: "Respons server tidak valid.",
-        }
-      );
-    }
-
-    const data = response.data || {};
-    const session = data.session || {};
-    const token = session.token;
-
-    if (!token || !data.user) {
+    if (!normalizedNBM) {
       return {
         success: false,
-        message: "Data session dari server tidak lengkap.",
+        message: "NBM wajib diisi.",
+        data: null,
       };
     }
 
-    // Simpan seluruh informasi session.
-    this.setSession({
-      token: token,
-      user: data.user,
-      guru: data.guru || null,
-      session: session,
-      expiresAt: session.expiresAt || null,
-    });
+    try {
+      const response = await API.post("auth.login", {
+        nbm: normalizedNBM,
+      });
 
-    return response;
-  } catch (error) {
-    console.error("[Auth] Login gagal:", error);
+      if (!response || response.success !== true) {
+        return (
+          response || {
+            success: false,
+            message: "Login gagal.",
+            data: null,
+          }
+        );
+      }
 
-    return {
-      success: false,
-      message: error.message || "Gagal menghubungi server.",
-    };
-  }
-};
+      const user = response.data?.user;
+      const guru = response.data?.guru;
 
-/* =====================================
-   SET SESSION
-===================================== */
+      if (!user || !guru) {
+        throw new Error("Data profil pengguna tidak lengkap.");
+      }
 
-Auth.setSession = function (data) {
-  this.setToken(data.token);
-  this.setUser(data.user);
-  this.setGuru(data.guru);
-  this.setSessionInfo(data.session);
-  this.setExpiresAt(data.expiresAt);
-};
+      const session = {
+        authenticated: true,
+        loginAt: new Date().toISOString(),
+      };
 
-/* =====================================
-   LOGOUT
-===================================== */
+      this.setSession({
+        user: user,
+        guru: guru,
+        session: session,
+      });
 
-Auth.logout = async function () {
-  const token = this.getToken();
+      console.log("[Auth] Login successful.");
 
-  try {
-    if (token) {
-      await API.post("auth.logout", { token });
+      return response;
+    } catch (error) {
+      console.error("[Auth] Login failed:", error);
+
+      return {
+        success: false,
+        message: error.message || "Terjadi kesalahan saat login.",
+        data: null,
+      };
     }
-  } catch (error) {
-    console.error("[Auth] Logout server gagal:", error);
-  } finally {
-    this.destroy();
-  }
+  },
 
-  return {
-    success: true,
-    message: "Session lokal telah diakhiri.",
-  };
-};
+  /* =====================================
+     SET SESSION
+  ===================================== */
 
-/* =====================================
-   CHECK SESSION
-===================================== */
+  setSession(data) {
+    this.user = data.user || null;
+    this.guru = data.guru || null;
+    this.session = data.session || null;
 
-Auth.check = function () {
-  return this.isLoggedIn();
-};
+    Storage.set(this.config.userKey, this.user);
+    Storage.set(this.config.guruKey, this.guru);
+    Storage.set(this.config.sessionKey, this.session);
+  },
 
-/* =====================================
-   IS LOGGED IN
-===================================== */
+  /* =====================================
+     LOGOUT
+  ===================================== */
 
-Auth.isLoggedIn = function () {
-  const token = this.getToken();
+  logout() {
+    this.clearSession();
 
-  if (!token) return false;
+    console.log("[Auth] Logout successful.");
 
-  const expiresAt = State.get("sessionExpiresAt");
+    return true;
+  },
 
-  if (expiresAt && new Date(expiresAt).getTime() <= Date.now()) {
-    this.destroy();
-    return false;
-  }
+  /* =====================================
+     CLEAR SESSION
+  ===================================== */
 
-  return true;
-};
+  clearSession() {
+    this.user = null;
+    this.guru = null;
+    this.session = null;
 
-/* =====================================
-   USER
-===================================== */
+    Storage.remove(this.config.userKey);
+    Storage.remove(this.config.guruKey);
+    Storage.remove(this.config.sessionKey);
+  },
 
-Auth.user = function () {
-  return State.get("user");
-};
+  /* =====================================
+     CHECK AUTHENTICATION
+  ===================================== */
 
-Auth.setUser = function (user) {
-  Storage.set(this.config.userKey, user);
-  State.set("user", user);
-};
+  check() {
+    return this.isLoggedIn();
+  },
 
-Auth.clearUser = function () {
-  Storage.remove(this.config.userKey);
-  State.remove("user");
-};
+  isLoggedIn() {
+    return Boolean(
+      this.session &&
+      this.session.authenticated === true &&
+      this.user &&
+      this.guru,
+    );
+  },
 
-/* =====================================
-   GURU
-===================================== */
+  /* =====================================
+     USER
+  ===================================== */
 
-Auth.guru = function () {
-  return State.get("guru");
-};
+  getUser() {
+    return this.user;
+  },
 
-Auth.setGuru = function (guru) {
-  if (guru) {
+  setUser(user) {
+    this.user = user;
+    Storage.set(this.config.userKey, user);
+  },
+
+  clearUser() {
+    this.user = null;
+    Storage.remove(this.config.userKey);
+  },
+
+  /* =====================================
+     GURU
+  ===================================== */
+
+  getGuru() {
+    return this.guru;
+  },
+
+  setGuru(guru) {
+    this.guru = guru;
     Storage.set(this.config.guruKey, guru);
-    State.set("guru", guru);
-  } else {
-    this.clearGuru();
-  }
-};
+  },
 
-Auth.clearGuru = function () {
-  Storage.remove(this.config.guruKey);
-  State.remove("guru");
-};
+  clearGuru() {
+    this.guru = null;
+    Storage.remove(this.config.guruKey);
+  },
 
-/* =====================================
-   TOKEN
-===================================== */
+  /* =====================================
+     DESTROY
+  ===================================== */
 
-Auth.getToken = function () {
-  return State.get("token");
-};
-
-Auth.setToken = function (token) {
-  Storage.set(this.config.tokenKey, token);
-  State.set("token", token);
-};
-
-Auth.clearToken = function () {
-  Storage.remove(this.config.tokenKey);
-  State.remove("token");
-};
-
-/* =====================================
-   SESSION INFO
-===================================== */
-
-Auth.setSessionInfo = function (session) {
-  Storage.set(this.config.sessionKey, session);
-  State.set("session", session);
-};
-
-Auth.setExpiresAt = function (expiresAt) {
-  if (expiresAt) {
-    Storage.set(this.config.expiresKey, expiresAt);
-    State.set("sessionExpiresAt", expiresAt);
-  } else {
-    Storage.remove(this.config.expiresKey);
-    State.remove("sessionExpiresAt");
-  }
-};
-
-/* =====================================
-   DESTROY SESSION
-===================================== */
-
-Auth.destroy = function () {
-  this.clearToken();
-  this.clearUser();
-  this.clearGuru();
-
-  Storage.remove(this.config.sessionKey);
-  Storage.remove(this.config.expiresKey);
-
-  State.remove("session");
-  State.remove("sessionExpiresAt");
+  destroy() {
+    this.clearSession();
+    this.initialized = false;
+  },
 };

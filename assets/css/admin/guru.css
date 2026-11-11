@@ -1,0 +1,701 @@
+/* =========================================
+   TEACHLY - ADMIN DATA GURU
+   PREMIUM RESPONSIVE UI
+========================================= */
+
+.admin-guru-page {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  color: #172b4d;
+}
+
+/* =========================================
+   PAGE HEADER
+========================================= */
+
+.admin-guru-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.admin-guru-eyebrow {
+  display: block;
+  margin-bottom: 7px;
+  color: #b58b35;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.admin-guru-header h1 {
+  margin: 0;
+  color: #172b4d;
+  font-size: 27px;
+  font-weight: 800;
+}
+
+.admin-guru-header p {
+  margin: 7px 0 0;
+  color: #8491a5;
+  font-size: 13px;
+}
+
+/* =========================================
+   BUTTON
+========================================= */
+
+.admin-guru-btn {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  padding: 0 17px;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-guru-btn svg {
+  width: 17px;
+  height: 17px;
+}
+
+.admin-guru-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.admin-guru-btn-primary {
+  color: #fff;
+  background: #17365f;
+  box-shadow: 0 4px 12px rgba(23, 54, 95, 0.15);
+}
+
+.admin-guru-btn-primary:hover:not(:disabled) {
+  background: #244b7c;
+  transform: translateY(-1px);
+}
+
+.admin-guru-btn-light {
+  color: #52627a;
+  background: #fff;
+  border-color: #e3e9f1;
+}
+
+.admin-guru-btn-light:hover {
+  background: #f5f7fa;
+  border-color: #cbd5e1;
+}
+
+/* =========================================
+   STATISTICS
+========================================= */
+
+.admin-guru-statistics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-guru-stat-card {
+  min-height: 105px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: #fff;
+  border: 1px solid #e9edf3;
+  border-radius: 13px;
+  box-shadow: 0 3px 12px rgba(25, 45, 75, 0.035);
+}
+
+.admin-guru-stat-icon {
+  width: 46px;
+  height: 46px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  color: #315d91;
+  background: #edf4fc;
+  border-radius: 12px;
+}
+
+.admin-guru-stat-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.admin-guru-stat-icon.active {
+  color: #16845a;
+  background: #eaf7f0;
+}
+
+.admin-guru-stat-icon.inactive {
+  color: #c17b35;
+  background: #fff5e9;
+}
+
+.admin-guru-stat-card span {
+  display: block;
+  margin-bottom: 6px;
+  color: #8491a5;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.admin-guru-stat-card strong {
+  display: block;
+  color: #172b4d;
+  font-size: 25px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+/* =========================================
+   TABLE PANEL
+========================================= */
+
+.admin-guru-panel {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e9edf3;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(25, 45, 75, 0.035);
+}
+
+.admin-guru-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 22px 24px;
+}
+
+.admin-guru-toolbar h2 {
+  margin: 0;
+  color: #172b4d;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.admin-guru-toolbar p {
+  margin: 6px 0 0;
+  color: #8a96a8;
+  font-size: 12px;
+}
+
+.admin-guru-search {
+  width: 310px;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 13px;
+  background: #f8fafc;
+  border: 1px solid #e5eaf1;
+  border-radius: 9px;
+}
+
+.admin-guru-search svg {
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+  color: #98a4b5;
+}
+
+.admin-guru-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 10px 0;
+  color: #263b59;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: inherit;
+  font-size: 12px;
+}
+
+.admin-guru-search input::placeholder {
+  color: #a2adbb;
+}
+
+.admin-guru-search:focus-within {
+  border-color: #5278a8;
+  box-shadow: 0 0 0 3px rgba(82, 120, 168, 0.09);
+}
+
+/* =========================================
+   TABLE
+========================================= */
+
+.admin-guru-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-guru-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.admin-guru-table thead {
+  background: #f7f9fc;
+}
+
+.admin-guru-table th {
+  padding: 14px 20px;
+  color: #7b899d;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.35px;
+  text-transform: uppercase;
+  border-top: 1px solid #edf0f5;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.admin-guru-table td {
+  padding: 15px 20px;
+  color: #52627a;
+  font-size: 12px;
+  border-bottom: 1px solid #f0f2f6;
+}
+
+.admin-guru-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-guru-table tbody tr:hover {
+  background: #fbfcfe;
+}
+
+.admin-guru-nbm {
+  color: #355c8b;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.admin-guru-name {
+  color: #253b59;
+  font-weight: 700;
+}
+
+.admin-guru-message {
+  height: 110px;
+  text-align: center !important;
+  color: #8491a5 !important;
+  font-size: 13px !important;
+}
+
+.admin-guru-message.error {
+  color: #c24141 !important;
+}
+
+/* =========================================
+   STATUS BADGE
+========================================= */
+
+.admin-guru-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 82px;
+  padding: 6px 11px;
+  border-radius: 20px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.3px;
+}
+
+.admin-guru-badge.active {
+  color: #16845a;
+  background: #eaf7f0;
+}
+
+.admin-guru-badge.inactive {
+  color: #b66b2c;
+  background: #fff3e5;
+}
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.admin-guru-actions {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.admin-guru-action-btn {
+  width: 33px;
+  height: 33px;
+  display: grid;
+  place-items: center;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.admin-guru-action-btn svg {
+  width: 15px;
+  height: 15px;
+}
+
+.admin-guru-action-btn.edit {
+  color: #35669e;
+  background: #edf4fc;
+}
+
+.admin-guru-action-btn.edit:hover {
+  background: #dceafa;
+}
+
+.admin-guru-action-btn.deactivate {
+  color: #c17b35;
+  background: #fff5e9;
+}
+
+.admin-guru-action-btn.deactivate:hover {
+  background: #ffead0;
+}
+
+.admin-guru-action-btn.activate {
+  color: #16845a;
+  background: #eaf7f0;
+}
+
+.admin-guru-action-btn.activate:hover {
+  background: #d6f0e2;
+}
+
+/* =========================================
+   TABLE FOOTER
+========================================= */
+
+.admin-guru-table-footer {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 22px;
+  background: #fcfdff;
+  border-top: 1px solid #edf0f5;
+}
+
+.admin-guru-table-footer > span {
+  color: #8793a5;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+/* =========================================
+   MODAL
+========================================= */
+
+.admin-guru-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.admin-guru-modal.show {
+  display: flex;
+}
+
+.admin-guru-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(12, 25, 45, 0.55);
+  backdrop-filter: blur(3px);
+}
+
+.admin-guru-modal-dialog {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  overflow: hidden;
+  background: #fff;
+  border-radius: 15px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+  animation: adminGuruModalIn 0.2s ease;
+}
+
+@keyframes adminGuruModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.admin-guru-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 23px 24px;
+  border-bottom: 1px solid #edf0f5;
+}
+
+.admin-guru-modal-header h2 {
+  margin: 0;
+  color: #172b4d;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.admin-guru-modal-header p {
+  margin: 6px 0 0;
+  color: #8995a6;
+  font-size: 12px;
+}
+
+.admin-guru-modal-close {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  color: #8491a5;
+  background: #f4f6f9;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.admin-guru-modal-close:hover {
+  color: #243b5a;
+  background: #e9edf3;
+}
+
+.admin-guru-modal-close svg {
+  width: 17px;
+  height: 17px;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+.admin-guru-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+}
+
+.admin-guru-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.admin-guru-form-group label {
+  color: #40536d;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.admin-guru-form-group input {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 13px;
+  color: #263b59;
+  background: #fff;
+  border: 1px solid #dfe5ed;
+  border-radius: 8px;
+  outline: none;
+  font-family: inherit;
+  font-size: 13px;
+  transition: all 0.2s ease;
+}
+
+.admin-guru-form-group input::placeholder {
+  color: #a5afbd;
+}
+
+.admin-guru-form-group input:focus {
+  border-color: #5278a8;
+  box-shadow: 0 0 0 3px rgba(82, 120, 168, 0.09);
+}
+
+.admin-guru-form-group input:disabled {
+  color: #8491a5;
+  background: #f3f5f8;
+  cursor: not-allowed;
+}
+
+.admin-guru-form-error {
+  padding: 11px 13px;
+  color: #b42318;
+  background: #fef0ef;
+  border: 1px solid #fbd4d0;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+.admin-guru-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 17px 24px;
+  background: #fafbfd;
+  border-top: 1px solid #edf0f5;
+}
+
+/* =========================================
+   TOAST
+========================================= */
+
+.admin-guru-toast {
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+  z-index: 1100;
+  max-width: min(380px, calc(100vw - 40px));
+  padding: 13px 18px;
+  color: #fff;
+  background: #263b59;
+  border-radius: 9px;
+  box-shadow: 0 8px 25px rgba(20, 35, 55, 0.2);
+  font-size: 12px;
+  font-weight: 600;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: all 0.25s ease;
+}
+
+.admin-guru-toast.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.admin-guru-toast.success {
+  background: #16845a;
+}
+
+.admin-guru-toast.error {
+  background: #bd3f3f;
+}
+
+/* =========================================
+   RESPONSIVE - TABLET
+========================================= */
+
+@media (max-width: 900px) {
+  .admin-guru-statistics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-guru-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-guru-search {
+    width: 100%;
+  }
+}
+
+/* =========================================
+   RESPONSIVE - MOBILE
+========================================= */
+
+@media (max-width: 600px) {
+  .admin-guru-page {
+    gap: 17px;
+  }
+
+  .admin-guru-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-guru-header h1 {
+    font-size: 23px;
+  }
+
+  .admin-guru-header .admin-guru-btn {
+    width: 100%;
+  }
+
+  .admin-guru-statistics {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .admin-guru-stat-card {
+    min-height: 82px;
+    padding: 14px;
+  }
+
+  .admin-guru-stat-icon {
+    width: 42px;
+    height: 42px;
+  }
+
+  .admin-guru-stat-card strong {
+    font-size: 22px;
+  }
+
+  .admin-guru-toolbar {
+    padding: 18px 15px;
+  }
+
+  .admin-guru-table th,
+  .admin-guru-table td {
+    padding: 13px 14px;
+  }
+
+  .admin-guru-table-footer {
+    padding: 12px 14px;
+  }
+
+  .admin-guru-modal {
+    padding: 12px;
+  }
+
+  .admin-guru-modal-header,
+  .admin-guru-form-body {
+    padding: 19px;
+  }
+
+  .admin-guru-modal-footer {
+    padding: 15px 19px;
+  }
+
+  .admin-guru-modal-footer .admin-guru-btn {
+    flex: 1;
+  }
+
+  .admin-guru-toast {
+    right: 15px;
+    bottom: 15px;
+    left: 15px;
+    max-width: none;
+    text-align: center;
+  }
+}

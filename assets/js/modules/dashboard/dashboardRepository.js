@@ -1,15 +1,30 @@
-/* =========================================
-   TEACHLY - DASHBOARD REPOSITORY
-========================================= */
-
 const DashboardRepository = {
-  async getSummary() {
-    const response = await API.post("dashboard.summary", {});
-
-    if (!response || response.success !== true) {
-      throw new Error(response?.message || "Gagal mengambil data dashboard.");
+  /**
+   * Mengambil ringkasan data Dashboard.
+   *
+   * @param {string} nbm
+   * @returns {Promise<Object>}
+   */
+  async getSummary(nbm) {
+    if (!nbm) {
+      return {
+        success: false,
+        message: "NBM guru tidak ditemukan.",
+        data: null,
+      };
     }
 
-    return response.data;
+    return await API.post("dashboard.summary", {
+      NBM: nbm,
+    });
+  },
+
+  /**
+   * Mengambil tahun ajaran aktif.
+   *
+   * @returns {Promise<Object>}
+   */
+  async getActiveAcademicYear() {
+    return await API.post("tahunAjaran.aktif", {});
   },
 };

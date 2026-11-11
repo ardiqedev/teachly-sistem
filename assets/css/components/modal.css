@@ -489,3 +489,125 @@
     padding: 12px 14px;
   }
 }
+
+/* =========================================
+   TEACHLY - MODAL ENGINE REFINEMENT
+========================================= */
+
+/* Modal overlay */
+.modal {
+  padding: 16px;
+  overscroll-behavior: contain;
+}
+
+/* Dialog */
+.modal-dialog {
+  width: 100%;
+  max-height: min(90vh, 900px);
+  max-height: min(90dvh, 900px);
+  min-height: 0;
+  border-radius: 20px;
+}
+
+/* Header */
+.modal-header {
+  gap: 16px;
+  min-height: 70px;
+}
+
+.modal-title {
+  min-width: 0;
+  line-height: 1.4;
+}
+
+/* Body */
+.modal-body {
+  min-height: 0;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Footer */
+.modal-footer {
+  flex-shrink: 0;
+}
+
+/* Form */
+.report-form {
+  width: 100%;
+  min-width: 0;
+}
+
+.report-form-group {
+  min-width: 0;
+}
+
+.report-form input,
+.report-form select,
+.report-form textarea {
+  box-sizing: border-box;
+}
+
+/* Two-column form */
+.report-form-row {
+  align-items: start;
+}
+
+/* Upload */
+.report-upload-area {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .modal {
+    padding: 10px;
+    align-items: center;
+  }
+
+  .modal-dialog,
+  .modal-dialog.modal-lg {
+    width: 100%;
+    max-width: 100%;
+    max-height: 94vh;
+    max-height: 94dvh;
+    border-radius: 18px;
+  }
+
+  .modal-header {
+    min-height: 62px;
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+    gap: 9px;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+}
+
+/* Small mobile */
+@media (max-width: 380px) {
+  .modal {
+    padding: 6px;
+  }
+
+  .modal-dialog {
+    border-radius: 15px;
+  }
+
+  .modal-header {
+    padding: 14px;
+  }
+
+  .modal-body {
+    padding: 16px 14px;
+  }
+
+  .modal-footer {
+    padding: 12px 14px;
+  }
+}

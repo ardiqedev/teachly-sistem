@@ -2,106 +2,166 @@
      TEACHLY - RIWAYAT LAPORAN GURU
 ========================================= -->
 
-<div class="riwayat-page">
-  <!-- HEADER -->
-  <header class="riwayat-header">
-    <div class="riwayat-header__top">
-      <div class="riwayat-brand">
-        <div class="riwayat-brand__icon">
+<div class="dashboard-page riwayat-page">
+  <!-- HEADER GURU -->
+  <header class="dashboard-header">
+    <div class="dashboard-header__top">
+      <div class="dashboard-brand">
+        <div class="dashboard-brand__icon">
           <i data-lucide="graduation-cap"></i>
         </div>
         <span>Teachly</span>
       </div>
+
+      <button
+        type="button"
+        class="dashboard-logout"
+        data-action="logout"
+        aria-label="Keluar dari aplikasi"
+      >
+        <i data-lucide="log-out"></i>
+      </button>
     </div>
 
-    <div class="riwayat-header__title">
-      <span class="riwayat-eyebrow">ARSIP PEMBELAJARAN</span>
-      <h1>Riwayat Laporan</h1>
-      <p>Lihat seluruh laporan kegiatan pembelajaran Anda.</p>
+    <div class="dashboard-welcome">
+      <div class="dashboard-welcome__identity">
+        <div class="dashboard-avatar">
+          <i data-lucide="user-round"></i>
+        </div>
+
+        <div class="dashboard-welcome__text">
+          <span class="dashboard-eyebrow">AKTIVITAS GURU</span>
+
+          <h1>Riwayat Laporan</h1>
+
+          <p data-guru-nama>Guru</p>
+        </div>
+      </div>
     </div>
 
-    <div class="riwayat-header__decoration"></div>
+    <div class="dashboard-header__decoration"></div>
   </header>
 
   <!-- KONTEN UTAMA -->
-  <main class="riwayat-content">
-    <!-- RINGKASAN -->
-    <section class="riwayat-summary">
-      <div class="riwayat-summary__icon">
-        <i data-lucide="files"></i>
+  <main class="dashboard-content riwayat-content">
+    <!-- JUDUL HALAMAN -->
+    <section class="dashboard-section">
+      <div class="dashboard-section__heading">
+        <div>
+          <span class="dashboard-eyebrow">ARSIP AKTIVITAS</span>
+          <h2>Semua Laporan Anda</h2>
+        </div>
       </div>
 
-      <div class="riwayat-summary__info">
-        <span>Total Laporan Tersimpan</span>
-        <strong data-riwayat-total>-</strong>
-      </div>
+      <p class="riwayat-description">
+        Lihat kembali laporan pembelajaran yang telah Anda kirim.
+      </p>
     </section>
 
-    <!-- FILTER -->
+    <!-- TAB KATEGORI -->
+    <section class="riwayat-tabs" aria-label="Kategori laporan">
+      <button
+        type="button"
+        class="riwayat-tab active"
+        data-riwayat-tab="GURU_KELAS"
+        aria-pressed="true"
+      >
+        <i data-lucide="school"></i>
+        <span>Guru Kelas</span>
+      </button>
+
+      <button
+        type="button"
+        class="riwayat-tab"
+        data-riwayat-tab="GURU_MAPEL"
+        aria-pressed="false"
+      >
+        <i data-lucide="book-open"></i>
+        <span>Guru Mapel</span>
+      </button>
+
+      <button
+        type="button"
+        class="riwayat-tab"
+        data-riwayat-tab="GURU_NGAJI"
+        aria-pressed="false"
+      >
+        <i data-lucide="book-marked"></i>
+        <span>Guru Ngaji</span>
+      </button>
+    </section>
+
+    <!-- FILTER TANGGAL -->
     <section class="riwayat-filter">
-      <div class="riwayat-section-heading">
+      <div class="riwayat-filter__heading">
         <div>
-          <span class="riwayat-eyebrow">PENCARIAN</span>
-          <h2>Filter Laporan</h2>
+          <i data-lucide="calendar-days"></i>
+          <h3>Filter Tanggal</h3>
         </div>
       </div>
 
       <div class="riwayat-filter__fields">
         <div class="riwayat-filter__field">
-          <label for="riwayatBulan">Bulan</label>
+          <label for="riwayatTanggalMulai"> Tanggal Mulai </label>
 
-          <select id="riwayatBulan" data-filter-bulan>
-            <option value="">Semua Bulan</option>
-            <option value="1">Januari</option>
-            <option value="2">Februari</option>
-            <option value="3">Maret</option>
-            <option value="4">April</option>
-            <option value="5">Mei</option>
-            <option value="6">Juni</option>
-            <option value="7">Juli</option>
-            <option value="8">Agustus</option>
-            <option value="9">September</option>
-            <option value="10">Oktober</option>
-            <option value="11">November</option>
-            <option value="12">Desember</option>
-          </select>
+          <input type="date" id="riwayatTanggalMulai" />
         </div>
 
         <div class="riwayat-filter__field">
-          <label for="riwayatTahun">Tahun</label>
+          <label for="riwayatTanggalAkhir"> Tanggal Akhir </label>
 
-          <select id="riwayatTahun" data-filter-tahun>
-            <option value="">Semua Tahun</option>
-          </select>
+          <input type="date" id="riwayatTanggalAkhir" />
         </div>
+      </div>
+
+      <div class="riwayat-filter__actions">
+        <button
+          type="button"
+          class="riwayat-filter__button riwayat-filter__button--reset"
+          id="btnResetRiwayat"
+        >
+          <i data-lucide="rotate-ccw"></i>
+          Reset
+        </button>
+
+        <button
+          type="button"
+          class="riwayat-filter__button riwayat-filter__button--apply"
+          id="btnFilterRiwayat"
+        >
+          <i data-lucide="filter"></i>
+          Terapkan Filter
+        </button>
+      </div>
+    </section>
+
+    <!-- RINGKASAN HASIL -->
+    <section class="riwayat-summary">
+      <div class="riwayat-summary__info">
+        <span class="riwayat-summary__label"> Jumlah Laporan </span>
+
+        <strong id="riwayatTotal">0</strong>
+      </div>
+
+      <div class="riwayat-summary__icon">
+        <i data-lucide="files"></i>
       </div>
     </section>
 
     <!-- DAFTAR LAPORAN -->
     <section class="riwayat-list-section">
-      <div class="riwayat-section-heading">
-        <div>
-          <span class="riwayat-eyebrow">ARSIP ANDA</span>
-          <h2>Daftar Laporan</h2>
-        </div>
+      <div class="riwayat-list-section__heading">
+        <h3>Daftar Laporan</h3>
 
-        <span class="riwayat-list-count" data-riwayat-count>0 laporan</span>
+        <span id="riwayatKategoriLabel"> Guru Kelas </span>
       </div>
 
-      <!-- LIST DARI BACKEND -->
-      <div class="riwayat-list" data-riwayat-list>
-        <!-- EMPTY STATE -->
-        <div class="riwayat-empty">
-          <div class="riwayat-empty__icon">
-            <i data-lucide="file-search"></i>
-          </div>
+      <div class="riwayat-list" id="riwayatList" aria-live="polite">
+        <!-- CARD LAPORAN DIISI OLEH RIWAYAT.JS -->
 
-          <h3>Belum Ada Laporan</h3>
-
-          <p>
-            Laporan pembelajaran yang sudah Anda simpan akan ditampilkan di
-            sini.
-          </p>
+        <div class="riwayat-state" id="riwayatLoading">
+          <i data-lucide="loader-circle"></i>
+          <span>Memuat riwayat laporan...</span>
         </div>
       </div>
     </section>
@@ -109,11 +169,13 @@
 
   <!-- BOTTOM NAVIGATION -->
   <nav class="dashboard-bottom-nav" aria-label="Navigasi utama">
+    <!-- BERANDA -->
     <button type="button" class="dashboard-nav-item" data-page="dashboard">
       <i data-lucide="house"></i>
       <span>Beranda</span>
     </button>
 
+    <!-- RIWAYAT -->
     <button
       type="button"
       class="dashboard-nav-item active"
@@ -122,11 +184,6 @@
     >
       <i data-lucide="files"></i>
       <span>Riwayat</span>
-    </button>
-
-    <button type="button" class="dashboard-nav-item" data-page="jadwal">
-      <i data-lucide="calendar-days"></i>
-      <span>Jadwal</span>
     </button>
   </nav>
 </div>

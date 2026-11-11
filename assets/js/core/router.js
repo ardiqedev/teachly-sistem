@@ -12,6 +12,8 @@ const Router = {
     dashboard: "pages/dashboard.html",
     riwayat: "pages/riwayat.html",
     jadwal: "pages/jadwal.html",
+    admin: "pages/admin/index.html",
+    "admin-login": "pages/admin/login.html",
   },
 
   currentPage: null,
@@ -125,8 +127,8 @@ const Router = {
   },
 
   /* =====================================
-     INIT PAGE MODULE
-  ===================================== */
+   INIT PAGE MODULE
+===================================== */
 
   initModule(page) {
     const modules = {
@@ -135,12 +137,18 @@ const Router = {
       dashboard: typeof Dashboard !== "undefined" ? Dashboard : null,
       riwayat: typeof Riwayat !== "undefined" ? Riwayat : null,
       jadwal: typeof Jadwal !== "undefined" ? Jadwal : null,
+
+      admin: typeof Admin !== "undefined" ? Admin : null,
+
+      "admin-login": typeof AdminLogin !== "undefined" ? AdminLogin : null,
     };
 
     const module = modules[page];
 
     if (module && typeof module.init === "function") {
       module.init();
+    } else {
+      console.warn(`[Router] Module untuk halaman "${page}" tidak ditemukan.`);
     }
   },
 

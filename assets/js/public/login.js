@@ -1,6 +1,7 @@
 /* =========================================
    TEACHLY - LOGIN MODULE
    Public Page Controller
+   Authentication menggunakan NBM
 ========================================= */
 
 const Login = {
@@ -22,11 +23,14 @@ const Login = {
     if (form.dataset.initialized === "true") return;
 
     this.form = form;
-    this.usernameInput = document.getElementById("loginUsername");
-    this.passwordInput = document.getElementById("loginPassword");
+    this.nbmInput = document.getElementById("loginNBM");
     this.submitButton = document.getElementById("loginSubmit");
     this.messageElement = document.getElementById("loginMessage");
-    this.toggleButton = document.getElementById("togglePassword");
+
+    if (!this.nbmInput || !this.submitButton || !this.messageElement) {
+      console.error("[Login] Elemen form login tidak lengkap.");
+      return;
+    }
 
     this.bindEvents();
 
@@ -45,11 +49,9 @@ const Login = {
       this.handleSubmit(event);
     });
 
-    if (this.toggleButton) {
-      this.toggleButton.addEventListener("click", () => {
-        this.togglePassword();
-      });
-    }
+    this.nbmInput.addEventListener("input", () => {
+      this.clearMessage();
+    });
   },
 
   /* =====================================
@@ -59,11 +61,11 @@ const Login = {
   async handleSubmit(event) {
     event.preventDefault();
 
-    const username = String(this.usernameInput?.value || "").trim();
-    const password = String(this.passwordInput?.value || "");
+    const nbm = String(this.nbmInput.value || "").trim();
 
-    if (!username || !password) {
-      this.showMessage("Username dan password wajib diisi.");
+    if (!nbm) {
+      this.showMessage("NBM wajib diisi.");
+      this.nbmInput.focus();
       return;
     }
 
@@ -76,22 +78,26 @@ const Login = {
     this.setLoading(true);
 
     try {
-      const response = await Auth.login(username, password);
+      const response = await Auth.login(nbm);
 
       if (!response || response.success !== true) {
         this.showMessage(
-          response?.message || "Login gagal. Periksa kembali akun Anda.",
+          response?.message || "Login gagal. Periksa kembali NBM Anda.",
         );
         return;
       }
 
       console.log("[Login] Login berhasil.");
 
-      if (typeof Router !== "undefined") {
-        await Router.navigate("dashboard");
-      } else {
+      if (
+        typeof Router === "undefined" ||
+        typeof Router.navigate !== "function"
+      ) {
         this.showMessage("Router aplikasi belum tersedia.");
+        return;
       }
+
+      await Router.navigate("dashboard");
     } catch (error) {
       console.error("[Login] Error:", error);
 
@@ -100,35 +106,6 @@ const Login = {
       );
     } finally {
       this.setLoading(false);
-    }
-  },
-
-  /* =====================================
-     TOGGLE PASSWORD
-  ===================================== */
-
-  togglePassword() {
-    if (!this.passwordInput || !this.toggleButton) return;
-
-    const isPassword = this.passwordInput.type === "password";
-
-    this.passwordInput.type = isPassword ? "text" : "password";
-
-    this.toggleButton.setAttribute(
-      "aria-label",
-      isPassword ? "Sembunyikan password" : "Tampilkan password",
-    );
-
-    this.toggleButton.setAttribute("aria-pressed", String(isPassword));
-
-    const icon = this.toggleButton.querySelector("i");
-
-    if (icon) {
-      icon.setAttribute("data-lucide", isPassword ? "eye-off" : "eye");
-
-      if (window.lucide) {
-        window.lucide.createIcons();
-      }
     }
   },
 
@@ -163,7 +140,7 @@ const Login = {
     this.submitButton.setAttribute("aria-busy", String(loading));
 
     if (text) {
-      text.textContent = loading ? "Memeriksa akun..." : "Masuk";
+      text.textContent = loading ? "Memeriksa NBM..." : "Masuk";
     }
 
     if (loading) {

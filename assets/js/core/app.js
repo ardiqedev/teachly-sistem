@@ -46,7 +46,12 @@ const App = {
       });
 
       // 6. Buka halaman awal
-      Router.navigate("login");
+      // 6. Tentukan halaman awal berdasarkan session lokal
+      // const initialPage = Auth.isLoggedIn() ? "dashboard" : "login";
+
+      const initialPage = Auth.isLoggedIn() ? "dashboard" : "login";
+
+      await Router.navigate(initialPage);
 
       this.initialized = true;
 

@@ -427,7 +427,8 @@
   bottom: 0;
   left: 0;
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   width: 100%;
   max-width: 900px;
   min-height: 76px;
@@ -756,4 +757,81 @@
 
 .report-form [hidden] {
   display: none !important;
+}
+
+/* =========================================
+   WELCOME - UPDATED
+========================================= */
+
+.dashboard-welcome {
+  position: relative;
+  z-index: 2;
+  margin-top: 30px;
+}
+
+.dashboard-welcome__identity {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.dashboard-welcome__text {
+  flex: 1;
+  min-width: 0;
+}
+
+.dashboard-welcome h1 {
+  margin: 0;
+  color: #ffffff;
+  font-size: clamp(20px, 5vw, 25px);
+  font-weight: 800;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+/* Informasi lama sudah tidak digunakan */
+.dashboard-welcome__text p,
+.dashboard-separator {
+  display: none;
+}
+
+.login-access {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 22px 0;
+}
+
+.login-access__button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 48px;
+  padding: 10px;
+  border: 1px solid #dce2f3;
+  border-radius: 12px;
+  background: #fff;
+  color: #283580;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.login-access__button--active {
+  background: #283580;
+  border-color: #283580;
+  color: #fff;
+}
+
+.login-access__button:not(.login-access__button--active):hover {
+  background: #f1f3ff;
+}
+
+.login-access__button i {
+  width: 18px;
+  height: 18px;
 }
