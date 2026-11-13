@@ -6,6 +6,7 @@ const AdminDashboard = {
   data: null,
   initialized: false,
   loading: false,
+  reportCardsBound: false,
 
   /* =====================================
      INITIALIZE
@@ -18,6 +19,51 @@ const AdminDashboard = {
     this.loadData();
 
     console.log("[Teachly Admin] Dashboard initialized.");
+  },
+
+  /* =====================================
+   REPORT CARD NAVIGATION
+===================================== */
+
+  bindReportCards() {
+    if (this.reportCardsBound) return;
+
+    const selector = ".admin-stat-card[data-report-tab]";
+
+    // Klik mouse
+    document.addEventListener("click", (event) => {
+      const card = event.target.closest(selector);
+
+      if (!card) return;
+
+      sessionStorage.setItem(
+        "teachly_admin_report_tab",
+        card.dataset.reportTab,
+      );
+
+      // Navigasi halaman laporan tetap ditangani
+      // oleh Admin Router melalui data-admin-page.
+    });
+
+    // Akses keyboard: Enter dan Space
+    document.addEventListener("keydown", (event) => {
+      const card = event.target.closest(selector);
+
+      if (!card) return;
+
+      if (event.key !== "Enter" && event.key !== " ") return;
+
+      event.preventDefault();
+
+      sessionStorage.setItem(
+        "teachly_admin_report_tab",
+        card.dataset.reportTab,
+      );
+
+      card.click();
+    });
+
+    this.reportCardsBound = true;
   },
 
   /* =====================================

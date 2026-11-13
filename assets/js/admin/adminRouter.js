@@ -44,9 +44,10 @@ const AdminRouter = {
       title: "Pengguna Admin",
       description: "Kelola akun dan hak akses administrator.",
     },
-    "profil-sekolah": {
-      title: "Profil Sekolah",
-      description: "Kelola informasi identitas sekolah.",
+
+    "informasi-sekolah": {
+      title: "Informasi Sekolah",
+      description: "Kelola informasi Kurikulum dan Guru Ngaji.",
     },
   },
 
@@ -81,7 +82,15 @@ const AdminRouter = {
 
       if (pageButton) {
         event.preventDefault();
-        this.navigate(pageButton.dataset.adminPage);
+
+        const page = pageButton.dataset.adminPage;
+
+        // Kategori laporan langsung dari kartu Dashboard
+        const reportTab =
+          page === "laporan" ? pageButton.dataset.reportTab || null : null;
+
+        this.navigate(page, reportTab);
+
         this.closeSidebar();
         return;
       }
@@ -101,7 +110,7 @@ const AdminRouter = {
      NAVIGATE
   ===================================== */
 
-  navigate(page) {
+  navigate(page, reportTab = null) {
     if (!this.pages[page]) return;
 
     const content = document.getElementById("adminContent");
@@ -110,7 +119,6 @@ const AdminRouter = {
     if (!content) return;
 
     this.currentPage = page;
-
     if (page === "dashboard") {
       content.innerHTML = this.dashboardMarkup;
 
@@ -120,9 +128,34 @@ const AdminRouter = {
     } else if (page === "guru" && typeof Guru !== "undefined") {
       content.innerHTML = Guru.render();
       Guru.init();
+    } else if (page === "kelas" && typeof Kelas !== "undefined") {
+    } else if (page === "kelas" && typeof Kelas !== "undefined") {
+      content.innerHTML = Kelas.render();
+      Kelas.init();
+    } else if (page === "mata-pelajaran" && typeof Mapel !== "undefined") {
+      content.innerHTML = Mapel.render();
+      Mapel.init();
+    } else if (page === "sesi-ngaji" && typeof Sesi !== "undefined") {
+      content.innerHTML = Sesi.render();
+      Sesi.init();
+    } else if (page === "kelompok-ngaji" && typeof Kelompok !== "undefined") {
+      content.innerHTML = Kelompok.render();
+      Kelompok.init();
+    } else if (page === "tahun-ajaran" && typeof TahunAjaran !== "undefined") {
+      content.innerHTML = TahunAjaran.render();
+      TahunAjaran.init();
+    } else if (
+      page === "informasi-sekolah" &&
+      typeof InformasiSekolah !== "undefined"
+    ) {
+      content.innerHTML = InformasiSekolah.render();
+      InformasiSekolah.init();
+    } else if (page === "pengguna" && typeof Pengguna !== "undefined") {
+      content.innerHTML = Pengguna.render();
+      Pengguna.init();
     } else if (page === "laporan" && typeof AdminLaporan !== "undefined") {
       content.innerHTML = AdminLaporan.render();
-      AdminLaporan.init();
+      AdminLaporan.init(reportTab);
     } else {
       content.innerHTML = this.renderPlaceholder(page);
     }

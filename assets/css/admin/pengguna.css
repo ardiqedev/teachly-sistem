@@ -1,0 +1,51 @@
+/* =========================================
+   TEACHLY - PENGGUNA ADMIN
+========================================= */
+
+.pengguna-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.pengguna-stat-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.pengguna-stat-card span {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.pengguna-stat-card strong {
+  color: #25367f;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+@media (max-width: 640px) {
+  .pengguna-stats {
+    gap: 8px;
+  }
+
+  .pengguna-stat-card {
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .pengguna-stat-card span {
+    font-size: 11px;
+  }
+
+  .pengguna-stat-card strong {
+    font-size: 22px;
+  }
+}

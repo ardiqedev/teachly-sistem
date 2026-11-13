@@ -24,9 +24,13 @@ const AdminAuth = {
       this.user = Storage.get(this.config.userKey) || null;
       this.session = Storage.get(this.config.sessionKey) || null;
 
+      if (!this.isLoggedIn()) {
+        this.clearSession();
+      }
+
       this.initialized = true;
 
-      console.log("[AdminAuth] Initialized.");
+      console.log("[AdminAuth] Initialized V2.");
     } catch (error) {
       console.error("[AdminAuth] Initialization failed:", error);
       this.clearSession();
@@ -67,13 +71,24 @@ const AdminAuth = {
       }
 
       const admin = response.data?.admin;
+      const token = response.data?.sessionToken;
+      const expiresAt = response.data?.expiresAt;
 
-      if (!admin || !admin.ID_PENGGUNA || !admin.ROLE) {
-        throw new Error("Data akun administrator tidak lengkap.");
+      if (
+        !admin ||
+        !admin.ID_PENGGUNA ||
+        admin.ROLE !== "ADMIN" ||
+        typeof token !== "string" ||
+        !token ||
+        !expiresAt ||
+        !Number.isFinite(new Date(expiresAt).getTime())
+      ) {
+        throw new Error("Data sesi administrator tidak valid.");
       }
 
       const session = {
-        authenticated: true,
+        token: token,
+        expiresAt: expiresAt,
         loginAt: new Date().toISOString(),
       };
 
@@ -82,7 +97,7 @@ const AdminAuth = {
         session: session,
       });
 
-      console.log("[AdminAuth] Login successful.");
+      console.log("[AdminAuth] Login V2 successful.");
 
       return response;
     } catch (error) {
@@ -141,12 +156,24 @@ const AdminAuth = {
   },
 
   isLoggedIn() {
-    return Boolean(
-      this.session &&
-      this.session.authenticated === true &&
-      this.user &&
-      this.user.ID_PENGGUNA,
-    );
+    if (
+      !this.user ||
+      !this.user.ID_PENGGUNA ||
+      this.user.ROLE !== "ADMIN" ||
+      !this.session ||
+      typeof this.session.token !== "string" ||
+      !this.session.token
+    ) {
+      return false;
+    }
+
+    const expiresAt = new Date(this.session.expiresAt).getTime();
+
+    if (!Number.isFinite(expiresAt) || Date.now() >= expiresAt) {
+      return false;
+    }
+
+    return true;
   },
 
   /* =====================================
@@ -159,6 +186,14 @@ const AdminAuth = {
 
   getRole() {
     return this.user?.ROLE || null;
+  },
+
+  /* =====================================
+   GET SESSION TOKEN
+===================================== */
+
+  getToken() {
+    return this.isLoggedIn() ? this.session.token : null;
   },
 
   /* =====================================

@@ -22,9 +22,14 @@ const App = {
         State.init();
       }
 
-      // 2. Pulihkan session pengguna
+      // 2. Pulihkan session Guru
       if (typeof Auth !== "undefined") {
         Auth.init();
+      }
+
+      // 2A. Pulihkan session Admin V2
+      if (typeof AdminAuth !== "undefined") {
+        AdminAuth.init();
       }
 
       // 3. Inisialisasi Modal Engine
@@ -45,11 +50,15 @@ const App = {
         }
       });
 
-      // 6. Buka halaman awal
-      // 6. Tentukan halaman awal berdasarkan session lokal
-      // const initialPage = Auth.isLoggedIn() ? "dashboard" : "login";
+      // 6. Tentukan halaman awal berdasarkan session
+      let initialPage = "login";
 
-      const initialPage = Auth.isLoggedIn() ? "dashboard" : "login";
+      // Prioritaskan sesi Admin yang masih berlaku
+      if (typeof AdminAuth !== "undefined" && AdminAuth.isLoggedIn()) {
+        initialPage = "admin";
+      } else if (typeof Auth !== "undefined" && Auth.isLoggedIn()) {
+        initialPage = "dashboard";
+      }
 
       await Router.navigate(initialPage);
 

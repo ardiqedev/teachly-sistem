@@ -60,41 +60,41 @@
           <i data-lucide="chevron-right" class="admin-nav-arrow"></i>
         </button>
 
-        <!-- <button
+        <button
           type="button"
           class="admin-nav-item"
           data-admin-page="mata-pelajaran"
         >
           <i data-lucide="layers"></i>
           <span>Mata Pelajaran</span>
-        </button> -->
+        </button>
 
-        <!-- <button
+        <button
           type="button"
           class="admin-nav-item"
           data-admin-page="kelompok-ngaji"
         >
           <i data-lucide="book-marked"></i>
           <span>Kelompok Ngaji</span>
-        </button> -->
+        </button>
 
-        <!-- <button
+        <button
           type="button"
           class="admin-nav-item"
           data-admin-page="sesi-ngaji"
         >
           <i data-lucide="calendar-days"></i>
           <span>Sesi Ngaji</span>
-        </button> -->
+        </button>
 
-        <!-- <button
+        <button
           type="button"
           class="admin-nav-item"
           data-admin-page="tahun-ajaran"
         >
           <i data-lucide="calendar-range"></i>
           <span>Tahun Ajaran</span>
-        </button> -->
+        </button>
       </div>
 
       <div class="admin-nav-group">
@@ -118,10 +118,10 @@
         <button
           type="button"
           class="admin-nav-item"
-          data-admin-page="profil-sekolah"
+          data-admin-page="informasi-sekolah"
         >
-          <i data-lucide="school"></i>
-          <span>Profil Sekolah</span>
+          <i data-lucide="info"></i>
+          <span>Informasi Sekolah</span>
         </button>
       </div>
     </nav>
@@ -224,33 +224,48 @@
 
         <!-- STATISTICS -->
         <section class="admin-statistics">
-          <article class="admin-stat-card admin-stat-guru">
+          <article
+            class="admin-stat-card admin-stat-guru"
+            data-admin-page="laporan"
+            data-report-tab="GURU_KELAS"
+            role="button"
+            tabindex="0"
+          >
             <div class="admin-stat-icon">
               <i data-lucide="clipboard-list"></i>
             </div>
-
             <div class="admin-stat-info">
               <span>Laporan Guru Kelas</span>
               <strong id="statLaporanGuruKelas">0</strong>
             </div>
           </article>
 
-          <article class="admin-stat-card admin-stat-kelas">
+          <article
+            class="admin-stat-card admin-stat-kelas"
+            data-admin-page="laporan"
+            data-report-tab="GURU_MAPEL"
+            role="button"
+            tabindex="0"
+          >
             <div class="admin-stat-icon">
               <i data-lucide="book-open"></i>
             </div>
-
             <div class="admin-stat-info">
               <span>Laporan Guru Mapel</span>
               <strong id="statLaporanGuruMapel">0</strong>
             </div>
           </article>
 
-          <article class="admin-stat-card admin-stat-mapel">
+          <article
+            class="admin-stat-card admin-stat-mapel"
+            data-admin-page="laporan"
+            data-report-tab="GURU_NGAJI"
+            role="button"
+            tabindex="0"
+          >
             <div class="admin-stat-icon">
               <i data-lucide="book-marked"></i>
             </div>
-
             <div class="admin-stat-info">
               <span>Laporan Guru Ngaji</span>
               <strong id="statLaporanGuruNgaji">0</strong>
@@ -261,7 +276,6 @@
             <div class="admin-stat-icon">
               <i data-lucide="chart-no-axes-column-increasing"></i>
             </div>
-
             <div class="admin-stat-info">
               <span>Total Seluruh Laporan</span>
               <strong id="statTotalSeluruhLaporan">0</strong>

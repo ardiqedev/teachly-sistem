@@ -1,0 +1,694 @@
+/* =========================================
+   TEACHLY - DASHBOARD INFORMASI SEKOLAH
+   PREMIUM V2
+
+   Navy & Gold
+   Mobile First
+   Scoped Components
+========================================= */
+
+/* =========================================
+   DESIGN TOKENS
+========================================= */
+
+#dashboardInformasi {
+  --info-navy: #28367f;
+  --info-navy-dark: #17264a;
+  --info-gold: #c18a30;
+  --info-text: #596980;
+  --info-muted: #8b98aa;
+  --info-border: #e2e8f3;
+  --info-surface: #ffffff;
+
+  width: 100%;
+  min-width: 0;
+
+  margin-top: 28px;
+  margin-bottom: 28px;
+}
+
+#dashboardInformasi:empty,
+#dashboardInformasi[hidden] {
+  display: none !important;
+  margin: 0;
+}
+
+#dashboardInformasi,
+#dashboardInformasi * {
+  box-sizing: border-box;
+}
+
+/* =========================================
+   SECTION
+========================================= */
+
+.dashboard-informasi-section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  width: 100%;
+  min-width: 0;
+}
+
+/* =========================================
+   SECTION HEADING
+========================================= */
+
+.dashboard-informasi-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.dashboard-informasi-heading-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.dashboard-informasi-eyebrow {
+  display: block;
+  margin-bottom: 7px;
+
+  color: #c18a30;
+
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  line-height: 1.5;
+}
+
+.dashboard-informasi-heading h2 {
+  margin: 0;
+
+  color: #17264a;
+
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+  line-height: 1.35;
+}
+
+.dashboard-informasi-subtitle {
+  margin: 6px 0 0;
+
+  color: #7c8aa3;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.dashboard-informasi-heading-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 46px;
+  height: 46px;
+
+  border: 1px solid #dfe4fa;
+  border-radius: 15px;
+
+  background: #e8ebfa;
+  color: #303b8c;
+}
+
+.dashboard-informasi-heading-icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+/* =========================================
+   INFORMATION LIST
+========================================= */
+
+.dashboard-informasi-list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+
+  width: 100%;
+}
+
+/* =========================================
+   PREMIUM CARD
+========================================= */
+
+.dashboard-informasi-card {
+  position: relative;
+
+  display: flex;
+  flex-direction: column;
+
+  min-width: 0;
+  padding: 20px;
+
+  overflow: hidden;
+
+  border: 1px solid #e2e8f3;
+  border-radius: 20px;
+
+  background: #ffffff;
+
+  box-shadow:
+    0 3px 8px rgba(23, 38, 74, 0.025),
+    0 10px 28px rgba(23, 38, 74, 0.035);
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+/* Decorative top accent */
+
+.dashboard-informasi-card::before {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 20px;
+  right: 20px;
+
+  height: 3px;
+
+  border-radius: 0 0 6px 6px;
+}
+
+.dashboard-informasi-card--kurikulum::before {
+  background: linear-gradient(90deg, #303b8c, #a7b4ff);
+}
+
+.dashboard-informasi-card--ngaji::before {
+  background: linear-gradient(90deg, #c18a30, #f3d59a);
+}
+
+.dashboard-informasi-card:hover {
+  transform: translateY(-2px);
+
+  border-color: #cbd5ea;
+
+  box-shadow:
+    0 6px 14px rgba(23, 38, 74, 0.035),
+    0 16px 34px rgba(23, 38, 74, 0.065);
+}
+
+/* =========================================
+   CARD HEADER
+========================================= */
+
+.dashboard-informasi-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  min-width: 0;
+  margin-bottom: 18px;
+}
+
+/* Source icon */
+
+.dashboard-informasi-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 46px;
+  height: 46px;
+
+  border-radius: 14px;
+}
+
+.dashboard-informasi-icon svg {
+  width: 21px;
+  height: 21px;
+}
+
+/* Source identity */
+
+.dashboard-informasi-source {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 5px;
+
+  min-width: 0;
+}
+
+.dashboard-informasi-source strong {
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.dashboard-informasi-date {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+
+  color: #8b98aa;
+
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.dashboard-informasi-date svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+/* =========================================
+   SOURCE THEMES
+========================================= */
+
+/* KURIKULUM */
+
+.dashboard-informasi-card--kurikulum .dashboard-informasi-icon {
+  background: #edf0ff;
+  color: #303b8c;
+}
+
+.dashboard-informasi-card--kurikulum .dashboard-informasi-source strong {
+  color: #303b8c;
+}
+
+/* GURU NGAJI */
+
+.dashboard-informasi-card--ngaji .dashboard-informasi-icon {
+  background: #fff3de;
+  color: #b57b20;
+}
+
+.dashboard-informasi-card--ngaji .dashboard-informasi-source strong {
+  color: #9b6b20;
+}
+
+/* =========================================
+   BADGE TERBARU
+========================================= */
+
+.dashboard-informasi-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  padding: 5px 9px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.dashboard-informasi-card--kurikulum .dashboard-informasi-badge {
+  background: #edf0ff;
+  color: #303b8c;
+}
+
+.dashboard-informasi-card--ngaji .dashboard-informasi-badge {
+  background: #fff3de;
+  color: #9b6b20;
+}
+
+/* =========================================
+   CARD BODY
+========================================= */
+
+.dashboard-informasi-card-body {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 18px;
+}
+
+.dashboard-informasi-title {
+  margin: 0 0 10px;
+
+  color: #17264a;
+
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.25px;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+.dashboard-informasi-summary {
+  margin: 0;
+
+  color: #62718a;
+
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.8;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================
+   CARD FOOTER
+========================================= */
+
+.dashboard-informasi-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  padding-top: 14px;
+
+  border-top: 1px solid #edf0f5;
+}
+
+/* =========================================
+   READ MORE BUTTON
+========================================= */
+
+.dashboard-informasi-read {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 38px;
+  padding: 9px 13px;
+
+  border: 1px solid transparent;
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.4;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.dashboard-informasi-read svg {
+  width: 15px;
+  height: 15px;
+
+  transition: transform 0.2s ease;
+}
+
+.dashboard-informasi-card--kurikulum .dashboard-informasi-read {
+  background: #f0f2fc;
+  color: #303b8c;
+}
+
+.dashboard-informasi-card--kurikulum .dashboard-informasi-read:hover {
+  background: #e4e9ff;
+  border-color: #d8dfff;
+}
+
+.dashboard-informasi-card--ngaji .dashboard-informasi-read {
+  background: #fff6e7;
+  color: #9b6b20;
+}
+
+.dashboard-informasi-card--ngaji .dashboard-informasi-read:hover {
+  background: #ffedcd;
+  border-color: #f5dcae;
+}
+
+.dashboard-informasi-read:hover svg {
+  transform: translate(2px, -2px);
+}
+
+.dashboard-informasi-read:active {
+  transform: scale(0.98);
+}
+
+.dashboard-informasi-read:focus-visible {
+  outline: 2px solid #c18a30;
+  outline-offset: 3px;
+}
+
+/* =========================================
+   LOADING & ERROR
+========================================= */
+
+.dashboard-informasi-loading,
+.dashboard-informasi-error {
+  padding: 22px 16px;
+
+  border: 1px solid #e2e8f3;
+  border-radius: 16px;
+
+  background: #ffffff;
+  color: #8190a5;
+
+  font-size: 13px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.dashboard-informasi-error {
+  border-color: #f0d4d4;
+  background: #fff7f7;
+  color: #a64b4b;
+}
+
+/* =========================================
+   MODAL HEADING
+   Global: Modal Engine may mount outside
+   #dashboardInformasi.
+========================================= */
+
+.dashboard-informasi-modal-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dashboard-informasi-modal-heading > span {
+  font-size: 17px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.dashboard-informasi-modal-heading small {
+  color: #8391a6;
+
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+/* =========================================
+   MODAL CONTENT
+========================================= */
+
+.dashboard-informasi-modal-content {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+
+  width: 100%;
+  min-width: 0;
+}
+
+.dashboard-informasi-modal-meta {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dashboard-informasi-modal-meta > div:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  min-width: 0;
+}
+
+.dashboard-informasi-modal-meta strong {
+  color: #243a61;
+
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.dashboard-informasi-modal-meta span {
+  color: #8995a8;
+
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* =========================================
+   MODAL SOURCE ICON
+========================================= */
+
+.dashboard-informasi-modal-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  width: 46px;
+  height: 46px;
+
+  border-radius: 14px;
+}
+
+.dashboard-informasi-modal-icon svg {
+  width: 22px;
+  height: 22px;
+}
+
+.dashboard-informasi-modal-icon--kurikulum {
+  background: #edf0ff;
+  color: #303b8c;
+}
+
+.dashboard-informasi-modal-icon--ngaji {
+  background: #fff3de;
+  color: #b57b20;
+}
+
+/* =========================================
+   MODAL TITLE
+========================================= */
+
+.dashboard-informasi-modal-title {
+  margin: 0;
+
+  color: #17264a;
+
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+/* =========================================
+   MODAL DETAIL
+   Preserve Enter, bullet, numbering.
+========================================= */
+
+.dashboard-informasi-modal-detail {
+  padding: 18px;
+
+  border: 1px solid #e7ecf4;
+  border-radius: 14px;
+
+  background: #f8fafd;
+  color: #34465e;
+
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.9;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
+@media (max-width: 375px) {
+  .dashboard-informasi-heading h2 {
+    font-size: 18px;
+  }
+
+  .dashboard-informasi-card {
+    padding: 16px;
+    border-radius: 17px;
+  }
+
+  .dashboard-informasi-card-header {
+    gap: 9px;
+  }
+
+  .dashboard-informasi-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .dashboard-informasi-source strong {
+    font-size: 12px;
+  }
+
+  .dashboard-informasi-date {
+    font-size: 10px;
+  }
+
+  .dashboard-informasi-badge {
+    padding: 4px 7px;
+    font-size: 9px;
+  }
+
+  .dashboard-informasi-title {
+    font-size: 15px;
+  }
+
+  .dashboard-informasi-read {
+    font-size: 11px;
+  }
+
+  .dashboard-informasi-modal-detail {
+    padding: 14px;
+    font-size: 13px;
+  }
+}
+
+/* =========================================
+   TABLET & DESKTOP
+========================================= */
+
+@media (min-width: 768px) {
+  .dashboard-informasi-section {
+    gap: 20px;
+  }
+
+  .dashboard-informasi-heading h2 {
+    font-size: 22px;
+  }
+
+  .dashboard-informasi-card {
+    padding: 24px;
+  }
+
+  .dashboard-informasi-title {
+    font-size: 17px;
+  }
+
+  .dashboard-informasi-modal-detail {
+    padding: 22px;
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .dashboard-informasi-card,
+  .dashboard-informasi-read,
+  .dashboard-informasi-read svg {
+    transition: none;
+  }
+
+  .dashboard-informasi-card:hover,
+  .dashboard-informasi-read:active {
+    transform: none;
+  }
+}

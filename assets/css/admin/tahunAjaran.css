@@ -1,0 +1,420 @@
+/* =========================================
+   TEACHLY - ADMIN TAHUN AJARAN
+   NAVY & GOLD THEME
+========================================= */
+
+/* PAGE */
+.admin-guru-page:has(#tahunAjaranTable) {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* TOOLBAR */
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 26px 28px;
+  background: linear-gradient(110deg, #202d70 0%, #303f94 100%);
+  border-radius: 20px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-toolbar-left {
+  flex: 1;
+  max-width: 320px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-search {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 0 14px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-search svg {
+  width: 18px;
+  height: 18px;
+  color: #94a3b8;
+  flex-shrink: 0;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-search input {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #172554;
+  font-size: 13px;
+}
+
+/* BUTTONS */
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 16px;
+  border-radius: 9px;
+  border: 1px solid transparent;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+  white-space: nowrap;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-btn-primary {
+  background: #17365f;
+  color: #ffffff;
+}
+
+.admin-guru-page:has(#tahunAjaranTable)
+  .admin-guru-btn-primary:hover:not(:disabled) {
+  background: #244c82;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-btn-secondary {
+  background: #ffffff;
+  color: #17365f;
+  border-color: #e2e8f0;
+}
+
+.admin-guru-page:has(#tahunAjaranTable)
+  .admin-guru-btn-secondary:hover:not(:disabled) {
+  background: #f1f5f9;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* SUMMARY */
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 24px;
+  background: #ffffff;
+  border: 1px solid #e4eaf3;
+  border-radius: 16px;
+  box-shadow: 0 3px 12px rgba(22, 42, 91, 0.03);
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-stat span {
+  color: #7183a3;
+  font-size: 13px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-stat strong {
+  color: #172b60;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+/* TABLE CARD */
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-table-card {
+  overflow: hidden;
+  background: #ffffff;
+  border: 1px solid #e4eaf3;
+  border-radius: 16px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-table-header {
+  padding: 22px 24px;
+  border-bottom: 1px solid #e8edf5;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-table-header h3 {
+  margin: 0 0 5px;
+  color: #172b60;
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-table-header p {
+  margin: 0;
+  color: #8390a9;
+  font-size: 12px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 680px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-table th {
+  padding: 17px 20px;
+  background: #f5f7fb;
+  color: #7183a3;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+  text-transform: uppercase;
+  border-bottom: 1px solid #e8edf5;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-table td {
+  padding: 16px 20px;
+  color: #536a93;
+  font-size: 13px;
+  border-bottom: 1px solid #edf1f7;
+  vertical-align: middle;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-table tbody tr:hover {
+  background: #f9fbff;
+}
+
+.admin-guru-page:has(#tahunAjaranTable)
+  .admin-guru-table
+  tbody
+  tr:last-child
+  td {
+  border-bottom: none;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-table td strong {
+  color: #17365f;
+  font-weight: 700;
+}
+
+/* STATUS BADGES */
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-status-active,
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-status-inactive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-status-active {
+  background: #e8f7ee;
+  color: #07834a;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-status-inactive {
+  background: #fff3e7;
+  color: #c27828;
+}
+
+/* TABLE ACTIONS */
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-actions .admin-guru-btn {
+  padding: 9px 12px;
+  font-size: 12px;
+}
+
+/* MODAL */
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(12, 24, 55, 0.55);
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-modal {
+  width: 100%;
+  max-width: 460px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.18);
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e8edf5;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-modal-header h3 {
+  margin: 0;
+  color: #172b60;
+  font-size: 18px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-modal-close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: none;
+  border-radius: 8px;
+  background: #f1f5f9;
+  color: #536a93;
+  cursor: pointer;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-modal-body {
+  padding: 24px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-form-group label {
+  color: #172b60;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-form-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #dce4ef;
+  border-radius: 9px;
+  outline: none;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-form-group input:focus {
+  border-color: #303f94;
+  box-shadow: 0 0 0 3px rgba(48, 63, 148, 0.1);
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-form-group small {
+  color: #8390a9;
+  font-size: 12px;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-modal-body p {
+  color: #7183a3;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 18px 24px;
+  border-top: 1px solid #e8edf5;
+}
+
+/* EMPTY / LOADING */
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-empty {
+  padding: 55px 20px;
+  text-align: center;
+  color: #8390a9;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-empty svg {
+  width: 34px;
+  height: 34px;
+  margin-bottom: 12px;
+}
+
+/* TOAST */
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 10000;
+  padding: 13px 18px;
+  border-radius: 10px;
+  background: #e8f7ee;
+  color: #07834a;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.admin-guru-page:has(#tahunAjaranTable) .admin-guru-toast.error {
+  background: #fff0ee;
+  color: #c24136;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .admin-guru-page:has(#tahunAjaranTable) .admin-guru-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 20px;
+  }
+
+  .admin-guru-page:has(#tahunAjaranTable) .admin-guru-toolbar-left {
+    max-width: none;
+  }
+
+  .admin-guru-page:has(#tahunAjaranTable) .admin-guru-toolbar-right {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .admin-guru-page:has(#tahunAjaranTable)
+    .admin-guru-toolbar-right
+    [data-tahun-action="create"] {
+    grid-column: 1 / -1;
+  }
+
+  .admin-guru-page:has(#tahunAjaranTable) .admin-guru-summary {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-guru-page:has(#tahunAjaranTable) .admin-guru-stat {
+    padding: 18px 20px;
+  }
+
+  .admin-guru-page:has(#tahunAjaranTable) .admin-guru-modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .admin-guru-page:has(#tahunAjaranTable)
+    .admin-guru-modal-footer
+    .admin-guru-btn {
+    width: 100%;
+  }
+}

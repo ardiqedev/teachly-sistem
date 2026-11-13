@@ -464,16 +464,28 @@ const AdminLaporan = {
   // INITIALIZE
   // =======================================================
 
-  init() {
+  async init(requestedTab = null) {
     const root = document.getElementById("adminContent");
 
     if (!root) return;
 
     this.bindEvents(root);
-
     this.initialized = true;
 
-    this.loadData();
+    const allowed = ["GURU_KELAS", "GURU_MAPEL", "GURU_NGAJI"];
+
+    const targetTab = allowed.includes(requestedTab)
+      ? requestedTab
+      : "GURU_KELAS";
+
+    this.changeTab(targetTab);
+
+    await this.loadData();
+
+    console.log("[Admin Laporan] Initialized:", {
+      requestedTab,
+      activeTab: this.activeTab,
+    });
   },
 
   // =======================================================

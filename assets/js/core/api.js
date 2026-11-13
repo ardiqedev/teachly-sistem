@@ -26,6 +26,50 @@ API.request = async function (endpoint, payload = {}) {
       payload: payload,
     };
 
+    /* =====================================
+   ADMIN SESSION TOKEN
+   Hanya untuk endpoint terlindungi
+===================================== */
+
+    const protectedAdminEndpoints = [
+      "informasiSekolah.save",
+      "pengguna.list",
+      "pengguna.create",
+      "pengguna.update",
+      "pengguna.updateStatus",
+      "pengguna.resetPassword",
+    ];
+
+    const protectedAdminPrefixes = [
+      "admin.guru.",
+      "admin.laporan.",
+      "adminDashboard.",
+      "adminKelas.",
+      "adminKelompok.",
+      "adminMapel.",
+      "adminSesi.",
+      "adminTahunAjaran.",
+    ];
+
+    const requiresAdminToken =
+      protectedAdminEndpoints.includes(endpoint) ||
+      protectedAdminPrefixes.some(function (prefix) {
+        return endpoint.startsWith(prefix);
+      });
+
+    if (requiresAdminToken) {
+      const token =
+        typeof AdminAuth !== "undefined" ? AdminAuth.getToken() : null;
+
+      if (!token) {
+        throw new Error(
+          "Sesi administrator tidak tersedia. Silakan login kembali.",
+        );
+      }
+
+      requestBody.sessionToken = token;
+    }
+
     const controller = new AbortController();
 
     const timeout = setTimeout(function () {

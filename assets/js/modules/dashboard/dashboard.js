@@ -46,6 +46,18 @@ const Dashboard = {
       // Tahun ajaran aktif dimuat secara independen.
       await this.loadActiveAcademicYear();
 
+      // =====================================
+      // LOAD INFORMASI SEKOLAH
+      // =====================================
+
+      if (typeof DashboardInformasi !== "undefined") {
+        console.log("[Dashboard] Memuat informasi sekolah...");
+
+        DashboardInformasi.init();
+      } else {
+        console.warn("[Dashboard] Modul DashboardInformasi belum dimuat.");
+      }
+
       this.initialized = true;
 
       console.log("[Dashboard] Berhasil dimuat.");
@@ -293,7 +305,7 @@ const Dashboard = {
       <div class="report-modal-heading">
         <span>Buat Laporan Harian</span>
         <small>Catat kegiatan pembelajaran Anda.</small>
-      </div>
+      </div>      
     `,
       size: "lg",
 

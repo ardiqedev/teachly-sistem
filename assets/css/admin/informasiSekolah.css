@@ -1,0 +1,467 @@
+/* =========================================
+   TEACHLY - INFORMASI SEKOLAH
+   ADMIN MODULE STYLES
+   NAVY & GOLD | MOBILE FIRST
+========================================= */
+
+/* =========================================
+   PAGE
+========================================= */
+
+.informasi-sekolah-page {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  min-width: 0;
+}
+
+/* =========================================
+   PAGE HEADER
+   Mengikuti admin-guru-header
+========================================= */
+
+.informasi-sekolah-page .admin-guru-header {
+  margin-bottom: 0;
+}
+
+.informasi-sekolah-page .admin-guru-header h2 {
+  margin: 6px 0 8px;
+}
+
+.informasi-sekolah-page .admin-guru-header p {
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* =========================================
+   CARDS
+========================================= */
+
+.informasi-sekolah-card,
+.informasi-sekolah-preview-card {
+  min-width: 0;
+  padding: 22px;
+  border: 1px solid #e5eaf1;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: 0 4px 18px rgba(15, 35, 65, 0.04);
+}
+
+/* =========================================
+   SECTION HEADER
+========================================= */
+
+.informasi-sekolah-section-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.informasi-sekolah-section-header h3 {
+  margin: 0 0 6px;
+  color: #142d50;
+  font-size: 17px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.informasi-sekolah-section-header p {
+  margin: 0;
+  color: #718096;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   FORM
+========================================= */
+
+#informasiSekolahForm {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.informasi-sekolah-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.informasi-sekolah-field label {
+  color: #243b53;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.informasi-sekolah-required {
+  color: #dc3545;
+  margin-left: 3px;
+}
+
+/* =========================================
+   INPUT, SELECT, TEXTAREA
+========================================= */
+
+.informasi-sekolah-field input,
+.informasi-sekolah-field select,
+.informasi-sekolah-field textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+
+  padding: 12px 14px;
+
+  border: 1px solid #d9e1eb;
+  border-radius: 10px;
+
+  background: #ffffff;
+  color: #243b53;
+
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.informasi-sekolah-field input,
+.informasi-sekolah-field select {
+  min-height: 46px;
+}
+
+.informasi-sekolah-field select {
+  cursor: pointer;
+}
+
+.informasi-sekolah-field textarea {
+  min-height: 240px;
+  resize: vertical;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.informasi-sekolah-field input::placeholder,
+.informasi-sekolah-field textarea::placeholder {
+  color: #9aa9ba;
+  opacity: 1;
+}
+
+.informasi-sekolah-field input:hover,
+.informasi-sekolah-field select:hover,
+.informasi-sekolah-field textarea:hover {
+  border-color: #aebed0;
+}
+
+.informasi-sekolah-field input:focus,
+.informasi-sekolah-field select:focus,
+.informasi-sekolah-field textarea:focus {
+  border-color: #c6a15b;
+  box-shadow: 0 0 0 3px rgba(198, 161, 91, 0.14);
+}
+
+.informasi-sekolah-field input:disabled,
+.informasi-sekolah-field select:disabled,
+.informasi-sekolah-field textarea:disabled {
+  background: #f5f7fa;
+  color: #7c8b9b;
+  cursor: not-allowed;
+}
+
+.informasi-sekolah-field-help {
+  color: #8391a3;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* =========================================
+   LAST UPDATED META
+========================================= */
+
+.informasi-sekolah-meta {
+  padding: 11px 14px;
+  border: 1px solid #e8edf3;
+  border-radius: 10px;
+
+  background: #f8fafc;
+  color: #66788a;
+
+  font-size: 12px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+
+/* =========================================
+   FEEDBACK MESSAGE
+========================================= */
+
+.informasi-sekolah-message {
+  padding: 12px 14px;
+  border: 1px solid #dce6f0;
+  border-radius: 10px;
+
+  background: #f0f6fc;
+  color: #24547e;
+
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.informasi-sekolah-message[hidden] {
+  display: none !important;
+}
+
+.informasi-sekolah-message[data-type="success"] {
+  border-color: #b9e3c6;
+  background: #edf9f0;
+  color: #23683a;
+}
+
+.informasi-sekolah-message[data-type="error"] {
+  border-color: #f0c3c3;
+  background: #fff1f1;
+  color: #a52d2d;
+}
+
+.informasi-sekolah-message[data-type="info"] {
+  border-color: #dce6f0;
+  background: #f0f6fc;
+  color: #24547e;
+}
+
+/* =========================================
+   ACTION BUTTONS
+========================================= */
+
+.informasi-sekolah-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  padding-top: 18px;
+  border-top: 1px solid #edf0f4;
+}
+
+.informasi-sekolah-btn-clear,
+.informasi-sekolah-btn-save {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  min-height: 44px;
+  padding: 11px 18px;
+
+  border-radius: 10px;
+
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.4;
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.informasi-sekolah-btn-clear {
+  border: 1px solid #d9e1eb;
+  background: #ffffff;
+  color: #526579;
+}
+
+.informasi-sekolah-btn-clear:hover:not(:disabled) {
+  border-color: #c6a15b;
+  background: #fffaf0;
+  color: #8b6a2d;
+}
+
+.informasi-sekolah-btn-save {
+  border: 1px solid #142d50;
+  background: #142d50;
+  color: #ffffff;
+}
+
+.informasi-sekolah-btn-save:hover:not(:disabled) {
+  border-color: #21456f;
+  background: #21456f;
+  box-shadow: 0 4px 12px rgba(20, 45, 80, 0.16);
+}
+
+.informasi-sekolah-btn-clear:focus-visible,
+.informasi-sekolah-btn-save:focus-visible {
+  outline: 3px solid rgba(198, 161, 91, 0.45);
+  outline-offset: 2px;
+}
+
+.informasi-sekolah-btn-clear:disabled,
+.informasi-sekolah-btn-save:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* =========================================
+   PREVIEW
+========================================= */
+
+.informasi-sekolah-preview {
+  min-width: 0;
+  padding: 20px;
+
+  border: 1px solid #e7edf4;
+  border-radius: 12px;
+
+  background: #fafbfd;
+}
+
+.informasi-sekolah-preview-empty {
+  padding: 30px 12px;
+  color: #91a0b0;
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.7;
+}
+
+.informasi-sekolah-preview-source {
+  display: inline-flex;
+  align-items: center;
+
+  margin-bottom: 12px;
+  padding: 6px 12px;
+
+  border: 1px solid #ead9b5;
+  border-radius: 8px;
+
+  background: #fff9ed;
+  color: #99732e;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+}
+
+.informasi-sekolah-preview-title {
+  margin: 0 0 16px;
+
+  color: #142d50;
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.5;
+
+  overflow-wrap: anywhere;
+}
+
+.informasi-sekolah-preview-detail {
+  color: #34465a;
+  font-size: 14px;
+  line-height: 1.85;
+
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+/* =========================================
+   TABLET & DESKTOP
+========================================= */
+
+@media (min-width: 768px) {
+  .informasi-sekolah-page {
+    gap: 24px;
+  }
+
+  .informasi-sekolah-card,
+  .informasi-sekolah-preview-card {
+    padding: 26px;
+  }
+
+  .informasi-sekolah-section-header h3 {
+    font-size: 18px;
+  }
+
+  .informasi-sekolah-preview {
+    padding: 24px;
+  }
+}
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 575px) {
+  .informasi-sekolah-page {
+    gap: 16px;
+  }
+
+  .informasi-sekolah-card,
+  .informasi-sekolah-preview-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  .informasi-sekolah-section-header {
+    margin-bottom: 18px;
+  }
+
+  .informasi-sekolah-section-header h3 {
+    font-size: 16px;
+  }
+
+  .informasi-sekolah-field textarea {
+    min-height: 220px;
+  }
+
+  .informasi-sekolah-actions {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .informasi-sekolah-btn-clear,
+  .informasi-sekolah-btn-save {
+    width: 100%;
+  }
+
+  .informasi-sekolah-preview {
+    padding: 16px;
+  }
+
+  .informasi-sekolah-preview-title {
+    font-size: 16px;
+  }
+
+  .informasi-sekolah-preview-detail {
+    font-size: 13px;
+  }
+}
+
+/* =========================================
+   REDUCED MOTION
+========================================= */
+
+@media (prefers-reduced-motion: reduce) {
+  .informasi-sekolah-field input,
+  .informasi-sekolah-field select,
+  .informasi-sekolah-field textarea,
+  .informasi-sekolah-btn-clear,
+  .informasi-sekolah-btn-save {
+    transition: none;
+  }
+}

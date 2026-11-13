@@ -1785,3 +1785,73 @@
     flex: 1;
   }
 }
+
+.admin-stat-card[data-report-tab] {
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.admin-stat-card[data-report-tab]:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px #ebebee1a;
+}
+
+.admin-stat-card[data-report-tab]:focus-visible {
+  outline: 2px solid #25377f;
+  outline-offset: 3px;
+}
+
+/* =========================================
+   TEACHLY - ADMIN PAGE HEADER
+   NAVY DASHBOARD STYLE
+========================================= */
+
+.admin-guru-header {
+  background: linear-gradient(110deg, #202d70 0%, #303f94 100%);
+
+  padding: 28px 32px;
+  border-radius: 20px;
+  color: #ffffff;
+}
+
+/* Judul header */
+.admin-guru-header h1,
+.admin-guru-header h2 {
+  color: #ffffff;
+}
+
+/* Deskripsi header */
+.admin-guru-header p {
+  color: #d8e2ff;
+}
+
+/* Label kategori */
+.admin-guru-header .admin-guru-eyebrow {
+  color: #f5c451;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .admin-guru-header {
+    padding: 22px 20px;
+    border-radius: 16px;
+  }
+}
+
+/* =========================================
+   TEACHLY - HEADER TEXT WHITE
+========================================= */
+
+.admin-guru-header h1,
+.admin-guru-header h2,
+.admin-guru-header h3,
+.admin-guru-header .admin-guru-title {
+  color: #ffffff !important;
+}
+
+.admin-guru-header p,
+.admin-guru-header .admin-guru-description {
+  color: #ffffff !important;
+}

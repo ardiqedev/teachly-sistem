@@ -6,7 +6,7 @@ const Router = {
   /* =====================================
      ROUTES GURU
   ===================================== */
-
+  globalActionsInitialized: false,
   routes: {
     login: "pages/login.html",
     dashboard: "pages/dashboard.html",
@@ -189,6 +189,54 @@ const Router = {
   },
 
   /* =====================================
+   GLOBAL ACTIONS
+===================================== */
+
+  initGlobalActions() {
+    if (this.globalActionsInitialized) return;
+
+    document.addEventListener("click", async (event) => {
+      const logoutButton = event.target.closest('[data-action="logout"]');
+
+      if (!logoutButton) return;
+
+      event.preventDefault();
+
+      if (logoutButton.disabled) return;
+
+      const confirmed = window.confirm(
+        "Apakah Anda yakin ingin keluar dari Teachly?",
+      );
+
+      if (!confirmed) return;
+
+      logoutButton.disabled = true;
+
+      try {
+        // Hapus session autentikasi guru
+        Auth.logout();
+
+        // Kembali ke halaman login
+        await this.navigate("login");
+
+        console.log("[Router] Guru berhasil logout.");
+      } catch (error) {
+        console.error("[Router] Logout gagal:", error);
+
+        alert("Terjadi kesalahan saat logout.");
+      } finally {
+        if (logoutButton.isConnected) {
+          logoutButton.disabled = false;
+        }
+      }
+    });
+
+    this.globalActionsInitialized = true;
+
+    console.log("[Router] Global actions initialized.");
+  },
+
+  /* =====================================
      SHOW 404
   ===================================== */
 
@@ -208,3 +256,9 @@ const Router = {
     `;
   },
 };
+
+/* =====================================
+   INITIALIZE GLOBAL ACTIONS
+===================================== */
+
+Router.initGlobalActions();

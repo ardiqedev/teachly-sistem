@@ -28,9 +28,12 @@
 @import url("pages/login.css");
 @import url("pages/dashboard.css");
 @import url("pages/riwayat.css");
-
+@import url("admin/tahunAjaran.css");
 @import url("admin/admin.css");
 @import url("admin/guru.css");
 @import url("admin/laporan.css");
+@import url("admin/informasiSekolah.css");
+@import url("admin/dashboardInformasi.css");
+@import url("admin/pengguna.css");
 
 @import url("templateLayout/responsive.css");
