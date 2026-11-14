@@ -7,6 +7,93 @@ const AdminRouter = {
   initialized: false,
   dashboardMarkup: "",
 
+  /* =====================================
+   ROLE BASED PAGE ACCESS
+===================================== */
+
+  rolePages: {
+    ADMIN: [
+      "dashboard",
+      "guru",
+      "kelas",
+      "mata-pelajaran",
+      "kelompok-ngaji",
+      "sesi-ngaji",
+      "tahun-ajaran",
+      "laporan",
+      "pengguna",
+      "informasi-sekolah",
+    ],
+
+    ADMIN_KURIKULUM: [
+      "guru",
+      "kelas",
+      "mata-pelajaran",
+      "tahun-ajaran",
+      "laporan",
+      "informasi-sekolah",
+    ],
+
+    ADMIN_GURU_NGAJI: [
+      "kelompok-ngaji",
+      "sesi-ngaji",
+      "laporan",
+      "informasi-sekolah",
+    ],
+  },
+
+  getRole() {
+    return AdminAuth.getRole();
+  },
+
+  canAccess(page) {
+    const role = this.getRole();
+    const allowed = this.rolePages[role] || [];
+
+    return allowed.includes(page);
+  },
+
+  getDefaultPage() {
+    const role = this.getRole();
+
+    switch (role) {
+      case "ADMIN":
+        return "dashboard";
+
+      case "ADMIN_KURIKULUM":
+        return "guru";
+
+      case "ADMIN_GURU_NGAJI":
+        return "kelompok-ngaji";
+
+      default:
+        return null;
+    }
+  },
+
+  applySidebarPermissions() {
+    const sidebar = document.getElementById("adminSidebar");
+
+    if (!sidebar) return;
+
+    // Filter hanya menu di sidebar.
+    sidebar.querySelectorAll("[data-admin-page]").forEach((item) => {
+      const page = item.dataset.adminPage;
+
+      item.hidden = !this.canAccess(page);
+    });
+
+    // Sembunyikan grup jika seluruh
+    // menu di dalamnya tidak diizinkan.
+    sidebar.querySelectorAll(".admin-nav-group").forEach((group) => {
+      const items = Array.from(group.querySelectorAll("[data-admin-page]"));
+
+      group.hidden = !items.some((item) =>
+        this.canAccess(item.dataset.adminPage),
+      );
+    });
+  },
+
   pages: {
     dashboard: {
       title: "Dashboard",
@@ -66,7 +153,16 @@ const AdminRouter = {
       this.initialized = true;
     }
 
-    this.navigate("dashboard");
+    this.applySidebarPermissions();
+
+    const defaultPage = this.getDefaultPage();
+
+    if (!defaultPage) {
+      console.error("[AdminRouter] Role administrator tidak valid.");
+      return;
+    }
+
+    this.navigate(defaultPage);
 
     const year = document.getElementById("adminCurrentYear");
     if (year) year.textContent = new Date().getFullYear();
@@ -77,7 +173,46 @@ const AdminRouter = {
   ===================================== */
 
   bindEvents() {
-    document.addEventListener("click", (event) => {
+    document.addEventListener("click", async (event) => {
+      /* =====================================
+       ADMIN LOGOUT
+    ===================================== */
+
+      const logoutButton = event.target.closest("[data-admin-logout]");
+
+      if (logoutButton) {
+        event.preventDefault();
+
+        if (logoutButton.disabled) return;
+
+        const confirmed = window.confirm(
+          "Yakin ingin keluar dari administrator?",
+        );
+
+        if (!confirmed) return;
+
+        logoutButton.disabled = true;
+
+        try {
+          await AdminAuth.logout();
+
+          this.closeSidebar();
+
+          // Muat ulang untuk menampilkan login Admin.
+          window.location.reload();
+        } catch (error) {
+          console.error("[AdminRouter] Logout failed:", error);
+
+          logoutButton.disabled = false;
+        }
+
+        return;
+      }
+
+      /* =====================================
+       ADMIN PAGE NAVIGATION
+    ===================================== */
+
       const pageButton = event.target.closest("[data-admin-page]");
 
       if (pageButton) {
@@ -95,10 +230,18 @@ const AdminRouter = {
         return;
       }
 
+      /* =====================================
+       SIDEBAR TOGGLE
+    ===================================== */
+
       if (event.target.closest("[data-admin-sidebar-toggle]")) {
         this.toggleSidebar();
         return;
       }
+
+      /* =====================================
+       SIDEBAR CLOSE
+    ===================================== */
 
       if (event.target.closest("[data-admin-sidebar-close]")) {
         this.closeSidebar();
@@ -112,6 +255,12 @@ const AdminRouter = {
 
   navigate(page, reportTab = null) {
     if (!this.pages[page]) return;
+
+    // Tolak navigasi yang tidak diizinkan.
+    if (!this.canAccess(page)) {
+      console.warn("[AdminRouter] Akses halaman ditolak:", page);
+      return;
+    }
 
     const content = document.getElementById("adminContent");
     const title = document.getElementById("adminPageTitle");
@@ -128,7 +277,6 @@ const AdminRouter = {
     } else if (page === "guru" && typeof Guru !== "undefined") {
       content.innerHTML = Guru.render();
       Guru.init();
-    } else if (page === "kelas" && typeof Kelas !== "undefined") {
     } else if (page === "kelas" && typeof Kelas !== "undefined") {
       content.innerHTML = Kelas.render();
       Kelas.init();

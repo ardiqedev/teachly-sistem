@@ -18,7 +18,7 @@ const CONFIG = {
   ===================================== */
 
   API: {
-    URL: "https://script.google.com/macros/s/AKfycby4kIu5ZjZgnQmx7oO5CWUIm196g1KbRMCdWpG5zE75rHKkI38lO-EGzx2cF0ru-Ca4/exec",
+    URL: "https://script.google.com/macros/s/AKfycbzzBMpNXrukY_pe7DkqKfYEEM9IRJJj5baCKA9fU2i3hZV4dJ_S-0DpujITYf_nuvIN/exec",
 
     TIMEOUT: 30000,
   },

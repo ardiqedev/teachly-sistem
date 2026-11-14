@@ -10,6 +10,7 @@ const InformasiSekolahAdminService = {
 
   SOURCES: {
     KURIKULUM: "KURIKULUM",
+    GURU_MAPEL: "GURU_MAPEL",
     GURU_NGAJI: "GURU_NGAJI",
   },
 
@@ -88,17 +89,18 @@ const InformasiSekolahAdminService = {
       throw new Error("Format informasi sekolah tidak valid.");
     }
 
-    return {
-      KURIKULUM: this.normalizeInformation(
-        response.data.KURIKULUM,
-        this.SOURCES.KURIKULUM,
-      ),
+    const result = {};
 
-      GURU_NGAJI: this.normalizeInformation(
-        response.data.GURU_NGAJI,
-        this.SOURCES.GURU_NGAJI,
-      ),
-    };
+    Object.values(this.SOURCES).forEach((source) => {
+      if (Object.prototype.hasOwnProperty.call(response.data, source)) {
+        result[source] = this.normalizeInformation(
+          response.data[source],
+          source,
+        );
+      }
+    });
+
+    return result;
   },
 
   /* =====================================

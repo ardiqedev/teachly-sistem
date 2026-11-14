@@ -30,6 +30,59 @@ const AdminLaporan = {
   boundRoot: null,
   loading: false,
 
+  /* =========================================
+   RBAC LAPORAN GURU
+========================================= */
+
+  roleCategories: {
+    ADMIN: ["GURU_KELAS", "GURU_MAPEL", "GURU_NGAJI"],
+
+    ADMIN_KURIKULUM: ["GURU_KELAS", "GURU_MAPEL"],
+
+    ADMIN_GURU_NGAJI: ["GURU_NGAJI"],
+  },
+
+  getAllowedCategories() {
+    const role = AdminAuth.getRole();
+
+    return this.roleCategories[role] || [];
+  },
+
+  canAccessCategory(kategori) {
+    return this.getAllowedCategories().includes(
+      String(kategori || "")
+        .trim()
+        .toUpperCase(),
+    );
+  },
+
+  applyRoleVisibility() {
+    const root = document.getElementById("adminContent");
+    if (!root) return;
+
+    root.querySelectorAll("[data-laporan-tab]").forEach((tab) => {
+      tab.hidden = !this.canAccessCategory(tab.dataset.laporanTab);
+    });
+
+    const statisticCards = {
+      GURU_KELAS: "laporanStatKelas",
+      GURU_MAPEL: "laporanStatMapel",
+      GURU_NGAJI: "laporanStatNgaji",
+    };
+
+    Object.entries(statisticCards).forEach(([kategori, id]) => {
+      const element = document.getElementById(id);
+
+      if (!element) return;
+
+      const card = element.closest(".admin-laporan-stat-card");
+
+      if (card) {
+        card.hidden = !this.canAccessCategory(kategori);
+      }
+    });
+  },
+
   getFilteredData() {
     let source = [...this.getActiveData()];
 
@@ -472,11 +525,18 @@ const AdminLaporan = {
     this.bindEvents(root);
     this.initialized = true;
 
-    const allowed = ["GURU_KELAS", "GURU_MAPEL", "GURU_NGAJI"];
+    const allowed = this.getAllowedCategories();
+
+    if (!allowed.length) {
+      console.error("[Admin Laporan] Role tidak memiliki akses.");
+      return;
+    }
+
+    this.applyRoleVisibility();
 
     const targetTab = allowed.includes(requestedTab)
       ? requestedTab
-      : "GURU_KELAS";
+      : allowed[0];
 
     this.changeTab(targetTab);
 
@@ -707,9 +767,10 @@ const AdminLaporan = {
   // =======================================================
 
   changeTab(kategori) {
-    const allowed = ["GURU_KELAS", "GURU_MAPEL", "GURU_NGAJI"];
-
-    if (!allowed.includes(kategori)) return;
+    if (!this.canAccessCategory(kategori)) {
+      console.warn("[Admin Laporan] Akses kategori ditolak:", kategori);
+      return;
+    }
 
     this.activeTab = kategori;
     this.page = 1;
@@ -1086,6 +1147,10 @@ const AdminLaporan = {
 
   async openDetail(idLaporan, kategori) {
     if (!idLaporan || !kategori) return;
+    if (!this.canAccessCategory(kategori)) {
+      console.warn("[Admin Laporan] Akses detail ditolak:", kategori);
+      return;
+    }
 
     const modal = document.getElementById("adminLaporanModal");
 
@@ -1807,40 +1872,6 @@ const AdminLaporan = {
       return parsed.href;
     } catch (error) {
       return "";
-    }
-  },
-
-  async printPDF() {
-    const content = document.getElementById("adminLaporanPrintBody");
-
-    if (!content) return;
-
-    const button = document.querySelector('[data-laporan-action="print-pdf"]');
-
-    if (button) button.disabled = true;
-
-    try {
-      const images = [...content.querySelectorAll("img")];
-
-      await Promise.all(
-        images.map((img) => {
-          if (img.complete && img.naturalWidth > 0) {
-            return Promise.resolve();
-          }
-
-          return new Promise((resolve) => {
-            img.onload = resolve;
-            img.onerror = resolve;
-          });
-        }),
-      );
-
-      window.print();
-    } catch (error) {
-      console.error("Gagal menyiapkan cetak PDF:", error);
-      this.showToast("Gagal menyiapkan dokumen cetak.", "error");
-    } finally {
-      if (button) button.disabled = false;
     }
   },
 

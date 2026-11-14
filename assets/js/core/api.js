@@ -32,6 +32,7 @@ API.request = async function (endpoint, payload = {}) {
 ===================================== */
 
     const protectedAdminEndpoints = [
+      "adminAuth.logout",
       "informasiSekolah.save",
       "pengguna.list",
       "pengguna.create",

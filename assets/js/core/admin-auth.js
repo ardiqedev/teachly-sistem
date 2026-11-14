@@ -77,7 +77,9 @@ const AdminAuth = {
       if (
         !admin ||
         !admin.ID_PENGGUNA ||
-        admin.ROLE !== "ADMIN" ||
+        !["ADMIN", "ADMIN_KURIKULUM", "ADMIN_GURU_NGAJI"].includes(
+          admin.ROLE,
+        ) ||
         typeof token !== "string" ||
         !token ||
         !expiresAt ||
@@ -127,10 +129,34 @@ const AdminAuth = {
      LOGOUT
   ===================================== */
 
-  logout() {
-    this.clearSession();
+  /* =====================================
+   LOGOUT ADMIN
+===================================== */
 
-    console.log("[AdminAuth] Logout successful.");
+  /* =====================================
+   LOGOUT ADMIN
+===================================== */
+
+  async logout() {
+    const token = this.session?.token || null;
+
+    try {
+      if (token) {
+        const response = await API.post("adminAuth.logout", {
+          sessionToken: token,
+        });
+
+        if (!response || response.success !== true) {
+          console.warn("[AdminAuth] Server logout failed:", response?.message);
+        }
+      }
+    } catch (error) {
+      console.error("[AdminAuth] Logout request failed:", error);
+    } finally {
+      this.clearSession();
+
+      console.log("[AdminAuth] Local session cleared.");
+    }
 
     return true;
   },
@@ -159,7 +185,9 @@ const AdminAuth = {
     if (
       !this.user ||
       !this.user.ID_PENGGUNA ||
-      this.user.ROLE !== "ADMIN" ||
+      !["ADMIN", "ADMIN_KURIKULUM", "ADMIN_GURU_NGAJI"].includes(
+        this.user.ROLE,
+      ) ||
       !this.session ||
       typeof this.session.token !== "string" ||
       !this.session.token

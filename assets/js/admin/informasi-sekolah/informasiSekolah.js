@@ -12,6 +12,49 @@ const InformasiSekolah = {
   requestId: 0,
 
   /* =====================================
+   RBAC INFORMASI SEKOLAH
+===================================== */
+
+  roleSources: {
+    ADMIN: ["KURIKULUM", "GURU_NGAJI"],
+    ADMIN_KURIKULUM: ["KURIKULUM"],
+    ADMIN_GURU_NGAJI: ["GURU_NGAJI"],
+  },
+
+  getAllowedSources() {
+    const role = AdminAuth.getRole();
+    return this.roleSources[role] || [];
+  },
+
+  canAccessSource(source) {
+    return this.getAllowedSources().includes(
+      String(source || "")
+        .trim()
+        .toUpperCase(),
+    );
+  },
+
+  applySourcePermissions() {
+    const select = this.getElement("informasiSekolahSource");
+    if (!select) return;
+
+    const allowed = this.getAllowedSources();
+
+    Array.from(select.options).forEach((option) => {
+      option.hidden = !allowed.includes(option.value);
+      option.disabled = !allowed.includes(option.value);
+    });
+
+    // Sumber awal harus sesuai dengan role.
+    this.source = allowed[0] || "";
+
+    select.value = this.source;
+
+    // Role terbatas tidak perlu mengganti sumber.
+    select.disabled = allowed.length <= 1;
+  },
+
+  /* =====================================
      RENDER PAGE
   ===================================== */
 
@@ -170,16 +213,22 @@ const InformasiSekolah = {
 
     if (!this.root) return;
 
-    this.source = "KURIKULUM";
+    this.source = "";
     this.originalData = null;
     this.loading = false;
     this.saving = false;
     this.requestId += 1;
 
-    const sourceSelect = this.getElement("informasiSekolahSource");
+    this.applySourcePermissions();
 
-    if (sourceSelect) {
-      sourceSelect.value = this.source;
+    if (!this.source) {
+      this.showMessage(
+        "Role administrator tidak memiliki akses informasi sekolah.",
+        "error",
+      );
+
+      this.setBusy(true);
+      return;
     }
 
     this.bindEvents();
@@ -282,6 +331,14 @@ const InformasiSekolah = {
   ===================================== */
 
   async loadInformation(source) {
+    if (!this.canAccessSource(source)) {
+      this.showMessage(
+        "Anda tidak memiliki izin mengakses sumber informasi ini.",
+        "error",
+      );
+      return;
+    }
+
     const requestedSource = source;
     const currentRequest = ++this.requestId;
     const currentRoot = this.root;
@@ -344,6 +401,13 @@ const InformasiSekolah = {
   async handleSourceChange(nextSource) {
     const select = this.getElement("informasiSekolahSource");
 
+    if (!this.canAccessSource(nextSource)) {
+      console.warn("[InformasiSekolah] Akses sumber ditolak:", nextSource);
+
+      if (select) select.value = this.source;
+      return;
+    }
+
     if (this.loading || this.saving) {
       if (select) select.value = this.source;
       return;
@@ -405,6 +469,14 @@ const InformasiSekolah = {
 
   async handleSave() {
     if (this.loading || this.saving) return;
+
+    if (!this.canAccessSource(this.source)) {
+      this.showMessage(
+        "Anda tidak memiliki izin menyimpan informasi ini.",
+        "error",
+      );
+      return;
+    }
 
     const currentRoot = this.root;
     const data = this.getFormData();
@@ -538,11 +610,14 @@ const InformasiSekolah = {
 
     const saveButton = this.getElement("informasiSekolahSave");
 
-    [sourceSelect, namaInput, detailInput, clearButton, saveButton].forEach(
-      (element) => {
-        if (element) element.disabled = busy;
-      },
-    );
+    [namaInput, detailInput, clearButton, saveButton].forEach((element) => {
+      if (element) element.disabled = busy;
+    });
+
+    // Dropdown tetap terkunci untuk role terbatas.
+    if (sourceSelect) {
+      sourceSelect.disabled = busy || this.getAllowedSources().length <= 1;
+    }
 
     if (saveButton) {
       saveButton.textContent = this.saving
