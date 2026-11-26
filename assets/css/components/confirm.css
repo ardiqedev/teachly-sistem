@@ -2,22 +2,10 @@
    OVERLAY
 ========================================= */
 
-.confirm-overlay {
-  position: fixed;
-
-  inset: 0;
-
-  display: flex;
-
-  align-items: center;
-
-  justify-content: center;
-
+.confirm::backdrop {
   background: rgba(15, 23, 42, 0.45);
 
   backdrop-filter: blur(5px);
-
-  z-index: 99999;
 
   animation: confirmFade 0.2s ease;
 }
@@ -27,9 +15,11 @@
 ========================================= */
 
 .confirm {
-  width: 100%;
-
-  max-width: 420px;
+  width: min(420px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
+  margin: auto;
+  border: 0;
+  box-sizing: border-box;
 
   background: #fff;
 
@@ -114,6 +104,13 @@
   color: var(--text-light);
 
   line-height: 1.6;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.confirm-danger .confirm-ok {
+  background: #b42318;
+  border-color: #b42318;
 }
 
 /* =========================================
@@ -164,8 +161,6 @@
 
 @media (max-width: 640px) {
   .confirm {
-    margin: 20px;
-
     padding: 24px;
   }
 

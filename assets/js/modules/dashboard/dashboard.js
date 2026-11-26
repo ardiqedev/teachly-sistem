@@ -31,6 +31,9 @@ const Dashboard = {
 
       // Tampilkan nama guru pada sapaan.
       this.setText("[data-guru-nama]", namaGuru);
+      if (guru.IS_KEPALA_SEKOLAH) {
+        this.setText(".dashboard-eyebrow", "DASHBOARD KEPALA SEKOLAH");
+      }
 
       // Ambil ringkasan laporan berdasarkan NBM.
       const result = await DashboardService.getSummary(nbm);
@@ -74,18 +77,6 @@ const Dashboard = {
   ===================================== */
 
   bindEvents() {
-    const logoutButton = document.querySelector('[data-action="logout"]');
-
-    if (logoutButton && !logoutButton.dataset.bound) {
-      logoutButton.dataset.bound = "true";
-
-      logoutButton.addEventListener("click", () => {
-        if (typeof Auth !== "undefined" && Auth.logout) {
-          Auth.logout();
-        }
-      });
-    }
-
     const createButton = document.querySelector(
       '[data-action="create-report"]',
     );
@@ -111,47 +102,12 @@ const Dashboard = {
     this.setText("[data-tahun-ajaran]", "Memuat...");
   },
 
-  updateReportSubmitState() {
+  updateReportDraftState() {
     const form = document.getElementById("formLaporanHarian");
-    const button = document.getElementById("btnKirimLaporan");
-
+    const button = document.getElementById("btnSimpanDraftLaporan");
     if (!form || !button) return;
-
-    const kategori = this.selectedReportCategory;
-
-    let valid = form.checkValidity();
-
-    const getValue = (id) => document.getElementById(id)?.value.trim() || "";
-
-    if (kategori === "GURU_KELAS") {
-      const adaDetail = [
-        "haditsDoaKelas",
-        "pendidikanAdabKelas",
-        "ringkasanPembelajaranKelas",
-        "kendalaKelas",
-        "solusiKelas",
-      ].some((id) => getValue(id));
-
-      valid = valid && !!getValue("idKelasLaporan") && adaDetail;
-    }
-
-    if (kategori === "GURU_MAPEL") {
-      valid =
-        valid &&
-        !!getValue("idKelasMapelLaporan") &&
-        !!getValue("idMapelLaporan") &&
-        !!getValue("ringkasanPembelajaranMapel");
-    }
-
-    if (kategori === "GURU_NGAJI") {
-      valid =
-        valid &&
-        !!getValue("idSesiNgajiLaporan") &&
-        this.selectedReportGroups.length > 0 &&
-        !!getValue("halamanSuratAyat");
-    }
-
-    button.disabled = !valid || this.reportSubmitting;
+    button.disabled = form.inert || this.draftSaving ||
+      !!form.querySelector("[data-upload-pending]");
   },
 
   /* =====================================
@@ -290,21 +246,107 @@ const Dashboard = {
    OPEN FORM LAPORAN
 ===================================== */
 
-  async openCreateReport() {
+  async saveReportDraft(form, nbm) {
+    if (!nbm || String(Auth.getGuru()?.NBM || "").trim() !== nbm ||
+        this.draftSaving ||
+        form.inert || form.querySelector("[data-upload-pending]")) return;
+
+    this.draftSaving = true;
+    this.updateReportDraftState();
+    try {
+      const fields = {};
+      for (const field of form.querySelectorAll("input[id], select[id], textarea[id]")) {
+        if (field.type === "file") continue;
+        fields[field.id] = {
+          value: field.value,
+          label: field.selectedOptions?.[0]?.textContent,
+        };
+      }
+
+      const revision = Array.from(crypto.getRandomValues(new Uint32Array(4))).join("-");
+      const draft = {
+        id: this.reportDraftId || revision,
+        revision,
+        savedAt: Date.now(),
+        fields,
+        groups: this.selectedReportGroups,
+        uploads: this.reportUploads,
+        attendance: this.reportAttendance,
+      };
+      await ReportDraft.access(nbm, "save", draft);
+      Toast.success("Draft laporan disimpan di browser.");
+      if (form.isConnected) {
+        Modal.close();
+        await Router.navigate("draft");
+      }
+    } catch (error) {
+      console.error("[Dashboard] Gagal menyimpan draft:", error);
+      Toast.error("Draft gagal disimpan di browser. Pastikan penyimpanan masih tersedia.");
+    } finally {
+      this.draftSaving = false;
+      if (form.isConnected) this.updateReportDraftState();
+    }
+  },
+
+  restoreReportDraft(form, draft) {
+    const category = form.querySelector("#kategoriLaporan");
+    category.value = draft.fields.kategoriLaporan?.value || "";
+    this.selectedReportCategory = category.value;
+    this.renderReportCategory(category.value);
+
+    for (const [id, { value, label }] of Object.entries(draft.fields)) {
+      const field = document.getElementById(id);
+      if (!field || !form.contains(field) || field.type === "file") continue;
+      field.value = value;
+      if (!this.reportFormOptions && field.options && value && !field.value) {
+        field.add(new Option(label || value, value, true, true));
+        field.disabled = false;
+      }
+    }
+
+    this.selectedReportGroups = draft.groups || [];
+    this.renderSelectedReportGroups();
+    this.reportUploads = draft.uploads || {};
+    for (const input of form.querySelectorAll("[data-report-image]")) {
+      const attachment = this.reportUploads[input.dataset.reportImage];
+      if (!attachment) continue;
+      const isPdf = attachment.startsWith("data:application/pdf;");
+      const status = document.getElementById(input.id + "Status");
+      status.textContent = isPdf ? "PDF tersimpan di draft." : "Foto tersimpan di draft.";
+      const preview = document.getElementById(input.id + "Preview");
+      if (!isPdf) {
+        preview.src = attachment;
+        preview.hidden = false;
+        preview.style.display = "block";
+      }
+      document.getElementById(input.id + "Remove").hidden = false;
+    }
+  },
+
+  async openCreateReport(draft = null) {
+    const nbm = String(Auth.getGuru()?.NBM || "").trim();
+    if (!nbm || this.draftSaving) return;
+    const principal = Auth.getGuru().IS_KEPALA_SEKOLAH === true;
+    if (draft && (draft.fields.kategoriLaporan?.value === "KEPALA_SEKOLAH") !== principal) {
+      Toast.warning("Kategori draft ini tidak sesuai dengan penugasan akun.");
+      return;
+    }
+
     const tanggalHariIni = new Date().toLocaleDateString("en-CA", {
       timeZone: "Asia/Jakarta",
     });
 
     this.reportFormOptions = null;
-    this.reportSubmitting = false;
     this.selectedReportCategory = "";
     this.reportUploads = {};
+    this.reportAttendance = null;
+    this.reportDraftId = draft?.id;
 
     Modal.open({
       title: `
       <div class="report-modal-heading">
-        <span>Buat Laporan Harian</span>
-        <small>Catat kegiatan pembelajaran Anda.</small>
+        <span>${draft ? "Lanjutkan Draft Laporan" : "Buat Laporan Harian"}</span>
+        <small>Draft disimpan di browser ini sampai laporan dikirim.</small>
       </div>      
     `,
       size: "lg",
@@ -319,10 +361,12 @@ const Dashboard = {
           <div class="report-form-group">
             <label for="kategoriLaporan">Kategori Laporan</label>
             <select id="kategoriLaporan" required>
+              ${principal ? '<option value="KEPALA_SEKOLAH">Kepala Sekolah</option>' : `
               <option value="">Pilih kategori laporan</option>
               <option value="GURU_KELAS">Guru Kelas</option>
               <option value="GURU_MAPEL">Guru Mapel</option>
               <option value="GURU_NGAJI">Guru Ngaji</option>
+              `}
             </select>
           </div>
 
@@ -392,48 +436,20 @@ const Dashboard = {
 
         <!-- REKAP KEHADIRAN -->
         <div id="sectionKehadiranLaporan" class="report-section" hidden>
-          <h3>Rekap Ketidakhadiran</h3>
+          <h3>Absensi Siswa</h3>
+          <p id="reportAttendanceMessage" class="report-section-info" role="status"></p>
+          <div id="reportAttendanceTotals" class="draft-chip-list"></div>
+          <div id="reportAttendanceStudents" class="report-attendance-students"></div>
+        </div>
 
-          <p class="report-section-info">
-            Masukkan jumlah murid yang tidak hadir.
-          </p>
-
-          <div class="report-form-row">
-            <div class="report-form-group">
-              <label for="sakitLaporan">Sakit</label>
-              <input
-                type="number"
-                id="sakitLaporan"
-                min="0"
-                step="1"
-                value="0"
-                required
-              >
-            </div>
-
-            <div class="report-form-group">
-              <label for="izinLaporan">Izin</label>
-              <input
-                type="number"
-                id="izinLaporan"
-                min="0"
-                step="1"
-                value="0"
-                required
-              >
-            </div>
-
-            <div class="report-form-group">
-              <label for="alpaLaporan">Alpa</label>
-              <input
-                type="number"
-                id="alpaLaporan"
-                min="0"
-                step="1"
-                value="0"
-                required
-              >
-            </div>
+        <div id="sectionKepalaSekolah" hidden class="report-section">
+          <div class="report-form-group">
+            <label for="kegiatanKepalaSekolah">Kegiatan Kepala Sekolah</label>
+            <textarea id="kegiatanKepalaSekolah" rows="4"></textarea>
+          </div>
+          <div class="report-form-group">
+            <label for="catatanKepalaSekolah">Catatan</label>
+            <textarea id="catatanKepalaSekolah" rows="3"></textarea>
           </div>
         </div>
 
@@ -463,13 +479,8 @@ const Dashboard = {
             </div>
 
             <div class="report-form-group">
-              <label for="kendalaKelas">Kendala</label>
-              <textarea id="kendalaKelas" rows="3"></textarea>
-            </div>
-
-            <div class="report-form-group">
-              <label for="solusiKelas">Solusi</label>
-              <textarea id="solusiKelas" rows="3"></textarea>
+              <label for="catatanKelas">Catatan</label>
+              <textarea id="catatanKelas" rows="3"></textarea>
             </div>
           </div>
         </div>
@@ -490,13 +501,8 @@ const Dashboard = {
             </div>
 
             <div class="report-form-group">
-              <label for="kendalaMapel">Kendala</label>
-              <textarea id="kendalaMapel" rows="3"></textarea>
-            </div>
-
-            <div class="report-form-group">
-              <label for="solusiMapel">Solusi</label>
-              <textarea id="solusiMapel" rows="3"></textarea>
+              <label for="catatanMapel">Catatan</label>
+              <textarea id="catatanMapel" rows="3"></textarea>
             </div>
           </div>
         </div>
@@ -504,7 +510,7 @@ const Dashboard = {
         <!-- LAMPIRAN GAMBAR GURU KELAS / MAPEL -->
         <div id="sectionReportUploads" hidden>
           <div class="report-section">
-            ${this.renderReportImageUploadFields()}
+            ${this.renderReportImageUploadFields(principal)}
           </div>
         </div>
 
@@ -533,13 +539,8 @@ const Dashboard = {
             </div>
 
             <div class="report-form-group">
-              <label for="kendalaNgaji">Kendala</label>
-              <textarea id="kendalaNgaji" rows="3"></textarea>
-            </div>
-
-            <div class="report-form-group">
-              <label for="solusiNgaji">Solusi</label>
-              <textarea id="solusiNgaji" rows="3"></textarea>
+              <label for="catatanNgaji">Catatan</label>
+              <textarea id="catatanNgaji" rows="3"></textarea>
             </div>
           </div>
         </div>
@@ -559,12 +560,12 @@ const Dashboard = {
       <button
         type="button"
         class="btn btn-primary"
-        id="btnKirimLaporan"
-        disabled
+        id="btnSimpanDraftLaporan"
       >
-        <i data-lucide="send"></i>
-        Kirim Laporan
+        Simpan Draft
       </button>
+
+
     `,
     });
 
@@ -577,18 +578,30 @@ const Dashboard = {
         this.selectedReportCategory = kategori;
 
         this.renderReportCategory(kategori);
-        this.updateReportSubmitState();
+        this.reportAttendance = null;
+        void this.loadReportAttendance(reportForm);
+        this.updateReportDraftState();
       });
 
     // VALIDASI FORM DAN STATUS TOMBOL KIRIM
     const reportForm = document.getElementById("formLaporanHarian");
+    reportForm.inert = Boolean(draft);
+    this.updateReportDraftState();
 
-    reportForm?.addEventListener("input", () => {
-      this.updateReportSubmitState();
+    document.getElementById("btnSimpanDraftLaporan")?.addEventListener("click", () => {
+      this.saveReportDraft(reportForm, nbm);
     });
 
-    reportForm?.addEventListener("change", () => {
-      this.updateReportSubmitState();
+    reportForm?.addEventListener("input", () => {
+      this.updateReportDraftState();
+    });
+
+    reportForm?.addEventListener("change", (event) => {
+      if (["idKelasLaporan", "tanggalLaporan"].includes(event.target.id)) {
+        this.reportAttendance = null;
+        void this.loadReportAttendance(reportForm);
+      }
+      this.updateReportDraftState();
     });
 
     // EVENT UPLOAD GAMBAR (Guru Kelas dan Guru Mapel)
@@ -619,7 +632,7 @@ const Dashboard = {
           });
 
           this.renderSelectedReportGroups();
-          this.updateReportSubmitState();
+          this.updateReportDraftState();
         }
 
         select.value = "";
@@ -632,18 +645,98 @@ const Dashboard = {
         Modal.close();
       });
 
-    // TOMBOL KIRIM
-    document
-      .getElementById("btnKirimLaporan")
-      ?.addEventListener("click", () => {
-        this.submitLaporan();
-      });
-
     // MUAT PILIHAN MASTER
-    await this.loadReportFormOptions();
+    reportForm.addEventListener("submit", (event) => event.preventDefault());
+    if (principal && !draft) {
+      this.selectedReportCategory = "KEPALA_SEKOLAH";
+      this.renderReportCategory(this.selectedReportCategory);
+    }
+    if (!principal) await this.loadReportFormOptions(reportForm);
+    if (draft && reportForm.isConnected) {
+      this.restoreReportDraft(reportForm, draft);
+      this.reportAttendance = draft.attendance || null;
+      reportForm.inert = false;
+      this.updateReportDraftState();
+    }
+    if (reportForm.isConnected) void this.loadReportAttendance(reportForm);
   },
 
-  renderReportImageUploadFields() {
+  async loadReportAttendance(form) {
+    const request = this.attendanceRequest = (this.attendanceRequest || 0) + 1;
+    if (!form || this.selectedReportCategory !== "GURU_KELAS") return;
+    const classId = form.querySelector("#idKelasLaporan").value;
+    const date = form.querySelector("#tanggalLaporan").value;
+    const message = form.querySelector("#reportAttendanceMessage");
+    const students = form.querySelector("#reportAttendanceStudents");
+    const totals = form.querySelector("#reportAttendanceTotals");
+    students.replaceChildren();
+    totals.replaceChildren();
+    if (!classId || !date) {
+      message.textContent = this.reportFormOptions?.GURU_KELAS?.kelas?.length === 0
+        ? "Belum ada kelas yang ditugaskan. Hubungi admin sekolah."
+        : "Pilih kelas dan tanggal untuk memuat daftar siswa.";
+      return;
+    }
+    const isCurrent = () => form.isConnected && request === this.attendanceRequest;
+    message.textContent = "Memuat daftar siswa…";
+    try {
+      const response = await API.post("laporan.absensiSiswa", {
+        ID_KELAS: classId,
+        TANGGAL_LAPORAN: date,
+      });
+      if (!isCurrent()) return;
+      if (!response?.success) throw new Error(response?.message || "Daftar siswa gagal dimuat.");
+      const { students: roster, recorded, year, totals: savedTotals } = response.data;
+      const previous = this.reportAttendance;
+      const compatible = previous?.year === year && previous.classId === classId && previous.date === date;
+      const previousStatuses = new Map(compatible ? previous.entries.map(row => [row.id, row.status]) : []);
+      const entries = roster.map(student => ({
+        id: student.id,
+        status: recorded ? student.status : previousStatuses.get(student.id) || "HADIR",
+      }));
+      this.reportAttendance = roster.length || recorded ? {
+        classId, date, year, recorded, entries, totals: savedTotals,
+      } : null;
+      message.textContent = recorded
+        ? "Absensi kelas sudah dicatat untuk tanggal ini. Rekap tersimpan akan digunakan."
+        : roster.length ? "Semua siswa mulai dengan status Hadir. Ubah status siswa yang tidak hadir."
+          : "Belum ada siswa aktif di kelas ini.";
+      const renderTotals = () => {
+        const counts = recorded ? savedTotals : { HADIR: 0, SAKIT: 0, IZIN: 0, ALPA: 0 };
+        if (!recorded) entries.forEach(({ status }) => counts[status]++);
+        if (this.reportAttendance) this.reportAttendance.totals = counts;
+        totals.replaceChildren(...Object.entries(counts).map(([status, count]) => {
+          const chip = document.createElement("span");
+          chip.className = "draft-chip";
+          chip.textContent = `${status[0]}${status.slice(1).toLowerCase()} ${count}`;
+          return chip;
+        }));
+      };
+      roster.forEach((student, index) => {
+        const row = document.createElement("label");
+        const name = document.createElement("span");
+        name.textContent = student.nama;
+        const select = document.createElement("select");
+        select.setAttribute("aria-label", `Kehadiran ${student.nama}`);
+        for (const status of ["HADIR", "SAKIT", "IZIN", "ALPA"]) {
+          select.add(new Option(status[0] + status.slice(1).toLowerCase(), status));
+        }
+        select.value = entries[index].status;
+        select.disabled = recorded;
+        select.addEventListener("change", () => {
+          entries[index].status = select.value;
+          renderTotals();
+        });
+        row.append(name, select);
+        students.append(row);
+      });
+      if (this.reportAttendance) renderTotals();
+    } catch (error) {
+      if (isCurrent()) message.textContent = error.message || "Daftar siswa gagal dimuat.";
+    }
+  },
+
+  renderReportImageUploadFields(photoOnly = false) {
     const fields = [
       { id: "modulAjarUpload", name: "MODUL_AJAR", label: "Modul Ajar" },
       { id: "asesmenUpload", name: "ASESMEN", label: "Asesmen" },
@@ -652,12 +745,12 @@ const Dashboard = {
 
     return `
       <div class="report-image-uploads">
-        <h4>Lampiran Gambar</h4>
+        <h4>Lampiran Laporan</h4>
         <p class="report-section-info">
-          Pilih gambar JPG, PNG, atau WEBP. Gambar akan dikompres otomatis
-          dengan target ukuran di bawah 100 KB.
+          ${photoOnly ? "Pilih satu foto (JPG, PNG, WebP)." : "Pilih satu foto (JPG, PNG, WebP) atau PDF maksimal 5 MB untuk setiap kolom."}
+          Foto dikompres otomatis hingga 100 KB.
         </p>
-        ${fields
+        ${(photoOnly ? fields.slice(-1) : fields)
           .map(
             (field) => `
           <div class="report-form-group report-image-field">
@@ -665,10 +758,13 @@ const Dashboard = {
             <input
               type="file"
               id="${field.id}"
-              accept="image/jpeg,image/png,image/webp"
+              accept="image/jpeg,image/png,image/webp${photoOnly ? "" : ",application/pdf,.pdf"}"
               data-report-image="${field.name}"
             >
-            <small id="${field.id}Status">Belum ada gambar dipilih.</small>
+            <small id="${field.id}Status">Belum ada lampiran dipilih.</small>
+            <button type="button" id="${field.id}Remove" hidden>
+              Hapus lampiran
+            </button>
             <img
               id="${field.id}Preview"
               alt="Preview ${field.label}"
@@ -751,20 +847,47 @@ const Dashboard = {
     }
   },
 
+  async readReportPdf(file) {
+    if (file.size > 5 * 1024 * 1024) {
+      throw new Error("Ukuran PDF maksimal 5 MB.");
+    }
+    if (await file.slice(0, 5).text() !== "%PDF-") {
+      throw new Error("File PDF tidak valid.");
+    }
+
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result).replace(
+        /^data:[^;]*;/,
+        "data:application/pdf;",
+      ));
+      reader.onerror = () => reject(new Error("File PDF tidak dapat dibaca."));
+      reader.readAsDataURL(file);
+    });
+  },
+
   bindReportImageUploads() {
     const inputs = document.querySelectorAll("[data-report-image]");
 
     inputs.forEach((input) => {
       if (input.dataset.bound === "true") return;
       input.dataset.bound = "true";
+      const removeButton = document.getElementById(input.id + "Remove");
+      removeButton?.addEventListener("click", () => {
+        input.value = "";
+        input.dispatchEvent(new Event("change", { bubbles: true }));
+      });
 
       input.addEventListener("change", async () => {
         const fieldName = input.dataset.reportImage;
         const preview = document.getElementById(input.id + "Preview");
         const status = document.getElementById(input.id + "Status");
+        if (removeButton) removeButton.hidden = true;
 
         this.reportUploads = this.reportUploads || {};
-        delete this.reportUploads[fieldName];
+        const uploads = this.reportUploads;
+        delete uploads[fieldName];
+        delete input.dataset.uploadPending;
 
         if (preview) {
           preview.removeAttribute("src");
@@ -774,18 +897,30 @@ const Dashboard = {
 
         const file = input.files && input.files[0];
         if (!file) {
-          if (status) status.textContent = "Belum ada gambar dipilih.";
-          this.updateReportSubmitState();
+          if (status) status.textContent = "Belum ada lampiran dipilih.";
+          this.updateReportDraftState();
           return;
         }
 
-        if (status) status.textContent = "Mengompres gambar...";
+        const isPdf = file.type === "application/pdf" || /\.pdf$/i.test(file.name);
+        const request = String(Number(input.dataset.uploadRequest || 0) + 1);
+        input.dataset.uploadRequest = request;
+        input.dataset.uploadPending = request;
+        this.updateReportDraftState();
+        const isCurrent = () => input.isConnected &&
+          this.reportUploads === uploads && input.dataset.uploadPending === request;
+        if (status) status.textContent = isPdf ? "Membaca PDF..." : "Mengompres gambar...";
 
         try {
-          const dataUrl = await this.compressReportImage(file);
-          this.reportUploads[fieldName] = dataUrl;
+          if (isPdf && !input.accept.includes("application/pdf")) {
+            throw new Error("Lampiran Kepala Sekolah harus berupa foto.");
+          }
+          const dataUrl = await (isPdf ? this.readReportPdf(file) : this.compressReportImage(file));
+          if (!isCurrent()) return;
+          uploads[fieldName] = dataUrl;
+          if (removeButton) removeButton.hidden = false;
 
-          if (preview) {
+          if (preview && !isPdf) {
             preview.src = dataUrl;
             preview.hidden = false;
             preview.style.display = "block";
@@ -796,12 +931,16 @@ const Dashboard = {
           );
           if (status) status.textContent = `Siap diunggah • ${sizeKB} KB`;
         } catch (error) {
+          if (!isCurrent()) return;
           input.value = "";
           if (status) status.textContent = error.message;
-          alert(error.message);
+          Toast.warning(error.message);
+        } finally {
+          if (isCurrent()) {
+            delete input.dataset.uploadPending;
+            this.updateReportDraftState();
+          }
         }
-
-        this.updateReportSubmitState();
       });
     });
   },
@@ -814,7 +953,7 @@ const Dashboard = {
     container.replaceChildren();
 
     if (!this.selectedReportGroups?.length) {
-      this.updateReportSubmitState();
+      this.updateReportDraftState();
       return;
     }
 
@@ -853,19 +992,20 @@ const Dashboard = {
       window.lucide.createIcons();
     }
 
-    this.updateReportSubmitState();
+    this.updateReportDraftState();
   },
 
   renderReportCategory(kategori) {
     const isKelas = kategori === "GURU_KELAS";
     const isMapel = kategori === "GURU_MAPEL";
     const isNgaji = kategori === "GURU_NGAJI";
+    const isPrincipal = kategori === "KEPALA_SEKOLAH";
 
     // Tampilkan bagian pilihan master
-    document.getElementById("sectionPilihanLaporan").hidden = !kategori;
+    document.getElementById("sectionPilihanLaporan").hidden = !kategori || isPrincipal;
 
     // Tampilkan bagian kehadiran
-    document.getElementById("sectionKehadiranLaporan").hidden = !kategori;
+    document.getElementById("sectionKehadiranLaporan").hidden = !isKelas;
 
     // Tampilkan pilihan berdasarkan kategori
     document.getElementById("pilihanGuruKelas").hidden = !isKelas;
@@ -876,10 +1016,11 @@ const Dashboard = {
     document.getElementById("sectionGuruKelas").hidden = !isKelas;
     document.getElementById("sectionGuruMapel").hidden = !isMapel;
     document.getElementById("sectionGuruNgaji").hidden = !isNgaji;
+    document.getElementById("sectionKepalaSekolah").hidden = !isPrincipal;
 
     const uploadSection = document.getElementById("sectionReportUploads");
     if (uploadSection) {
-      uploadSection.hidden = !(isKelas || isMapel);
+      uploadSection.hidden = !(isKelas || isMapel || isPrincipal);
     }
 
     // Field wajib setiap kategori
@@ -917,13 +1058,18 @@ const Dashboard = {
       const input = document.getElementById(id);
       const preview = document.getElementById(id + "Preview");
       const status = document.getElementById(id + "Status");
-      if (input) input.value = "";
+      const removeButton = document.getElementById(id + "Remove");
+      if (removeButton) removeButton.hidden = true;
+      if (input) {
+        input.value = "";
+        delete input.dataset.uploadPending;
+      }
       if (preview) {
         preview.removeAttribute("src");
         preview.hidden = true;
         preview.style.display = "none";
       }
-      if (status) status.textContent = "Belum ada gambar dipilih.";
+      if (status) status.textContent = "Belum ada lampiran dipilih.";
     });
 
     const kelompokSelect = document.getElementById("idKelompokLaporan");
@@ -951,7 +1097,7 @@ const Dashboard = {
     }
   },
 
-  async loadReportFormOptions() {
+  async loadReportFormOptions(form) {
     const setOptions = (
       selectId,
       items,
@@ -987,6 +1133,7 @@ const Dashboard = {
     try {
       // Ambil pilihan master dari backend
       const response = await API.post("laporan.formOptions", {});
+      if (!form.isConnected) return;
 
       if (!response || response.success !== true || !response.data) {
         throw new Error(response?.message || "Gagal memuat pilihan laporan.");
@@ -1057,221 +1204,28 @@ const Dashboard = {
 
       console.log("[Dashboard] Pilihan laporan berhasil dimuat.", data);
     } catch (error) {
+      if (!form.isConnected) return;
       console.error("[Dashboard] Gagal memuat pilihan laporan:", error);
 
       this.reportFormOptions = null;
 
-      alert(error.message || "Gagal memuat pilihan laporan.");
+      Toast.error(error.message || "Gagal memuat pilihan laporan.");
     } finally {
-      this.updateReportSubmitState();
+      if (form.isConnected) this.updateReportDraftState();
     }
   },
 
-  updateReportSourceInfo(selectedId) {
-    const state = this.reportFormOptions;
-    if (!state) return;
-
-    const selected = state.options.find(
-      (item) => String(item[state.setting.valueField]) === String(selectedId),
-    );
-
-    const kelas = document.getElementById("kelasLaporan");
-    const mapel = document.getElementById("mapelLaporan");
-    const jumlah = document.getElementById("jumlahPesertaLaporan");
-    const info = document.getElementById("infoSumberLaporan");
-    const button = document.getElementById("btnKirimLaporan");
-
-    kelas.value = "";
-    mapel.value = "";
-    jumlah.value = "0";
-
-    ["sakitLaporan", "izinLaporan", "alpaLaporan"].forEach((id) => {
-      document.getElementById(id).value = "0";
-    });
-
-    document.getElementById("jumlahTidakHadirLaporan").textContent = "0";
-
-    if (!selected) {
-      info.textContent = state.setting.info;
-      button.disabled = true;
-      this.updateAttendanceSummary();
-      return;
-    }
-
-    // Isi identitas sumber terlebih dahulu.
-    if (state.jenisGuru === "GURU_KELAS") {
-      kelas.value = selected.ID_KELAS || "";
-    }
-
-    if (state.jenisGuru === "GURU_MAPEL") {
-      kelas.value = selected.ID_KELAS || "";
-      mapel.value = selected.ID_MAPEL || "";
-
-      info.textContent =
-        [
-          selected.HARI || "",
-          selected.JAM_MULAI && selected.JAM_SELESAI
-            ? selected.JAM_MULAI + " - " + selected.JAM_SELESAI
-            : "",
-        ]
-          .filter(Boolean)
-          .join(" • ") || state.setting.info;
-    }
-
-    if (state.jenisGuru === "GURU_NGAJI") {
-      kelas.value = selected.ID_KELOMPOK_NGAJI || selected.ID_KELOMPOK || "";
-    }
-
-    // Validasi jumlah peserta dari backend.
-    const peserta = Number(selected.JUMLAH_PESERTA);
-
-    if (
-      selected.JUMLAH_PESERTA === undefined ||
-      selected.JUMLAH_PESERTA === null ||
-      selected.JUMLAH_PESERTA === "" ||
-      !Number.isSafeInteger(peserta) ||
-      peserta < 0
-    ) {
-      jumlah.value = "0";
-
-      info.textContent =
-        "Data jadwal berhasil dimuat, tetapi jumlah peserta belum dikirim server.";
-
-      button.disabled = true;
-      this.updateAttendanceSummary();
-      return;
-    }
-
-    jumlah.value = String(peserta);
-
-    if (state.jenisGuru === "GURU_NGAJI") {
-      info.textContent =
-        "Kelompok ngaji dipilih. Jumlah peserta aktif: " + peserta;
-    }
-
-    this.updateAttendanceSummary();
-  },
-
-  /* =====================================
-   REPORT FORM EVENTS
-===================================== */
-
-  bindReportForm() {
-    const form = document.getElementById("formLaporanHarian");
-    const dateInput = document.getElementById("tanggalLaporan");
-    const dayInput = document.getElementById("hariLaporan");
-
-    const updateDay = () => {
-      if (!dateInput.value) {
-        dayInput.value = "";
-        return;
-      }
-
-      const date = new Date(dateInput.value + "T12:00:00");
-
-      dayInput.value = new Intl.DateTimeFormat("id-ID", {
-        weekday: "long",
-      }).format(date);
-    };
-
-    dateInput.addEventListener("change", updateDay);
-    updateDay();
-
-    ["sakitLaporan", "izinLaporan", "alpaLaporan"].forEach((id) => {
-      document.getElementById(id).addEventListener("input", () => {
-        this.updateAttendanceSummary();
-      });
-    });
-
-    document
-      .getElementById("btnBatalLaporan")
-      .addEventListener("click", () => Modal.close());
-
-    document
-      .getElementById("btnKirimLaporan")
-      .addEventListener("click", () => this.submitLaporan());
-
-    form.addEventListener("submit", (event) => {
-      event.preventDefault();
-    });
-  },
-
-  updateAttendanceSummary() {
-    const getCount = (id) => Number(document.getElementById(id).value || 0);
-
-    const sakit = getCount("sakitLaporan");
-    const izin = getCount("izinLaporan");
-    const alpa = getCount("alpaLaporan");
-    const jumlahPeserta = getCount("jumlahPesertaLaporan");
-
-    const totalTidakHadir = sakit + izin + alpa;
-    const hadir = jumlahPeserta - totalTidakHadir;
-
-    document.getElementById("jumlahTidakHadirLaporan").textContent =
-      totalTidakHadir.toLocaleString("id-ID");
-
-    const info = document.getElementById("infoKehadiranLaporan");
-    const button = document.getElementById("btnKirimLaporan");
-
-    const valid =
-      [sakit, izin, alpa].every(
-        (value) => Number.isSafeInteger(value) && value >= 0,
-      ) &&
-      totalTidakHadir <= jumlahPeserta &&
-      !!document.getElementById("sumberLaporan").value;
-
-    info.textContent =
-      `Jumlah tidak hadir ${totalTidakHadir} dari ${jumlahPeserta} peserta. ` +
-      `Hadir otomatis: ${Math.max(0, hadir)}.`;
-
-    info.style.color = valid
-      ? "var(--success, #16834a)"
-      : "var(--danger, #dc3545)";
-
-    if (!this.reportSubmitting) {
-      button.disabled = !valid;
-    }
-  },
-
-  async submitLaporan() {
-    if (this.reportSubmitting) return;
-
-    const form = document.getElementById("formLaporanHarian");
-
-    if (!form || !form.reportValidity()) return;
-
-    const kategori = this.selectedReportCategory;
-
-    if (!["GURU_KELAS", "GURU_MAPEL", "GURU_NGAJI"].includes(kategori)) {
-      alert("Silakan pilih kategori laporan.");
-      return;
-    }
-
-    // =====================================
-    // IDENTITAS GURU
-    // =====================================
-
-    const guru = Auth.getGuru();
-
-    if (!guru || !guru.NBM) {
-      alert("Identitas guru tidak ditemukan. Silakan login kembali.");
-      return;
+  buildDraftRequest(nbm, draft) {
+    const kategori = draft.fields.kategoriLaporan?.value;
+    if (!["GURU_KELAS", "GURU_MAPEL", "GURU_NGAJI", "KEPALA_SEKOLAH"].includes(kategori)) {
+      throw new Error("Silakan pilih kategori laporan.");
     }
 
     const payload = {
-      NBM: String(guru.NBM).trim(),
+      NBM: nbm,
     };
 
-    const getValue = (id) => {
-      const element = document.getElementById(id);
-      return element ? element.value.trim() : "";
-    };
-
-    const getNumber = (id) => {
-      const value = Number(getValue(id));
-
-      return Number.isSafeInteger(value) && value >= 0 ? value : NaN;
-    };
+    const getValue = (id) => String(draft.fields[id]?.value ?? "").trim();
 
     // =====================================
     // TANGGAL DAN ABSENSI
@@ -1279,22 +1233,19 @@ const Dashboard = {
 
     payload.TANGGAL_LAPORAN = getValue("tanggalLaporan");
 
-    const attendance = {
-      SAKIT: getNumber("sakitLaporan"),
-      IZIN: getNumber("izinLaporan"),
-      ALPA: getNumber("alpaLaporan"),
-    };
+    if (!payload.TANGGAL_LAPORAN) throw new Error("Tanggal laporan wajib diisi.");
 
-    if (
-      Object.values(attendance).some((value) => !Number.isSafeInteger(value))
-    ) {
-      alert(
-        "Jumlah Sakit, Izin, dan Alpa harus berupa angka bulat tidak negatif.",
-      );
-      return;
+    if (kategori === "KEPALA_SEKOLAH") {
+      payload.KEGIATAN = getValue("kegiatanKepalaSekolah");
+      payload.CATATAN = getValue("catatanKepalaSekolah");
+      if (!payload.KEGIATAN) throw new Error("Isi kegiatan Kepala Sekolah.");
+      const photo = draft.uploads?.DOKUMENTASI;
+      if (photo && !photo.startsWith("data:image/jpeg;")) throw new Error("Lampiran harus berupa foto.");
+      payload.UPLOADS = photo ? { DOKUMENTASI: photo } : {};
+      return { endpoint: "laporan.createKepalaSekolah", payload };
     }
 
-    Object.assign(payload, attendance);
+    Object.assign(payload, { SAKIT: 0, IZIN: 0, ALPA: 0 });
 
     let endpoint = "";
 
@@ -1310,24 +1261,36 @@ const Dashboard = {
       payload.HADITS_DOA = getValue("haditsDoaKelas");
       payload.PENDIDIKAN_ADAB = getValue("pendidikanAdabKelas");
       payload.RINGKASAN_PEMBELAJARAN = getValue("ringkasanPembelajaranKelas");
-      payload.KENDALA = getValue("kendalaKelas");
-      payload.SOLUSI = getValue("solusiKelas");
-      payload.UPLOADS = this.reportUploads || {};
+      payload.KENDALA = getValue("catatanKelas");
+      payload.UPLOADS = draft.uploads || {};
 
       if (!payload.ID_KELAS) {
-        alert("Silakan pilih kelas.");
-        return;
+        throw new Error("Silakan pilih kelas.");
       }
+      const attendance = draft.attendance;
+      if (!attendance || attendance.classId !== payload.ID_KELAS ||
+          attendance.date !== payload.TANGGAL_LAPORAN || !attendance.totals) {
+        throw new Error("Lengkapi absensi siswa di Edit Draft.");
+      }
+      payload.ABSENSI_SISWA = {
+        year: attendance.year,
+        classId: attendance.classId,
+        date: attendance.date,
+        recorded: attendance.recorded,
+        onlyAbsent: true,
+        studentCount: attendance.entries.length,
+        entries: attendance.entries.filter(entry => entry.status !== "HADIR"),
+      };
+      const { SAKIT, IZIN, ALPA } = attendance.totals;
+      Object.assign(payload, { SAKIT, IZIN, ALPA });
 
       if (
         !payload.HADITS_DOA &&
         !payload.PENDIDIKAN_ADAB &&
         !payload.RINGKASAN_PEMBELAJARAN &&
-        !payload.KENDALA &&
-        !payload.SOLUSI
+        !payload.KENDALA
       ) {
-        alert("Isi minimal satu informasi pembelajaran.");
-        return;
+        throw new Error("Isi minimal satu informasi pembelajaran.");
       }
     }
 
@@ -1342,18 +1305,15 @@ const Dashboard = {
       payload.ID_MAPEL = getValue("idMapelLaporan");
 
       payload.RINGKASAN_PEMBELAJARAN = getValue("ringkasanPembelajaranMapel");
-      payload.KENDALA = getValue("kendalaMapel");
-      payload.SOLUSI = getValue("solusiMapel");
-      payload.UPLOADS = this.reportUploads || {};
+      payload.KENDALA = getValue("catatanMapel");
+      payload.UPLOADS = draft.uploads || {};
 
       if (!payload.ID_KELAS || !payload.ID_MAPEL) {
-        alert("Silakan pilih kelas dan mata pelajaran.");
-        return;
+        throw new Error("Silakan pilih kelas dan mata pelajaran.");
       }
 
       if (!payload.RINGKASAN_PEMBELAJARAN) {
-        alert("Ringkasan pembelajaran wajib diisi.");
-        return;
+        throw new Error("Ringkasan pembelajaran wajib diisi.");
       }
     }
 
@@ -1367,7 +1327,7 @@ const Dashboard = {
       payload.ID_SESI = getValue("idSesiNgajiLaporan");
 
       // Ambil nama kelompok dari daftar kelompok terpilih.
-      const selectedGroups = this.selectedReportGroups || [];
+      const selectedGroups = draft.groups || [];
 
       const groupNames = selectedGroups
         .map((item) => {
@@ -1382,69 +1342,21 @@ const Dashboard = {
       payload.HALAMAN_SURAT_AYAT = getValue("halamanSuratAyat");
       payload.HAFALAN_QURAN = getValue("hafalanQuran");
       payload.CATATAN_PEMBELAJARAN = getValue("catatanPembelajaranNgaji");
-      payload.KENDALA = getValue("kendalaNgaji");
-      payload.SOLUSI = getValue("solusiNgaji");
+      payload.KENDALA = getValue("catatanNgaji");
 
       if (!payload.ID_SESI) {
-        alert("Silakan pilih sesi ngaji.");
-        return;
+        throw new Error("Silakan pilih sesi ngaji.");
       }
 
       if (!payload.KELOMPOK_NGAJI) {
-        alert("Silakan pilih minimal satu kelompok ngaji.");
-        return;
+        throw new Error("Silakan pilih minimal satu kelompok ngaji.");
       }
 
       if (!payload.HALAMAN_SURAT_AYAT) {
-        alert("Halaman / Surat / Ayat wajib diisi.");
-        return;
+        throw new Error("Halaman / Surat / Ayat wajib diisi.");
       }
     }
 
-    // =====================================
-    // KIRIM LAPORAN
-    // =====================================
-
-    const button = document.getElementById("btnKirimLaporan");
-
-    if (!button) return;
-
-    const originalContent = button.innerHTML;
-
-    this.reportSubmitting = true;
-    button.disabled = true;
-    button.textContent = "Mengirim...";
-
-    try {
-      const response = await API.post(endpoint, payload);
-
-      if (!response || response.success !== true) {
-        throw new Error(response?.message || "Gagal mengirim laporan.");
-      }
-
-      alert(response.message || "Laporan berhasil dikirim.");
-
-      Modal.close();
-
-      this.initialized = false;
-      await this.init();
-    } catch (error) {
-      console.error("[Dashboard] Gagal mengirim laporan:", error);
-
-      alert(error.message || "Terjadi kesalahan saat mengirim laporan.");
-    } finally {
-      this.reportSubmitting = false;
-
-      const currentButton = document.getElementById("btnKirimLaporan");
-
-      if (currentButton) {
-        currentButton.innerHTML = originalContent;
-        this.updateReportSubmitState();
-
-        if (window.lucide) {
-          lucide.createIcons();
-        }
-      }
-    }
+    return { endpoint, payload };
   },
 };

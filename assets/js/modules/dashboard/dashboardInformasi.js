@@ -19,6 +19,12 @@ const DashboardInformasi = {
 
   SOURCES: [
     {
+      key: "KEPALA_SEKOLAH",
+      label: "Kepala Sekolah",
+      icon: "crown",
+      theme: "kurikulum",
+    },
+    {
       key: "KURIKULUM",
       label: "Kurikulum",
       icon: "book-open",
@@ -58,7 +64,7 @@ const DashboardInformasi = {
     this.renderLoading(container);
 
     try {
-      const response = await API.post("informasiSekolah.list", {});
+      const response = await API.post("informasiSekolah.publicList", {});
 
       if (
         !response ||
@@ -190,6 +196,9 @@ const DashboardInformasi = {
   ===================================== */
 
   getSourceConfig(source) {
+    if (source === "KEPALA_SEKOLAH") {
+      return { label: "Kepala Sekolah", icon: "crown", className: "kurikulum" };
+    }
     if (source === "KURIKULUM") {
       return {
         label: "Kurikulum",

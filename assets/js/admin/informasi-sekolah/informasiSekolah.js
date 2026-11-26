@@ -16,7 +16,7 @@ const InformasiSekolah = {
 ===================================== */
 
   roleSources: {
-    ADMIN: ["KURIKULUM", "GURU_NGAJI"],
+    ADMIN: ["KURIKULUM", "GURU_NGAJI", "KEPALA_SEKOLAH"],
     ADMIN_KURIKULUM: ["KURIKULUM"],
     ADMIN_GURU_NGAJI: ["GURU_NGAJI"],
   },
@@ -69,7 +69,7 @@ const InformasiSekolah = {
             </div>
             <h2>Informasi Sekolah</h2>
             <p>
-              Kelola informasi Kurikulum dan Guru Ngaji
+              Kelola pengumuman sekolah
               yang ditampilkan kepada guru.
             </p>
           </div>
@@ -105,6 +105,7 @@ const InformasiSekolah = {
                 <option value="GURU_NGAJI">
                   Guru Ngaji
                 </option>
+                <option value="KEPALA_SEKOLAH">Kepala Sekolah</option>
               </select>
             </div>
 
@@ -422,11 +423,14 @@ const InformasiSekolah = {
       InformasiSekolahAdminService.hasChanges(currentData, this.originalData);
 
     if (hasChanges) {
-      const confirmed = window.confirm(
-        "Ada perubahan yang belum disimpan.\n\n" +
+      const confirmed = await Confirm.ask({
+        title: "Ganti pemberi informasi?",
+        message: "Ada perubahan yang belum disimpan.\n\n" +
           "Yakin ingin mengganti pemberi informasi?",
-      );
+        confirmText: "Ganti Sumber",
+      });
 
+      if (!select?.isConnected) return;
       if (!confirmed) {
         if (select) select.value = this.source;
         return;
@@ -495,16 +499,13 @@ const InformasiSekolah = {
       this.originalData = { ...saved };
       this.setFormData(saved);
 
-      this.showMessage("Informasi sekolah berhasil disimpan.", "success");
+      Toast.success("Informasi sekolah berhasil disimpan.");
     } catch (error) {
       if (currentRoot !== this.root || !currentRoot.isConnected) {
         return;
       }
 
-      this.showMessage(
-        error?.message || "Gagal menyimpan informasi sekolah.",
-        "error",
-      );
+      Toast.error(error?.message || "Gagal menyimpan informasi sekolah.");
     } finally {
       if (currentRoot === this.root && currentRoot.isConnected) {
         this.saving = false;
@@ -577,7 +578,7 @@ const InformasiSekolah = {
     }
 
     const sourceLabel =
-      this.source === "KURIKULUM" ? "Kurikulum" : "Guru Ngaji";
+      this.getElement("informasiSekolahSource")?.selectedOptions[0]?.textContent.trim() || this.source;
 
     preview.innerHTML = `
       <div class="informasi-sekolah-preview-source">

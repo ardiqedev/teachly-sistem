@@ -53,4 +53,8 @@ const GuruRepository = {
       status: String(status).trim().toUpperCase(),
     });
   },
+
+  async resetPassword(nbm) {
+    return API.post("admin.guru.resetPassword", { nbm: String(nbm).trim() });
+  },
 };

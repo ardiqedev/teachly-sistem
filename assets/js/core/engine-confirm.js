@@ -1,141 +1,57 @@
-/* =========================================
-   CONFIRM ENGINE
-========================================= */
+﻿const Confirm = {
+  dialog: null,
 
-const Confirm = {
-  container: null,
+  ask({ title = "Konfirmasi", message = "", confirmText = "Lanjutkan", type = "warning" } = {}) {
+    if (this.dialog) return Promise.resolve(false);
 
-  /* =====================================
-     INIT
-  ===================================== */
-
-  init() {
-    if (document.getElementById("confirmContainer")) return;
-
-    const container = document.createElement("div");
-
-    container.id = "confirmContainer";
-
-    document.body.appendChild(container);
-
-    this.container = container;
-  },
-
-  /* =====================================
-     OPEN
-  ===================================== */
-
-  open(options = {}) {
-    this.init();
-
-    const {
-      title = "Konfirmasi",
-      message = "",
-      type = "warning",
-      confirmText = "Ya",
-      cancelText = "Batal",
-      onConfirm = () => {},
-      onCancel = () => {},
-      closeOnOutside = true,
-    } = options;
-
-    const icons = {
-      danger: "trash-2",
-      warning: "triangle-alert",
-      success: "circle-check-big",
-      info: "info",
-    };
-
-    this.container.innerHTML = `
-
-      <div class="confirm-overlay">
-
-        <div class="confirm confirm-${type}">
-
-            <div class="confirm-icon">
-
-                <i data-lucide="${icons[type]}"></i>
-
-            </div>
-
-            <div class="confirm-title">
-
-                ${title}
-
-            </div>
-
-            <div class="confirm-message">
-
-                ${message}
-
-            </div>
-
-            <div class="confirm-footer">
-
-                <button
-                    class="btn btn-outline confirm-cancel">
-
-                    ${cancelText}
-
-                </button>
-
-                <button
-                    class="btn btn-primary confirm-ok">
-
-                    ${confirmText}
-
-                </button>
-
-            </div>
-
+    const dialog = document.createElement("dialog");
+    const isDanger = type === "danger";
+    dialog.className = `confirm confirm-${isDanger ? "danger" : "warning"}`;
+    dialog.setAttribute("aria-labelledby", "confirmTitle");
+    dialog.setAttribute("aria-describedby", "confirmMessage");
+    dialog.innerHTML = `
+      <form method="dialog">
+        <div class="confirm-icon" aria-hidden="true">
+          <i data-lucide="${isDanger ? "trash-2" : "triangle-alert"}"></i>
         </div>
-
-      </div>
-
+        <h2 class="confirm-title" id="confirmTitle"></h2>
+        <p class="confirm-message" id="confirmMessage"></p>
+        <div class="confirm-footer">
+          <button type="submit" class="btn btn-outline" value="cancel" autofocus>Batal</button>
+          <button type="submit" class="btn btn-primary confirm-ok" value="confirm"></button>
+        </div>
+      </form>
     `;
+    dialog.querySelector("#confirmTitle").textContent = title;
+    dialog.querySelector("#confirmMessage").textContent = message;
+    dialog.querySelector(".confirm-ok").textContent = confirmText;
 
-    lucide.createIcons();
-
-    const overlay = this.container.querySelector(".confirm-overlay");
-
-    overlay.querySelector(".confirm-ok").onclick = () => {
-      onConfirm();
-
-      this.close();
-    };
-
-    overlay.querySelector(".confirm-cancel").onclick = () => {
-      onCancel();
-
-      this.close();
-    };
-
-    if (closeOnOutside) {
-      overlay.onclick = (e) => {
-        if (e.target === overlay) {
-          onCancel();
-
-          this.close();
-        }
-      };
-    }
-
-    document.onkeydown = (e) => {
-      if (e.key === "Escape") {
-        onCancel();
-
-        this.close();
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") event.stopPropagation();
+    });
+    dialog.addEventListener("click", (event) => {
+      if (event.target !== dialog) return;
+      const bounds = dialog.getBoundingClientRect();
+      if (event.clientX < bounds.left || event.clientX > bounds.right ||
+          event.clientY < bounds.top || event.clientY > bounds.bottom) {
+        dialog.close("cancel");
       }
-    };
-  },
+    });
 
-  /* =====================================
-     CLOSE
-  ===================================== */
+    const activeElement = document.activeElement;
+    const result = new Promise((resolve) => {
+      dialog.addEventListener("close", () => {
+        dialog.remove();
+        this.dialog = null;
+        if (activeElement?.isConnected) activeElement.focus();
+        resolve(dialog.returnValue === "confirm");
+      }, { once: true });
+    });
 
-  close() {
-    this.container.innerHTML = "";
-
-    document.onkeydown = null;
+    document.body.append(dialog);
+    this.dialog = dialog;
+    dialog.showModal();
+    window.lucide?.createIcons();
+    return result;
   },
 };

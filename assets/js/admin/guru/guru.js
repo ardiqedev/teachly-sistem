@@ -231,13 +231,6 @@ const Guru = {
           </div>
         </div>
 
-        <!-- TOAST -->
-        <div
-          class="admin-guru-toast"
-          id="guruToast"
-          role="status"
-          aria-live="polite"
-        ></div>
 
       </section>
     `;
@@ -279,6 +272,10 @@ const Guru = {
 
       if (action === "edit") {
         this.edit(button.dataset.nbm);
+      }
+
+      if (action === "reset-password") {
+        void this.resetPassword(button);
       }
 
       if (action === "toggle-status") {
@@ -398,7 +395,7 @@ const Guru = {
     const data = this.data || [];
 
     if (!data.length) {
-      alert("Tidak ada data guru untuk diekspor.");
+      Toast.warning("Tidak ada data guru untuk diekspor.");
       return;
     }
 
@@ -424,7 +421,7 @@ const Guru = {
     const printWindow = window.open("", "_blank");
 
     if (!printWindow) {
-      alert("Popup diblokir browser. Izinkan popup untuk mencetak PDF.");
+      Toast.warning("Popup diblokir browser. Izinkan popup untuk mencetak PDF.");
       return;
     }
 
@@ -634,6 +631,19 @@ const Guru = {
                 <i data-lucide="pencil"></i>
               </button>
 
+              ${AdminAuth.getRole() === "ADMIN" ? `
+                <button
+                  type="button"
+                  class="admin-guru-action-btn edit"
+                  data-guru-action="reset-password"
+                  data-nbm="${nbm}"
+                  title="Set/Reset Password"
+                  aria-label="Set atau reset password ${nama}"
+                >
+                  <i data-lucide="key-round"></i>
+                </button>
+              ` : ""}
+
               <button
                 type="button"
                 class="admin-guru-action-btn ${aktif ? "deactivate" : "activate"}"
@@ -784,6 +794,79 @@ const Guru = {
      UPDATE STATUS
   ===================================== */
 
+  async resetPassword(button) {
+    if (this.passwordResetting || AdminAuth.getRole() !== "ADMIN") return;
+    const nbm = button.dataset.nbm;
+    const guru = this.data.find((item) => String(item.NBM).trim() === nbm);
+    if (!guru) return;
+
+    const confirmed = await Confirm.ask({
+      title: "Buat password sementara?",
+      message: `Buat password baru untuk ${guru.NAMA_GURU || nbm}. Password yang tersimpan sebelumnya akan diganti.`,
+      confirmText: "Buat Password",
+    });
+    if (!confirmed || !button.isConnected || this.passwordResetting) return;
+
+    this.passwordResetting = true;
+    button.disabled = true;
+    try {
+      const response = await GuruRepository.resetPassword(nbm);
+      const password = response?.data?.temporaryPassword;
+      if (response?.success !== true || !password) {
+        throw new Error(response?.message || "Gagal membuat password sementara.");
+      }
+      if (button.isConnected && AdminAuth.getRole() === "ADMIN") {
+        this.showTemporaryPassword(nbm, password);
+      }
+    } catch (error) {
+      Toast.error(error.message || "Gagal membuat password sementara.");
+    } finally {
+      this.passwordResetting = false;
+      button.disabled = false;
+    }
+  },
+
+  showTemporaryPassword(nbm, password) {
+    const dialog = document.createElement("dialog");
+    dialog.className = "confirm admin-guru-password-dialog";
+    dialog.setAttribute("aria-labelledby", "guruTemporaryPasswordTitle");
+    dialog.innerHTML = `
+      <form method="dialog">
+        <h2 id="guruTemporaryPasswordTitle" class="confirm-title">Password sementara</h2>
+        <p class="confirm-message">Berikan password ini kepada guru secara pribadi. Setelah ditutup, password tidak dapat ditampilkan lagi.</p>
+        <p data-guru-password-nbm></p>
+        <label>
+          Password sementara
+          <input data-guru-password-value type="text" readonly autocomplete="off" spellcheck="false" autofocus>
+        </label>
+        <p role="status"></p>
+        <div class="confirm-footer">
+          <button type="button" class="btn btn-outline" data-copy-password>Salin Password</button>
+          <button type="submit" class="btn btn-primary">Tutup</button>
+        </div>
+      </form>
+    `;
+    dialog.querySelector("[data-guru-password-nbm]").textContent = `NBM: ${nbm}`;
+    const input = dialog.querySelector("[data-guru-password-value]");
+    input.value = password;
+    dialog.querySelector("[data-copy-password]").onclick = async () => {
+      const status = dialog.querySelector("[role='status']");
+      try {
+        await navigator.clipboard.writeText(input.value);
+        status.textContent = "Password disalin.";
+      } catch {
+        input.select();
+        status.textContent = "Password telah dipilih. Salin secara manual.";
+      }
+    };
+    dialog.addEventListener("close", () => {
+      input.value = "";
+      dialog.remove();
+    }, { once: true });
+    document.body.append(dialog);
+    dialog.showModal();
+  },
+
   async toggleStatus(nbm, status) {
     const guru = this.data.find((item) => String(item.NBM) === String(nbm));
 
@@ -793,9 +876,11 @@ const Guru = {
 
     const action = status === "AKTIF" ? "mengaktifkan" : "menonaktifkan";
 
-    const confirmed = window.confirm(
-      `Apakah kamu yakin ingin ${action} akun guru ${nama}?`,
-    );
+    const confirmed = await Confirm.ask({
+      title: "Ubah status akun guru?",
+      message: `Apakah kamu yakin ingin ${action} akun guru ${nama}?`,
+      confirmText: status === "AKTIF" ? "Aktifkan" : "Nonaktifkan",
+    });
 
     if (!confirmed) return;
 
@@ -818,18 +903,7 @@ const Guru = {
   ===================================== */
 
   showToast(message, type = "success") {
-    const toast = document.getElementById("guruToast");
-
-    if (!toast) return;
-
-    toast.textContent = message;
-    toast.className = `admin-guru-toast show ${type}`;
-
-    clearTimeout(this.toastTimer);
-
-    this.toastTimer = setTimeout(() => {
-      toast.classList.remove("show");
-    }, 3500);
+    Toast[type](message);
   },
 
   /* =====================================

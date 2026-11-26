@@ -16,12 +16,14 @@ const Riwayat = {
     GURU_KELAS: "laporan.getHistoryGuruKelas",
     GURU_MAPEL: "laporan.getHistoryGuruMapel",
     GURU_NGAJI: "laporan.getHistoryGuruNgaji",
+    KEPALA_SEKOLAH: "laporan.getHistoryKepalaSekolah",
   },
 
   detailEndpoints: {
     GURU_KELAS: "laporan.getDetailGuruKelas",
     GURU_MAPEL: "laporan.getDetailGuruMapel",
     GURU_NGAJI: "laporan.getDetailGuruNgaji",
+    KEPALA_SEKOLAH: "laporan.getDetailKepalaSekolah",
   },
 
   /* =====================================
@@ -49,6 +51,12 @@ const Riwayat = {
       }
 
       this.setText("[data-guru-nama]", namaGuru);
+      const tabs = document.querySelector(".riwayat-tabs");
+      const principal = guru.IS_KEPALA_SEKOLAH === true;
+      if (tabs) tabs.hidden = principal;
+      if (principal) this.kategoriAktif = "KEPALA_SEKOLAH";
+      else if (this.kategoriAktif === "KEPALA_SEKOLAH") this.kategoriAktif = "GURU_KELAS";
+      this.setText("#riwayatKategoriLabel", this.getCategoryLabel(this.kategoriAktif));
 
       await this.loadHistory();
 
@@ -109,23 +117,8 @@ const Riwayat = {
         return;
       }
 
-      const editButton = event.target.closest('[data-action="edit"]');
-
-      if (editButton) {
-        this.showEditComingSoon();
-        return;
-      }
     });
 
-    const logoutButton = root.querySelector('[data-action="logout"]');
-
-    if (logoutButton) {
-      logoutButton.addEventListener("click", () => {
-        if (typeof Auth !== "undefined" && Auth.logout) {
-          Auth.logout();
-        }
-      });
-    }
   },
 
   /* =====================================
@@ -163,7 +156,7 @@ const Riwayat = {
     const akhir = document.getElementById("riwayatTanggalAkhir")?.value || "";
 
     if (mulai && akhir && mulai > akhir) {
-      alert("Tanggal mulai tidak boleh melebihi tanggal akhir.");
+      Toast.warning("Tanggal mulai tidak boleh melebihi tanggal akhir.");
       return;
     }
 
@@ -231,7 +224,7 @@ const Riwayat = {
       this.renderDetail(data);
     } catch (error) {
       console.error("[Riwayat] Detail error:", error);
-      alert(error.message);
+      Toast.error(error.message);
     }
   },
 
@@ -287,6 +280,9 @@ const Riwayat = {
     `;
       }
 
+      const isPdf = parsedUrl.hash === "#teachly-pdf";
+      if (isPdf) parsedUrl.hash = "";
+
       // Deteksi ID file Google Drive
       let fileId = null;
 
@@ -305,7 +301,7 @@ const Riwayat = {
     <div class="riwayat-detail-photo">
       <span>${label}</span>
 
-      <div class="riwayat-photo-preview">
+      ${isPdf ? "" : `<div class="riwayat-photo-preview">
         <img
           src="${escapeHtml(previewUrl)}"
           alt="${escapeHtml(label)}"
@@ -317,21 +313,32 @@ const Riwayat = {
           <i data-lucide="image-off"></i>
           <span>Preview tidak tersedia</span>
         </div>
-      </div>
+      </div>`}
 
       <a
-        href="${escapeHtml(originalUrl)}"
+        href="${escapeHtml(parsedUrl.href)}"
         target="_blank"
         rel="noopener noreferrer"
       >
-        Buka foto
+        ${isPdf ? "Buka PDF" : "Buka foto"}
         <i data-lucide="external-link"></i>
       </a>
     </div>
   `;
     };
 
-    const content = `
+    const principal = this.kategoriAktif === "KEPALA_SEKOLAH";
+    const content = principal ? `
+      <div class="riwayat-detail">
+        <div class="riwayat-detail-section">
+          ${field("Tanggal laporan", this.formatDate(data.TANGGAL_LAPORAN))}
+          ${field("Kegiatan", data.KEGIATAN)}
+          ${field("Catatan", data.CATATAN)}
+        </div>
+        <div class="riwayat-detail-section">
+          ${photo("Foto dokumentasi", data.DOKUMENTASI)}
+        </div>
+      </div>` : `
     <div class="riwayat-detail">
 
       <div class="riwayat-detail-section">
@@ -368,8 +375,7 @@ const Riwayat = {
         ${field("Ringkasan Pembelajaran", data.RINGKASAN_PEMBELAJARAN)}
         ${field("Hadits & Doa", data.HADITS_DOA)}
         ${field("Pendidikan Adab", data.PENDIDIKAN_ADAB)}
-        ${field("Kendala", data.KENDALA)}
-        ${field("Solusi", data.SOLUSI)}
+        ${field("Catatan", [data.KENDALA, data.SOLUSI].filter(Boolean).join("\n\n"))}
       </div>
 
       <div class="riwayat-detail-section">
@@ -384,7 +390,7 @@ const Riwayat = {
   `;
 
     Modal.open({
-      title: "Detail Laporan Guru Kelas",
+      title: `Detail Laporan ${this.getCategoryLabel(this.kategoriAktif)}`,
       body: content,
       footer: `
       <button type="button"
@@ -615,14 +621,6 @@ const Riwayat = {
             Detail
           </button>
 
-          <button
-            type="button"
-            class="btn-riwayat-edit"
-            data-action="edit"
-            data-id="${id}"
-          >
-            Edit
-          </button>
         </div>
       </article>
     `;
@@ -633,6 +631,7 @@ const Riwayat = {
   ===================================== */
 
   getReportTitle(item) {
+    if (this.kategoriAktif === "KEPALA_SEKOLAH") return "Kegiatan Kepala Sekolah";
     if (this.kategoriAktif === "GURU_KELAS") {
       return item.NAMA_KELAS || item.ID_KELAS || "Laporan Guru Kelas";
     }
@@ -646,6 +645,7 @@ const Riwayat = {
 
   getReportSummary(item) {
     return (
+      item.KEGIATAN ||
       item.RINGKASAN_PEMBELAJARAN ||
       item.CATATAN_PEMBELAJARAN ||
       item.HADITS_DOA ||
@@ -660,6 +660,7 @@ const Riwayat = {
       GURU_KELAS: "Guru Kelas",
       GURU_MAPEL: "Guru Mapel",
       GURU_NGAJI: "Guru Ngaji",
+      KEPALA_SEKOLAH: "Kepala Sekolah",
     };
 
     return labels[kategori] || "Riwayat Laporan";
@@ -782,7 +783,4 @@ const Riwayat = {
     }
   },
 
-  showEditComingSoon() {
-    Toast.info("Fitur edit laporan belum dikembangkan.");
-  },
 };

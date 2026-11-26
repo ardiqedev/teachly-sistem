@@ -15,7 +15,7 @@ API.baseUrl = CONFIG.API.URL;
    REQUEST
 ===================================== */
 
-API.request = async function (endpoint, payload = {}) {
+API.request = async function (endpoint, payload = {}, { admin = false } = {}) {
   try {
     if (!this.baseUrl) {
       throw new Error("URL API belum dikonfigurasi.");
@@ -44,6 +44,7 @@ API.request = async function (endpoint, payload = {}) {
     const protectedAdminPrefixes = [
       "admin.guru.",
       "admin.laporan.",
+      "admin.absensi.",
       "adminDashboard.",
       "adminKelas.",
       "adminKelompok.",
@@ -53,6 +54,7 @@ API.request = async function (endpoint, payload = {}) {
     ];
 
     const requiresAdminToken =
+      admin ||
       protectedAdminEndpoints.includes(endpoint) ||
       protectedAdminPrefixes.some(function (prefix) {
         return endpoint.startsWith(prefix);
@@ -71,6 +73,16 @@ API.request = async function (endpoint, payload = {}) {
       requestBody.sessionToken = token;
     }
 
+    const requiresTeacherToken = endpoint === "dashboard.summary" || endpoint === "laporan.formOptions" ||
+      endpoint === "laporan.absensiSiswa" ||
+      /^laporan\.(create|getHistory|getDetail)KepalaSekolah$/.test(endpoint) ||
+      /^laporan\.(create|getHistory|getDetail)Guru(Kelas|Mapel|Ngaji)$/.test(endpoint);
+    if (requiresTeacherToken) {
+      const token = typeof Auth !== "undefined" ? Auth.getToken() : null;
+      if (!token) throw new Error("Sesi guru tidak tersedia. Silakan masuk kembali.");
+      requestBody.sessionToken = token;
+    }
+
     const controller = new AbortController();
 
     const timeout = setTimeout(function () {
@@ -78,6 +90,7 @@ API.request = async function (endpoint, payload = {}) {
     }, CONFIG.API.TIMEOUT || 30000);
 
     let response;
+    let text;
 
     try {
       response = await fetch(this.baseUrl, {
@@ -88,6 +101,7 @@ API.request = async function (endpoint, payload = {}) {
         body: JSON.stringify(requestBody),
         signal: controller.signal,
       });
+      text = await response.text();
     } finally {
       clearTimeout(timeout);
     }
@@ -95,8 +109,6 @@ API.request = async function (endpoint, payload = {}) {
     /* =================================
        READ RESPONSE
     ================================= */
-
-    const text = await response.text();
 
     let result;
 
@@ -133,7 +145,9 @@ API.request = async function (endpoint, payload = {}) {
     return result;
   } catch (error) {
     if (error.name === "AbortError") {
-      throw new Error("Request timeout. Silakan coba kembali.");
+      const timeoutError = new Error("Waktu tunggu server habis.");
+      timeoutError.code = "API_TIMEOUT";
+      throw timeoutError;
     }
 
     console.error("[API] Request error:", error);
@@ -148,4 +162,8 @@ API.request = async function (endpoint, payload = {}) {
 
 API.post = function (endpoint, payload = {}) {
   return this.request(endpoint, payload);
+};
+
+API.postAdmin = function (endpoint, payload = {}) {
+  return this.request(endpoint, payload, { admin: true });
 };

@@ -12,6 +12,7 @@ const InformasiSekolahAdminService = {
     KURIKULUM: "KURIKULUM",
     GURU_MAPEL: "GURU_MAPEL",
     GURU_NGAJI: "GURU_NGAJI",
+    KEPALA_SEKOLAH: "KEPALA_SEKOLAH",
   },
 
   /* =====================================

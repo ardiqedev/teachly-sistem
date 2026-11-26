@@ -12,7 +12,6 @@ const Pengguna = {
   boundRoot: null,
   formMode: "create",
   editingId: null,
-  toastTimer: null,
 
   /* =====================================
      RENDER
@@ -367,13 +366,6 @@ const Pengguna = {
           </div>
         </div>
 
-        <!-- TOAST -->
-        <div
-          class="admin-guru-toast"
-          id="penggunaToast"
-          role="status"
-          aria-live="polite"
-        ></div>
 
       </section>
     `;
@@ -864,9 +856,11 @@ const Pengguna = {
 
     const action = status === "AKTIF" ? "mengaktifkan" : "menonaktifkan";
 
-    const confirmed = window.confirm(
-      `Apakah kamu yakin ingin ${action} akun ${item.NAMA_PENGGUNA}?`,
-    );
+    const confirmed = await Confirm.ask({
+      title: "Ubah status akun?",
+      message: `Apakah kamu yakin ingin ${action} akun ${item.NAMA_PENGGUNA}?`,
+      confirmText: status === "AKTIF" ? "Aktifkan" : "Nonaktifkan",
+    });
 
     if (!confirmed) {
       return;
@@ -1008,22 +1002,7 @@ const Pengguna = {
   ===================================== */
 
   showToast(message, type = "success") {
-    const toast = document.getElementById("penggunaToast");
-
-    if (!toast) {
-      return;
-    }
-
-    toast.textContent = message;
-    toast.className = `admin-guru-toast show ${type}`;
-
-    clearTimeout(this.toastTimer);
-
-    this.toastTimer = setTimeout(() => {
-      if (toast.isConnected) {
-        toast.classList.remove("show");
-      }
-    }, 3500);
+    Toast[type](message);
   },
 
   /* =====================================

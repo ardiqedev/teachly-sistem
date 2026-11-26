@@ -21,6 +21,7 @@ const AdminRouter = {
       "sesi-ngaji",
       "tahun-ajaran",
       "laporan",
+      "absensi-siswa",
       "pengguna",
       "informasi-sekolah",
     ],
@@ -31,6 +32,7 @@ const AdminRouter = {
       "mata-pelajaran",
       "tahun-ajaran",
       "laporan",
+      "absensi-siswa",
       "informasi-sekolah",
     ],
 
@@ -127,6 +129,10 @@ const AdminRouter = {
       title: "Laporan Guru",
       description: "Kelola dan pantau laporan harian guru.",
     },
+    "absensi-siswa": {
+      title: "Rekap Absensi Siswa",
+      description: "Pantau kehadiran siswa per kelas dan tanggal.",
+    },
     pengguna: {
       title: "Pengguna Admin",
       description: "Kelola akun dan hak akses administrator.",
@@ -185,9 +191,11 @@ const AdminRouter = {
 
         if (logoutButton.disabled) return;
 
-        const confirmed = window.confirm(
-          "Yakin ingin keluar dari administrator?",
-        );
+        const confirmed = await Confirm.ask({
+          title: "Keluar dari admin?",
+          message: "Yakin ingin keluar dari administrator?",
+          confirmText: "Keluar",
+        });
 
         if (!confirmed) return;
 
@@ -202,6 +210,7 @@ const AdminRouter = {
           window.location.reload();
         } catch (error) {
           console.error("[AdminRouter] Logout failed:", error);
+          Toast.error("Terjadi kesalahan saat logout admin.");
 
           logoutButton.disabled = false;
         }
@@ -301,6 +310,9 @@ const AdminRouter = {
     } else if (page === "pengguna" && typeof Pengguna !== "undefined") {
       content.innerHTML = Pengguna.render();
       Pengguna.init();
+    } else if (page === "absensi-siswa" && typeof AdminAbsensi !== "undefined") {
+      content.innerHTML = AdminAbsensi.render();
+      AdminAbsensi.init(content.querySelector("[data-admin-absensi]"));
     } else if (page === "laporan" && typeof AdminLaporan !== "undefined") {
       content.innerHTML = AdminLaporan.render();
       AdminLaporan.init(reportTab);

@@ -258,6 +258,24 @@
   gap: 17px;
 }
 
+.login-password-change {
+  min-width: 0;
+  margin: 0 0 12px;
+  padding: 12px;
+  border: 1px solid #dce3f1;
+  border-radius: 12px;
+}
+
+.login-password-change legend {
+  padding: 0 4px;
+  font-weight: 700;
+}
+
+.login-password-change p {
+  margin: 0 0 12px;
+  font-size: 0.8125rem;
+}
+
 .login-field {
   display: grid;
   gap: 7px;

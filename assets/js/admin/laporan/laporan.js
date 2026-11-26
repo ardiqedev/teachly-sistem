@@ -24,6 +24,7 @@ const AdminLaporan = {
   activeTab: "GURU_KELAS",
   keyword: "",
   selectedGuruNBM: "",
+  selectedMonth: "",
   page: 1,
   pageSize: 10,
   initialized: false,
@@ -35,7 +36,7 @@ const AdminLaporan = {
 ========================================= */
 
   roleCategories: {
-    ADMIN: ["GURU_KELAS", "GURU_MAPEL", "GURU_NGAJI"],
+    ADMIN: ["GURU_KELAS", "GURU_MAPEL", "GURU_NGAJI", "KEPALA_SEKOLAH"],
 
     ADMIN_KURIKULUM: ["GURU_KELAS", "GURU_MAPEL"],
 
@@ -84,7 +85,7 @@ const AdminLaporan = {
   },
 
   getFilteredData() {
-    let source = [...this.getActiveData()];
+    let source = this.filterByMonth(this.getActiveData());
 
     // Filter nama guru
     if (this.selectedGuruNBM) {
@@ -95,6 +96,45 @@ const AdminLaporan = {
 
     // Pencarian
     return LaporanService.search(source, this.keyword);
+  },
+
+  getReportMonth(value) {
+    if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return value.slice(0, 7);
+    }
+    const date = new Date(value || "");
+    if (!Number.isFinite(date.getTime())) return "";
+    const parts = new Intl.DateTimeFormat("en", {
+      timeZone: "Asia/Jakarta", year: "numeric", month: "2-digit",
+    }).formatToParts(date);
+    const part = (type) => parts.find(item => item.type === type).value;
+    return `${part("year")}-${part("month")}`;
+  },
+
+  formatReportMonth(month) {
+    if (!month) return "Semua bulan";
+    return new Intl.DateTimeFormat("id-ID", {
+      month: "long", year: "numeric", timeZone: "UTC",
+    }).format(new Date(`${month}-01T00:00:00Z`));
+  },
+
+  filterByMonth(rows) {
+    return this.selectedMonth
+      ? rows.filter(item => this.getReportMonth(item.TANGGAL_LAPORAN) === this.selectedMonth)
+      : rows;
+  },
+
+  updateMonthOptions() {
+    const select = document.getElementById("laporanFilterBulan");
+    if (!select) return;
+    const months = [...new Set(this.data.all.map(item =>
+      this.getReportMonth(item.TANGGAL_LAPORAN)
+    ).filter(Boolean))].sort().reverse();
+    select.replaceChildren(new Option("Semua bulan", ""), ...months.map(month =>
+      new Option(this.formatReportMonth(month), month)
+    ));
+    if (!months.includes(this.selectedMonth)) this.selectedMonth = "";
+    select.value = this.selectedMonth;
   },
 
   // =======================================================
@@ -229,6 +269,11 @@ const AdminLaporan = {
 
               <span id="laporanCountNgaji">0</span>
             </button>
+            <button type="button" class="admin-laporan-tab" data-laporan-tab="KEPALA_SEKOLAH" role="tab" aria-selected="false">
+              <i data-lucide="crown"></i>
+              Kepala Sekolah
+              <span id="laporanCountKepalaSekolah">0</span>
+            </button>
 
           </div>
 
@@ -252,23 +297,28 @@ const AdminLaporan = {
         <div class="admin-laporan-filter">
             <i data-lucide="user-round"></i>
 
-            <select id="laporanFilterGuru">
+            <select id="laporanFilterGuru" aria-label="Filter guru">
             <option value="">Semua Guru</option>
             </select>
         </div>
+        <div class="admin-laporan-filter">
+          <i data-lucide="calendar-days" aria-hidden="true"></i>
+          <select id="laporanFilterBulan" aria-label="Filter bulan">
+            <option value="">Semua bulan</option>
+          </select>
+        </div>
 
-        <!-- SEARCH DAN AKSI -->
-        <div class="admin-laporan-toolbar-actions">
-
-            <div class="admin-laporan-search">
+        <div class="admin-laporan-search">
             <input
                 type="search"
                 id="laporanSearch"
                 placeholder="Cari NBM, nama guru, kelas..."
+                aria-label="Cari laporan"
                 autocomplete="off"
             >
-            </div>
+        </div>
 
+        <div class="admin-laporan-toolbar-actions">
             <!-- PREVIEW PDF LAMA -->
             <button
             type="button"
@@ -468,12 +518,6 @@ const AdminLaporan = {
 
 
 
-        <!-- TOAST -->
-        <div
-          class="admin-laporan-toast"
-          id="adminLaporanToast"
-          role="status"
-        ></div>
 
       </section>
     `;
@@ -497,8 +541,10 @@ const AdminLaporan = {
     if (kategori === "GURU_NGAJI") {
       columns.push("Kelompok Ngaji", "Sesi");
     }
+    if (kategori === "KEPALA_SEKOLAH") columns.push("Kegiatan");
 
-    columns.push("Sakit", "Izin", "Alpa", "Aksi");
+    if (kategori === "GURU_KELAS") columns.push("Sakit", "Izin", "Alpa");
+    columns.push("Aksi");
 
     return `
       <tr>
@@ -656,8 +702,14 @@ const AdminLaporan = {
       }
     });
 
-    // FILTER NAMA GURU
+    // FILTER GURU DAN BULAN
     root.addEventListener("change", (event) => {
+      if (event.target.id === "laporanFilterBulan") {
+        this.selectedMonth = event.target.value;
+        this.page = 1;
+        this.updateStatistics();
+        this.renderTable();
+      }
       if (event.target.id === "laporanFilterGuru") {
         this.selectedGuruNBM = event.target.value;
         this.page = 1;
@@ -712,6 +764,7 @@ const AdminLaporan = {
 
       this.data.statistics = statistics;
 
+      this.updateMonthOptions();
       this.updateStatistics();
       this.updateGuruFilterOptions();
 
@@ -750,16 +803,26 @@ const AdminLaporan = {
   // =======================================================
 
   updateStatistics() {
-    const stats = this.data.statistics;
+    const counts = {
+      guruKelas: this.filterByMonth(this.data.guruKelas).length,
+      guruMapel: this.filterByMonth(this.data.guruMapel).length,
+      guruNgaji: this.filterByMonth(this.data.guruNgaji).length,
+    };
+    const principalCount = this.filterByMonth(this.data.all)
+      .filter(item => item.KATEGORI === "KEPALA_SEKOLAH").length;
+    const stats = this.selectedMonth
+      ? { ...counts, total: counts.guruKelas + counts.guruMapel + counts.guruNgaji + principalCount }
+      : this.data.statistics;
 
     this.setText("laporanStatTotal", stats.total);
     this.setText("laporanStatKelas", stats.guruKelas);
     this.setText("laporanStatMapel", stats.guruMapel);
     this.setText("laporanStatNgaji", stats.guruNgaji);
 
-    this.setText("laporanCountKelas", this.data.guruKelas.length);
-    this.setText("laporanCountMapel", this.data.guruMapel.length);
-    this.setText("laporanCountNgaji", this.data.guruNgaji.length);
+    this.setText("laporanCountKelas", counts.guruKelas);
+    this.setText("laporanCountMapel", counts.guruMapel);
+    this.setText("laporanCountNgaji", counts.guruNgaji);
+    this.setText("laporanCountKepalaSekolah", principalCount);
   },
 
   // =======================================================
@@ -797,12 +860,14 @@ const AdminLaporan = {
       GURU_KELAS: "Laporan Guru Kelas",
       GURU_MAPEL: "Laporan Guru Mapel",
       GURU_NGAJI: "Laporan Guru Ngaji",
+      KEPALA_SEKOLAH: "Laporan Kepala Sekolah",
     };
 
     const description = {
       GURU_KELAS: "Daftar laporan kegiatan Guru Kelas.",
       GURU_MAPEL: "Daftar laporan kegiatan Guru Mapel.",
       GURU_NGAJI: "Daftar laporan kegiatan Guru Ngaji.",
+      KEPALA_SEKOLAH: "Daftar laporan kegiatan Kepala Sekolah.",
     };
 
     this.setText("laporanTableTitle", title[kategori]);
@@ -849,6 +914,7 @@ const AdminLaporan = {
       GURU_KELAS: this.data.guruKelas,
       GURU_MAPEL: this.data.guruMapel,
       GURU_NGAJI: this.data.guruNgaji,
+      KEPALA_SEKOLAH: this.data.all.filter(item => item.KATEGORI === "KEPALA_SEKOLAH"),
     };
 
     return source[this.activeTab] || [];
@@ -912,18 +978,7 @@ const AdminLaporan = {
 
     if (!body) return;
 
-    // 1. Ambil data kategori aktif
-    let source = this.getActiveData();
-
-    // 2. Filter nama guru
-    if (this.selectedGuruNBM) {
-      source = source.filter(
-        (item) => String(item.NBM || "").trim() === this.selectedGuruNBM,
-      );
-    }
-
-    // 3. Filter pencarian
-    const data = LaporanService.search(source, this.keyword);
+    const data = this.getFilteredData();
 
     // 4. Hitung pagination
     const totalData = data.length;
@@ -965,7 +1020,9 @@ const AdminLaporan = {
     // 6. Render data halaman aktif
     body.innerHTML = pageData
       .map((item, index) => {
-        const attendance = LaporanService.formatAttendance(item);
+        const attendance = this.activeTab === "GURU_KELAS"
+          ? LaporanService.formatAttendance(item)
+          : null;
 
         let extraColumns = "";
 
@@ -987,6 +1044,9 @@ const AdminLaporan = {
           <td>${this.escapeHTML(item.NAMA_KELOMPOK || "-")}</td>
           <td>${this.escapeHTML(item.NAMA_SESI || "-")}</td>
         `;
+        }
+        if (this.activeTab === "KEPALA_SEKOLAH") {
+          extraColumns = `<td>${this.escapeHTML(item.KEGIATAN || "-")}</td>`;
         }
 
         return `
@@ -1011,9 +1071,9 @@ const AdminLaporan = {
 
           ${extraColumns}
 
-          <td>${attendance.sakit}</td>
+          ${attendance ? `<td>${attendance.sakit}</td>
           <td>${attendance.izin}</td>
-          <td>${attendance.alpa}</td>
+          <td>${attendance.alpa}</td>` : ""}
 
           <td>
             <button
@@ -1134,8 +1194,9 @@ const AdminLaporan = {
   getColumnCount() {
     const counts = {
       GURU_KELAS: 9,
-      GURU_MAPEL: 10,
-      GURU_NGAJI: 10,
+      GURU_MAPEL: 7,
+      GURU_NGAJI: 7,
+      KEPALA_SEKOLAH: 6,
     };
 
     return counts[this.activeTab] || 9;
@@ -1273,10 +1334,8 @@ const AdminLaporan = {
       ["Alpa", data.ALPA],
     ];
 
-    const notes = [
-      ["Kendala", data.KENDALA],
-      ["Solusi", data.SOLUSI],
-    ];
+    if (kategori === "KEPALA_SEKOLAH") specific = [["Kegiatan", data.KEGIATAN]];
+    const notes = [data.CATATAN, data.KENDALA, data.SOLUSI].filter(Boolean).join("\n\n");
 
     const files = [
       ["Modul Ajar", data.MODUL_AJAR],
@@ -1304,9 +1363,9 @@ const AdminLaporan = {
       </div>
 
 
-      <div class="admin-laporan-detail-section">
+      ${kategori === "GURU_KELAS" ? `<div class="admin-laporan-detail-section">
 
-        <h3>Rekap Kehadiran</h3>
+        <h3>Rekap Ketidakhadiran</h3>
 
         <div class="admin-laporan-attendance">
 
@@ -1323,14 +1382,14 @@ const AdminLaporan = {
 
         </div>
 
-      </div>
+      </div>` : ""}
 
 
       <div class="admin-laporan-detail-section">
 
-        <h3>Kendala dan Solusi</h3>
+        <h3>Catatan</h3>
 
-        ${this.renderDetailRows(notes)}
+        <p class="report-note">${this.escapeHTML(notes || "—")}</p>
 
       </div>
 
@@ -1379,9 +1438,13 @@ const AdminLaporan = {
 
   renderFileLink(label, value) {
     const url = this.normalizeUrl(value);
-    const previewUrl = this.getImageThumbnail(value);
+    if (!url) return "";
 
-    if (!url || !previewUrl) return "";
+    const fileUrl = new URL(url);
+    const isPdf = fileUrl.hash === "#teachly-pdf";
+    if (isPdf) fileUrl.hash = "";
+    const previewUrl = isPdf ? "" : this.getImageThumbnail(value);
+    if (!isPdf && !previewUrl) return "";
 
     return `
     <div class="admin-laporan-file-preview">
@@ -1390,17 +1453,17 @@ const AdminLaporan = {
         <span>${this.escapeHTML(label)}</span>
 
         <a
-          href="${this.escapeHTML(url)}"
+          href="${this.escapeHTML(fileUrl.href)}"
           target="_blank"
           rel="noopener noreferrer"
           class="admin-laporan-file-open"
         >
           <i data-lucide="external-link"></i>
-          Buka Asli
+          ${isPdf ? "Buka PDF" : "Buka Asli"}
         </a>
       </div>
 
-      <button
+      ${isPdf ? "" : `<button
         type="button"
         class="admin-laporan-file-image-link"
         data-laporan-action="open-lightbox"
@@ -1427,7 +1490,7 @@ const AdminLaporan = {
           <i data-lucide="zoom-in"></i>
           Perbesar
         </span>
-      </button>
+      </button>`}
 
     </div>
   `;
@@ -1438,6 +1501,7 @@ const AdminLaporan = {
       GURU_KELAS: "Guru Kelas",
       GURU_MAPEL: "Guru Mata Pelajaran",
       GURU_NGAJI: "Guru Ngaji",
+      KEPALA_SEKOLAH: "Kepala Sekolah",
     };
 
     const kategori = this.activeTab;
@@ -1448,7 +1512,8 @@ const AdminLaporan = {
       : "Semua Guru";
 
     const tanggalCetak = new Intl.DateTimeFormat("id-ID", {
-      day: "2-digit",
+      timeZone: "Asia/Jakarta",
+      day: "numeric",
       month: "long",
       year: "numeric",
     }).format(new Date());
@@ -1486,10 +1551,8 @@ const AdminLaporan = {
           ["Alpa", item.ALPA],
         ];
 
-        const notes = [
-          ["Kendala", item.KENDALA],
-          ["Solusi", item.SOLUSI],
-        ];
+        if (kategori === "KEPALA_SEKOLAH") specific = [["Kegiatan", item.KEGIATAN]];
+        const notes = [item.CATATAN, item.KENDALA, item.SOLUSI].filter(Boolean).join("\n\n");
 
         const files = [
           ["Modul Ajar", item.MODUL_AJAR],
@@ -1532,8 +1595,8 @@ const AdminLaporan = {
           ${this.renderPrintRows(specific)}
         </section>
 
-        <section class="print-report-section">
-          <h3>Rekap Kehadiran</h3>
+        ${kategori === "GURU_KELAS" ? `<section class="print-report-section">
+          <h3>Rekap Ketidakhadiran</h3>
 
           <div class="print-report-attendance">
             ${attendance
@@ -1547,11 +1610,11 @@ const AdminLaporan = {
               )
               .join("")}
           </div>
-        </section>
+        </section>` : ""}
 
         <section class="print-report-section">
-          <h3>Kendala dan Solusi</h3>
-          ${this.renderPrintRows(notes)}
+          <h3>Catatan</h3>
+          <p class="report-note">${this.escapeHTML(notes || "—")}</p>
         </section>
 
         <section class="print-report-section">
@@ -1561,6 +1624,16 @@ const AdminLaporan = {
             ${files
               .map(([label, value]) => {
                 if (!value) return "";
+
+                const attachmentUrl = this.normalizeUrl(value);
+                if (attachmentUrl.endsWith("#teachly-pdf")) {
+                  const pdfUrl = new URL(attachmentUrl);
+                  pdfUrl.hash = "";
+                  return `<div class="print-report-image">
+                    <h4>${this.escapeHTML(label)}</h4>
+                    <a href="${this.escapeHTML(pdfUrl.href)}">Buka PDF</a>
+                  </div>`;
+                }
 
                 // Menggunakan helper thumbnail yang sudah ada
                 const url = this.getImageThumbnail(value);
@@ -1600,11 +1673,17 @@ const AdminLaporan = {
         <div class="print-document-meta">
           <span>Guru: ${this.escapeHTML(namaGuru)}</span>
           <span>Jumlah laporan: ${data.length}</span>
-          <span>Tanggal cetak: ${tanggalCetak}</span>
+          <span>Periode: ${this.formatReportMonth(this.selectedMonth)}</span>
         </div>
       </header>
 
       ${laporanHTML}
+
+      <section class="print-report-signature" aria-label="Tanda tangan Kepala Sekolah">
+        <p>Leksono, ${tanggalCetak}</p>
+        <p>Kepala<br>MI Muhammadiyah Plus<br>Leksono</p>
+        <strong>YUWONO, S.Pd.I</strong>
+      </section>
 
       <footer class="print-document-footer">
         Teachly - Sistem Manajemen Pembelajaran
@@ -1625,6 +1704,7 @@ const AdminLaporan = {
       GURU_KELAS: "Guru Kelas",
       GURU_MAPEL: "Guru Mata Pelajaran",
       GURU_NGAJI: "Guru Ngaji",
+      KEPALA_SEKOLAH: "Kepala Sekolah",
     };
 
     // Mengganti ID referensi dengan nama tampilan.
@@ -1643,6 +1723,7 @@ const AdminLaporan = {
       "ASESMEN",
       "DOKUMENTASI",
     ];
+    if (kategori !== "GURU_KELAS") excludedFields.push("SAKIT", "IZIN", "ALPA");
 
     const originalFields = Object.keys(data[0]);
     const columns = [];
@@ -1742,6 +1823,8 @@ const AdminLaporan = {
           Guru: ${this.escapeHTML(namaGuru)}
           &nbsp; | &nbsp;
           Jumlah Data: ${data.length}
+          &nbsp; | &nbsp;
+          Periode: ${this.formatReportMonth(this.selectedMonth)}
           &nbsp; | &nbsp;
           Tanggal Cetak: ${tanggalCetak}
         </p>
@@ -1962,19 +2045,7 @@ const AdminLaporan = {
   // =======================================================
 
   showToast(message, type = "success") {
-    const toast = document.getElementById("adminLaporanToast");
-
-    if (!toast) return;
-
-    toast.textContent = message;
-
-    toast.className = `admin-laporan-toast ${type} show`;
-
-    clearTimeout(this.toastTimer);
-
-    this.toastTimer = setTimeout(() => {
-      toast.classList.remove("show");
-    }, 3000);
+    Toast[type](message);
   },
 
   // =======================================================

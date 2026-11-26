@@ -12,7 +12,6 @@ const Kelompok = {
   boundRoot: null,
   formMode: "create",
   editingId: null,
-  toastTimer: null,
 
   /* =====================================
      RENDER
@@ -209,13 +208,6 @@ const Kelompok = {
           </div>
         </div>
 
-        <!-- TOAST -->
-        <div
-          class="admin-guru-toast"
-          id="kelompokToast"
-          role="status"
-          aria-live="polite"
-        ></div>
 
       </section>
     `;
@@ -646,9 +638,11 @@ const Kelompok = {
 
     const action = status === "AKTIF" ? "mengaktifkan" : "menonaktifkan";
 
-    const confirmed = window.confirm(
-      `Apakah kamu yakin ingin ${action} kelompok ${item.NAMA_KELOMPOK}?`,
-    );
+    const confirmed = await Confirm.ask({
+      title: "Ubah status kelompok?",
+      message: `Apakah kamu yakin ingin ${action} kelompok ${item.NAMA_KELOMPOK}?`,
+      confirmText: status === "AKTIF" ? "Aktifkan" : "Nonaktifkan",
+    });
 
     if (!confirmed) {
       return;
@@ -682,7 +676,7 @@ const Kelompok = {
     const data = this.data || [];
 
     if (!data.length) {
-      window.alert("Tidak ada data kelompok ngaji untuk diekspor.");
+      Toast.warning("Tidak ada data kelompok ngaji untuk diekspor.");
       return;
     }
 
@@ -710,7 +704,7 @@ const Kelompok = {
     const printWindow = window.open("", "_blank");
 
     if (!printWindow) {
-      window.alert("Popup diblokir browser. Izinkan popup untuk mencetak PDF.");
+      Toast.warning("Popup diblokir browser. Izinkan popup untuk mencetak PDF.");
       return;
     }
 
@@ -861,22 +855,7 @@ const Kelompok = {
   ===================================== */
 
   showToast(message, type = "success") {
-    const toast = document.getElementById("kelompokToast");
-
-    if (!toast) {
-      return;
-    }
-
-    toast.textContent = message;
-    toast.className = `admin-guru-toast show ${type}`;
-
-    clearTimeout(this.toastTimer);
-
-    this.toastTimer = setTimeout(() => {
-      if (toast.isConnected) {
-        toast.classList.remove("show");
-      }
-    }, 3500);
+    Toast[type](message);
   },
 
   /* =====================================

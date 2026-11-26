@@ -105,6 +105,10 @@
           <span>Laporan Guru</span>
           <i data-lucide="chevron-right" class="admin-nav-arrow"></i>
         </button>
+        <button type="button" class="admin-nav-item" data-admin-page="absensi-siswa">
+          <i data-lucide="clipboard-check"></i>
+          <span>Rekap Absensi Siswa</span>
+        </button>
       </div>
 
       <div class="admin-nav-group">
@@ -230,7 +234,28 @@
           </div>
         </section>
 
-        <!-- STATISTICS -->
+        <form id="adminReportPeriodForm" class="admin-panel admin-report-period">
+          <label>
+            Periode laporan
+            <select id="adminReportPeriodMode">
+              <option value="tanggal">Tanggal</option>
+              <option value="bulan">Bulan</option>
+            </select>
+          </label>
+          <label id="adminReportDateField">
+            Tanggal
+            <input id="adminReportDate" type="date" required>
+          </label>
+          <label id="adminReportMonthField" hidden>
+            Bulan
+            <input id="adminReportMonth" type="month" disabled required>
+          </label>
+          <div class="admin-report-period-actions">
+            <button type="submit" class="btn btn-primary">Terapkan</button>
+            <button type="reset" class="btn btn-outline">Reset ke Hari Ini</button>
+          </div>
+          <p id="adminReportPeriodStatus" role="status"></p>
+        </form>
 
         <!-- STATISTICS -->
         <section class="admin-statistics">
@@ -301,7 +326,7 @@
               <div class="admin-panel-heading">
                 <div>
                   <h2>Statistik Guru</h2>
-                  <p>Distribusi guru berdasarkan peran</p>
+                  <p>Distribusi guru berdasarkan status akun</p>
                 </div>
 
                 <i data-lucide="chart-no-axes-column-increasing"></i>
@@ -317,21 +342,21 @@
 
                 <div class="admin-chart-legend">
                   <div class="admin-legend-item">
-                    <span class="admin-legend-dot guru-kelas"></span>
-                    <span>Guru Kelas</span>
-                    <strong id="statGuruKelas">0</strong>
+                    <span class="admin-legend-dot guru-aktif"></span>
+                    <span>Aktif</span>
+                    <strong id="statGuruAktif">–</strong>
                   </div>
 
                   <div class="admin-legend-item">
-                    <span class="admin-legend-dot guru-mapel"></span>
-                    <span>Guru Mapel</span>
-                    <strong id="statGuruMapel">0</strong>
+                    <span class="admin-legend-dot guru-nonaktif"></span>
+                    <span>Nonaktif</span>
+                    <strong id="statGuruNonaktif">–</strong>
                   </div>
 
-                  <div class="admin-legend-item">
-                    <span class="admin-legend-dot guru-ngaji"></span>
-                    <span>Guru Ngaji</span>
-                    <strong id="statGuruNgaji">0</strong>
+                  <div class="admin-legend-item" hidden>
+                    <span class="admin-legend-dot guru-lainnya"></span>
+                    <span>Status lain</span>
+                    <strong id="statGuruLainnya">–</strong>
                   </div>
                 </div>
               </div>
@@ -389,6 +414,30 @@
               </div>
             </article>
           </div>
+        </section>
+
+        <section class="admin-panel admin-teacher-reports">
+          <div class="admin-panel-heading">
+            <div>
+              <h2>Laporan per Guru</h2>
+              <p id="adminTeacherReportsPeriod">Jumlah laporan pada tahun ajaran aktif</p>
+            </div>
+            <input id="adminTeacherReportsSearch" type="search" placeholder="Cari nama guru" aria-label="Cari nama guru" disabled>
+          </div>
+          <ul class="admin-teacher-reports-key" aria-label="Kategori laporan">
+            <li><span class="admin-teacher-report-segment kelas"></span>Guru Kelas</li>
+            <li><span class="admin-teacher-report-segment mapel"></span>Guru Mapel</li>
+            <li><span class="admin-teacher-report-segment ngaji"></span>Guru Ngaji</li>
+          </ul>
+          <div id="adminTeacherReports" class="admin-teacher-report-list">Memuat laporan per guru…</div>
+        </section>
+
+        <section class="admin-panel admin-weekly-absences">
+          <h2>Ketidakhadiran Pekan Ini</h2>
+          <button type="button" class="btn btn-primary" id="adminWeeklyAbsencesButton">
+            <i data-lucide="calendar-days" aria-hidden="true"></i>
+            Tampilkan Siswa Tidak Hadir Pekan Ini
+          </button>
         </section>
 
         <!-- SCHOOL INFORMATION -->

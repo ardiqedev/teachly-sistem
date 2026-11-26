@@ -12,7 +12,6 @@ const Sesi = {
   boundRoot: null,
   formMode: "create",
   editingId: null,
-  toastTimer: null,
 
   /* =====================================
      RENDER
@@ -209,13 +208,6 @@ const Sesi = {
           </div>
         </div>
 
-        <!-- TOAST -->
-        <div
-          class="admin-guru-toast"
-          id="sesiToast"
-          role="status"
-          aria-live="polite"
-        ></div>
 
       </section>
     `;
@@ -640,9 +632,11 @@ const Sesi = {
 
     const action = status === "AKTIF" ? "mengaktifkan" : "menonaktifkan";
 
-    const confirmed = window.confirm(
-      `Apakah kamu yakin ingin ${action} sesi ${item.NAMA_SESI}?`,
-    );
+    const confirmed = await Confirm.ask({
+      title: "Ubah status sesi ngaji?",
+      message: `Apakah kamu yakin ingin ${action} sesi ${item.NAMA_SESI}?`,
+      confirmText: status === "AKTIF" ? "Aktifkan" : "Nonaktifkan",
+    });
 
     if (!confirmed) {
       return;
@@ -676,7 +670,7 @@ const Sesi = {
     const data = this.data || [];
 
     if (!data.length) {
-      window.alert("Tidak ada data sesi ngaji untuk diekspor.");
+      Toast.warning("Tidak ada data sesi ngaji untuk diekspor.");
       return;
     }
 
@@ -702,7 +696,7 @@ const Sesi = {
     const printWindow = window.open("", "_blank");
 
     if (!printWindow) {
-      window.alert("Popup diblokir browser. Izinkan popup untuk mencetak PDF.");
+      Toast.warning("Popup diblokir browser. Izinkan popup untuk mencetak PDF.");
       return;
     }
 
@@ -853,22 +847,7 @@ const Sesi = {
   ===================================== */
 
   showToast(message, type = "success") {
-    const toast = document.getElementById("sesiToast");
-
-    if (!toast) {
-      return;
-    }
-
-    toast.textContent = message;
-    toast.className = `admin-guru-toast show ${type}`;
-
-    clearTimeout(this.toastTimer);
-
-    this.toastTimer = setTimeout(() => {
-      if (toast.isConnected) {
-        toast.classList.remove("show");
-      }
-    }, 3500);
+    Toast[type](message);
   },
 
   /* =====================================

@@ -14,7 +14,6 @@ const TahunAjaran = {
   boundRoot: null,
   formMode: "create",
   editingId: null,
-  toastTimer: null,
 
   /* =====================================
      RENDER PAGE
@@ -96,7 +95,6 @@ const TahunAjaran = {
         </div>
 
         <div id="tahunAjaranModal"></div>
-        <div id="tahunAjaranToast"></div>
 
       </section>
     `;
@@ -710,12 +708,14 @@ const TahunAjaran = {
       return;
     }
 
-    const confirmed = window.confirm(
-      `Aktifkan tahun ajaran ${target.NAMA_TAHUN_AJARAN}?\n\n` +
+    const confirmed = await Confirm.ask({
+      title: "Aktifkan tahun ajaran?",
+      message: `Aktifkan tahun ajaran ${target.NAMA_TAHUN_AJARAN}?\n\n` +
         `Tahun ajaran ${current.NAMA_TAHUN_AJARAN} ` +
         `akan otomatis menjadi NONAKTIF.\n\n` +
         `Pastikan Anda sudah siap melakukan pergantian periode akademik.`,
-    );
+      confirmText: "Aktifkan",
+    });
 
     if (!confirmed) return;
 
@@ -889,23 +889,8 @@ const TahunAjaran = {
   ===================================== */
 
   showToast(message, isError = false) {
-    const container = document.getElementById("tahunAjaranToast");
-
-    if (!container) return;
-
-    clearTimeout(this.toastTimer);
-
-    container.innerHTML = `
-      <div class="admin-guru-toast ${isError ? "error" : "success"}">
-        ${this.escapeHTML(message)}
-      </div>
-    `;
-
-    this.toastTimer = setTimeout(() => {
-      if (container.isConnected) {
-        container.innerHTML = "";
-      }
-    }, 3500);
+    if (isError) Toast.error(message);
+    else Toast.success(message);
   },
 
   /* =====================================

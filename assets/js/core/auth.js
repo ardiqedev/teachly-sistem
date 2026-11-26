@@ -1,6 +1,6 @@
 /* =========================================
    QEDEV AUTH ENGINE
-   TEACHLY - TOKENLESS VERSION
+   TEACHLY - SESI GURU
 ========================================= */
 
 const Auth = {
@@ -46,7 +46,7 @@ const Auth = {
      LOGIN
   ===================================== */
 
-  async login(nbm) {
+  async login(nbm, password, newPassword) {
     const normalizedNBM = String(nbm || "").trim();
 
     if (!normalizedNBM) {
@@ -60,6 +60,8 @@ const Auth = {
     try {
       const response = await API.post("auth.login", {
         nbm: normalizedNBM,
+        password,
+        ...(newPassword === undefined ? {} : { newPassword }),
       });
 
       if (!response || response.success !== true) {
@@ -72,17 +74,15 @@ const Auth = {
         );
       }
 
+      if (response.data?.mustChangePassword) return response;
       const user = response.data?.user;
       const guru = response.data?.guru;
+      const session = response.data?.session;
 
-      if (!user || !guru) {
-        throw new Error("Data profil pengguna tidak lengkap.");
+      if (!user || !guru || !session?.token || session.expiresAt <= Date.now() ||
+          !Number.isFinite(session.expiresAt)) {
+        throw new Error("Sesi login guru belum tersedia. Periksa deployment Apps Script.");
       }
-
-      const session = {
-        authenticated: true,
-        loginAt: new Date().toISOString(),
-      };
 
       this.setSession({
         user: user,
@@ -154,11 +154,12 @@ const Auth = {
 
   isLoggedIn() {
     return Boolean(
-      this.session &&
-      this.session.authenticated === true &&
-      this.user &&
-      this.guru,
+      this.getToken() && this.user && this.guru,
     );
+  },
+
+  getToken() {
+    return this.session?.expiresAt > Date.now() ? this.session.token || null : null;
   },
 
   /* =====================================

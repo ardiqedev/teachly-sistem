@@ -78,6 +78,10 @@
    CATEGORY TABS
 ========================================= */
 
+.riwayat-page .riwayat-tabs[hidden] {
+  display: none;
+}
+
 .riwayat-page [data-riwayat-tab] {
   display: inline-flex;
   align-items: center;
@@ -328,12 +332,6 @@
   background: #eef0ff;
   color: #303b91;
   border: 1px solid #e0e4ff;
-}
-
-.riwayat-page .btn-riwayat-edit {
-  background: #303b91;
-  color: #fff;
-  border: 1px solid #303b91;
 }
 
 /* =========================================

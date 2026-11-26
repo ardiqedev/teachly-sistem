@@ -10,7 +10,7 @@ const Toast = {
   ===================================== */
 
   init() {
-    if (document.getElementById("toastContainer")) return;
+    if (this.container?.isConnected) return;
 
     const container = document.createElement("div");
 
@@ -42,13 +42,15 @@ const Toast = {
 
     const toast = document.createElement("div");
 
-    toast.className = `toast toast-${type}`;
+    const variant = Object.hasOwn(icons, type) ? type : "info";
+    toast.className = `toast toast-${variant}`;
+    toast.setAttribute("role", variant === "error" ? "alert" : "status");
 
     toast.innerHTML = `
 
         <div class="toast-icon">
 
-            <i data-lucide="${icons[type]}"></i>
+            <i data-lucide="${icons[variant]}" aria-hidden="true"></i>
 
         </div>
 
@@ -56,26 +58,22 @@ const Toast = {
 
             <div class="toast-title">
 
-                ${title}
 
             </div>
 
             <div class="toast-message">
 
-                ${message}
 
             </div>
 
             <div
-                class="toast-progress"
-                style="animation-duration:${duration}ms">
+                class="toast-progress">
 
             </div>
 
         </div>
 
-        <button
-            class="toast-close">
+        <button type="button" class="toast-close" aria-label="Tutup notifikasi">
 
             <i data-lucide="x"></i>
 
@@ -83,9 +81,12 @@ const Toast = {
 
     `;
 
+    toast.querySelector(".toast-title").textContent = title;
+    toast.querySelector(".toast-message").textContent = message;
+    toast.querySelector(".toast-progress").style.animationDuration = `${duration}ms`;
     this.container.appendChild(toast);
 
-    lucide.createIcons();
+    window.lucide?.createIcons();
 
     toast.querySelector(".toast-close").addEventListener("click", () => {
       this.remove(toast);
@@ -101,7 +102,7 @@ const Toast = {
   ===================================== */
 
   remove(toast) {
-    if (!toast) return;
+    if (!toast?.isConnected || toast.classList.contains("toast-hide")) return;
 
     toast.classList.add("toast-hide");
 

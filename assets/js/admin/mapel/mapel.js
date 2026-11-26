@@ -11,7 +11,6 @@ const Mapel = {
   boundRoot: null,
   formMode: "create",
   editingId: null,
-  toastTimer: null,
 
   /* =====================================
      RENDER
@@ -191,13 +190,6 @@ const Mapel = {
           </div>
         </div>
 
-        <!-- TOAST -->
-        <div
-          class="admin-guru-toast"
-          id="mapelToast"
-          role="status"
-          aria-live="polite"
-        ></div>
 
       </section>
     `;
@@ -583,9 +575,11 @@ const Mapel = {
 
     const action = status === "AKTIF" ? "mengaktifkan" : "menonaktifkan";
 
-    const confirmed = window.confirm(
-      `Apakah kamu yakin ingin ${action} mata pelajaran ${item.NAMA_MAPEL}?`,
-    );
+    const confirmed = await Confirm.ask({
+      title: "Ubah status mata pelajaran?",
+      message: `Apakah kamu yakin ingin ${action} mata pelajaran ${item.NAMA_MAPEL}?`,
+      confirmText: status === "AKTIF" ? "Aktifkan" : "Nonaktifkan",
+    });
 
     if (!confirmed) return;
 
@@ -617,7 +611,7 @@ const Mapel = {
     const data = this.data || [];
 
     if (!data.length) {
-      window.alert("Tidak ada data mata pelajaran untuk diekspor.");
+      Toast.warning("Tidak ada data mata pelajaran untuk diekspor.");
       return;
     }
 
@@ -643,7 +637,7 @@ const Mapel = {
     const printWindow = window.open("", "_blank");
 
     if (!printWindow) {
-      window.alert("Popup diblokir browser. Izinkan popup untuk mencetak PDF.");
+      Toast.warning("Popup diblokir browser. Izinkan popup untuk mencetak PDF.");
       return;
     }
 
@@ -793,20 +787,7 @@ const Mapel = {
   ===================================== */
 
   showToast(message, type = "success") {
-    const toast = document.getElementById("mapelToast");
-
-    if (!toast) return;
-
-    toast.textContent = message;
-    toast.className = `admin-guru-toast show ${type}`;
-
-    clearTimeout(this.toastTimer);
-
-    this.toastTimer = setTimeout(() => {
-      if (toast.isConnected) {
-        toast.classList.remove("show");
-      }
-    }, 3500);
+    Toast[type](message);
   },
 
   /* =====================================

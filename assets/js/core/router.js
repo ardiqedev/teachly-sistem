@@ -10,6 +10,7 @@ const Router = {
   routes: {
     login: "pages/login.html",
     dashboard: "pages/dashboard.html",
+    draft: "pages/draft.html",
     riwayat: "pages/riwayat.html",
     jadwal: "pages/jadwal.html",
     admin: "pages/admin/index.html",
@@ -135,6 +136,7 @@ const Router = {
       login: typeof Login !== "undefined" ? Login : null,
 
       dashboard: typeof Dashboard !== "undefined" ? Dashboard : null,
+      draft: typeof DraftLaporan !== "undefined" ? DraftLaporan : null,
       riwayat: typeof Riwayat !== "undefined" ? Riwayat : null,
       jadwal: typeof Jadwal !== "undefined" ? Jadwal : null,
 
@@ -204,9 +206,11 @@ const Router = {
 
       if (logoutButton.disabled) return;
 
-      const confirmed = window.confirm(
-        "Apakah Anda yakin ingin keluar dari Teachly?",
-      );
+      const confirmed = await Confirm.ask({
+        title: "Keluar dari Teachly?",
+        message: "Apakah Anda yakin ingin keluar dari Teachly?",
+        confirmText: "Keluar",
+      });
 
       if (!confirmed) return;
 
@@ -219,11 +223,12 @@ const Router = {
         // Kembali ke halaman login
         await this.navigate("login");
 
+        Toast.success("Anda sudah keluar dari Teachly.");
         console.log("[Router] Guru berhasil logout.");
       } catch (error) {
         console.error("[Router] Logout gagal:", error);
 
-        alert("Terjadi kesalahan saat logout.");
+        Toast.error("Terjadi kesalahan saat logout.");
       } finally {
         if (logoutButton.isConnected) {
           logoutButton.disabled = false;

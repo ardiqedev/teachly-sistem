@@ -8,6 +8,7 @@ const LaporanService = {
     GURU_KELAS: "GURU_KELAS",
     GURU_MAPEL: "GURU_MAPEL",
     GURU_NGAJI: "GURU_NGAJI",
+    KEPALA_SEKOLAH: "KEPALA_SEKOLAH",
   },
 
   // ==================================================
@@ -154,6 +155,7 @@ const LaporanService = {
         item.NAMA_KELOMPOK,
         item.NAMA_SESI,
         item.RINGKASAN_PEMBELAJARAN,
+        item.KEGIATAN,
       ];
 
       return searchable.some((value) =>

@@ -62,7 +62,7 @@ const AdminLogin = {
         throw new Error(response?.message || "Login administrator gagal.");
       }
 
-      this.showMessage(response.message || "Login berhasil.", "success");
+      Toast.success(response.message || "Login berhasil.");
 
       this.elements.form.reset();
 

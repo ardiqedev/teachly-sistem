@@ -12,7 +12,7 @@ const InformasiSekolahAdminRepository = {
   ===================================== */
 
   async getAll() {
-    return API.post("informasiSekolah.list", {});
+    return API.postAdmin("informasiSekolah.list", {});
   },
 
   /* =====================================
@@ -27,7 +27,7 @@ const InformasiSekolahAdminRepository = {
   ===================================== */
 
   async getBySource(source) {
-    return API.post("informasiSekolah.detail", {
+    return API.postAdmin("informasiSekolah.detail", {
       SUMBER_INFORMASI: String(source ?? "")
         .trim()
         .toUpperCase(),

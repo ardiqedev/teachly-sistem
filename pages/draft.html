@@ -1,0 +1,41 @@
+<div class="dashboard-page">
+  <header class="dashboard-header">
+    <div class="dashboard-header__top">
+      <div class="dashboard-brand">
+        <div class="dashboard-brand__icon"><i data-lucide="graduation-cap"></i></div>
+        <span>Teachly</span>
+      </div>
+      <button type="button" class="dashboard-logout" data-action="logout" aria-label="Keluar dari aplikasi">
+        <i data-lucide="log-out"></i>
+      </button>
+    </div>
+    <div class="dashboard-welcome">
+      <div class="dashboard-welcome__text">
+        <h1>Draft Laporan</h1>
+        <p>Draft tersimpan di browser ini. Centang laporan yang ingin dikirim.</p>
+      </div>
+    </div>
+  </header>
+
+  <main class="dashboard-content draft-content" id="draftLaporanPage">
+    <div class="draft-toolbar">
+      <button type="button" class="btn btn-outline" data-create-draft>Buat Laporan</button>
+      <button type="button" class="btn btn-primary" data-send-drafts disabled>Kirim Terpilih</button>
+    </div>
+    <p class="draft-limit" data-draft-limit></p>
+    <div data-draft-status role="status"></div>
+    <div data-draft-list class="draft-list" aria-label="Daftar draft">Memuat draft…</div>
+  </main>
+
+  <nav class="dashboard-bottom-nav" aria-label="Navigasi utama">
+    <button type="button" class="dashboard-nav-item" data-page="dashboard">
+      <i data-lucide="house"></i><span>Beranda</span>
+    </button>
+    <button type="button" class="dashboard-nav-item active" data-page="draft" aria-current="page">
+      <i data-lucide="file-pen-line"></i><span>Draft</span>
+    </button>
+    <button type="button" class="dashboard-nav-item" data-page="riwayat">
+      <i data-lucide="files"></i><span>Riwayat</span>
+    </button>
+  </nav>
+</div>

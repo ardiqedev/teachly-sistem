@@ -11,7 +11,6 @@ const Kelas = {
   boundRoot: null,
   formMode: "create",
   editingId: null,
-  toastTimer: null,
 
   /* =====================================
      RENDER
@@ -200,13 +199,6 @@ const Kelas = {
           </div>
         </div>
 
-        <!-- TOAST -->
-        <div
-          class="admin-guru-toast"
-          id="kelasToast"
-          role="status"
-          aria-live="polite"
-        ></div>
 
       </section>
     `;
@@ -585,9 +577,11 @@ const Kelas = {
 
     const verb = status === "AKTIF" ? "mengaktifkan" : "menonaktifkan";
 
-    const confirmed = window.confirm(
-      `Apakah kamu yakin ingin ${verb} kelas ${item.NAMA_KELAS}?`,
-    );
+    const confirmed = await Confirm.ask({
+      title: "Ubah status kelas?",
+      message: `Apakah kamu yakin ingin ${verb} kelas ${item.NAMA_KELAS}?`,
+      confirmText: status === "AKTIF" ? "Aktifkan" : "Nonaktifkan",
+    });
 
     if (!confirmed) return;
 
@@ -616,7 +610,7 @@ const Kelas = {
 
   exportPDF() {
     if (!this.data.length) {
-      window.alert("Tidak ada data kelas untuk diekspor.");
+      Toast.warning("Tidak ada data kelas untuk diekspor.");
       return;
     }
 
@@ -643,7 +637,7 @@ const Kelas = {
     const printWindow = window.open("", "_blank");
 
     if (!printWindow) {
-      window.alert("Popup diblokir browser. Izinkan popup untuk mencetak PDF.");
+      Toast.warning("Popup diblokir browser. Izinkan popup untuk mencetak PDF.");
       return;
     }
 
@@ -765,20 +759,7 @@ const Kelas = {
   ===================================== */
 
   showToast(message, type = "success") {
-    const toast = document.getElementById("kelasToast");
-
-    if (!toast) return;
-
-    toast.textContent = message;
-    toast.className = `admin-guru-toast show ${type}`;
-
-    clearTimeout(this.toastTimer);
-
-    this.toastTimer = setTimeout(() => {
-      if (toast.isConnected) {
-        toast.classList.remove("show");
-      }
-    }, 3500);
+    Toast[type](message);
   },
 
   /* =====================================
