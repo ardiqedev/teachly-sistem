@@ -13,12 +13,6 @@ const AdminLaporan = {
     guruKelas: [],
     guruMapel: [],
     guruNgaji: [],
-    statistics: {
-      total: 0,
-      guruKelas: 0,
-      guruMapel: 0,
-      guruNgaji: 0,
-    },
   },
 
   activeTab: "GURU_KELAS",
@@ -742,11 +736,7 @@ const AdminLaporan = {
     this.setLoading(true);
 
     try {
-      const [data, statistics] = await Promise.all([
-        LaporanService.getAll(),
-
-        LaporanService.getStatistics(),
-      ]);
+      const data = await LaporanService.getAll();
 
       this.data.all = data;
 
@@ -761,8 +751,6 @@ const AdminLaporan = {
       this.data.guruNgaji = data.filter(
         (item) => item.KATEGORI === "GURU_NGAJI",
       );
-
-      this.data.statistics = statistics;
 
       this.updateMonthOptions();
       this.updateStatistics();
@@ -803,26 +791,21 @@ const AdminLaporan = {
   // =======================================================
 
   updateStatistics() {
-    const counts = {
-      guruKelas: this.filterByMonth(this.data.guruKelas).length,
-      guruMapel: this.filterByMonth(this.data.guruMapel).length,
-      guruNgaji: this.filterByMonth(this.data.guruNgaji).length,
-    };
-    const principalCount = this.filterByMonth(this.data.all)
-      .filter(item => item.KATEGORI === "KEPALA_SEKOLAH").length;
-    const stats = this.selectedMonth
-      ? { ...counts, total: counts.guruKelas + counts.guruMapel + counts.guruNgaji + principalCount }
-      : this.data.statistics;
+    const reports = this.filterByMonth(this.data.all);
+    const counts = { GURU_KELAS: 0, GURU_MAPEL: 0, GURU_NGAJI: 0, KEPALA_SEKOLAH: 0 };
+    for (const report of reports) {
+      if (Object.hasOwn(counts, report.KATEGORI)) counts[report.KATEGORI]++;
+    }
 
-    this.setText("laporanStatTotal", stats.total);
-    this.setText("laporanStatKelas", stats.guruKelas);
-    this.setText("laporanStatMapel", stats.guruMapel);
-    this.setText("laporanStatNgaji", stats.guruNgaji);
+    this.setText("laporanStatTotal", reports.length);
+    this.setText("laporanStatKelas", counts.GURU_KELAS);
+    this.setText("laporanStatMapel", counts.GURU_MAPEL);
+    this.setText("laporanStatNgaji", counts.GURU_NGAJI);
 
-    this.setText("laporanCountKelas", counts.guruKelas);
-    this.setText("laporanCountMapel", counts.guruMapel);
-    this.setText("laporanCountNgaji", counts.guruNgaji);
-    this.setText("laporanCountKepalaSekolah", principalCount);
+    this.setText("laporanCountKelas", counts.GURU_KELAS);
+    this.setText("laporanCountMapel", counts.GURU_MAPEL);
+    this.setText("laporanCountNgaji", counts.GURU_NGAJI);
+    this.setText("laporanCountKepalaSekolah", counts.KEPALA_SEKOLAH);
   },
 
   // =======================================================
@@ -1960,34 +1943,33 @@ const AdminLaporan = {
 
   async printPDF() {
     const content = document.getElementById("adminLaporanPrintBody");
-
-    if (!content) return;
+    const modal = document.getElementById("adminLaporanPrintModal");
+    if (!content || !modal?.classList.contains("show")) return;
+    const documentContent = content.firstElementChild;
 
     const button = document.querySelector('[data-laporan-action="print-pdf"]');
-
+    if (button?.disabled) return;
     if (button) button.disabled = true;
 
+    let timer;
     try {
-      const images = [...content.querySelectorAll("img")];
+      const pending = [...content.querySelectorAll("img")].filter(img => !img.complete);
+      if (pending.length) {
+        await Promise.race([
+          Promise.allSettled(pending.map(img => img.decode())),
+          new Promise(resolve => { timer = setTimeout(resolve, 5000); }),
+        ]);
+      }
 
-      await Promise.all(
-        images.map((img) => {
-          if (img.complete && img.naturalWidth > 0) {
-            return Promise.resolve();
-          }
-
-          return new Promise((resolve) => {
-            img.onload = resolve;
-            img.onerror = resolve;
-          });
-        }),
-      );
-
-      window.print();
+      if (content.isConnected && modal.classList.contains("show") &&
+          content.firstElementChild === documentContent) {
+        window.print();
+      }
     } catch (error) {
       console.error("Gagal menyiapkan cetak PDF:", error);
       this.showToast("Gagal menyiapkan dokumen cetak.", "error");
     } finally {
+      clearTimeout(timer);
       if (button) button.disabled = false;
     }
   },

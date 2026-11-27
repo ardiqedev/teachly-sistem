@@ -3,8 +3,8 @@
 ========================================= */
 
 const Riwayat = {
-  initialized: false,
-  loading: false,
+  historyRequestId: 0,
+  detailRequestId: 0,
 
   kategoriAktif: "GURU_KELAS",
   laporan: [],
@@ -31,9 +31,8 @@ const Riwayat = {
   ===================================== */
 
   async init() {
-    if (this.loading) return;
-
-    this.loading = true;
+    const root = document.querySelector(".riwayat-page");
+    if (!root || root.dataset.bound === "true") return;
 
     this.bindEvents();
     this.renderLoading();
@@ -56,18 +55,12 @@ const Riwayat = {
       if (tabs) tabs.hidden = principal;
       if (principal) this.kategoriAktif = "KEPALA_SEKOLAH";
       else if (this.kategoriAktif === "KEPALA_SEKOLAH") this.kategoriAktif = "GURU_KELAS";
-      this.setText("#riwayatKategoriLabel", this.getCategoryLabel(this.kategoriAktif));
+      this.updateCategoryTabs();
 
       await this.loadHistory();
-
-      this.initialized = true;
-
-      console.log("[Riwayat] Berhasil dimuat.");
     } catch (error) {
       console.error("[Riwayat] Gagal memuat:", error);
-      this.renderError(error.message);
-    } finally {
-      this.loading = false;
+      if (root.isConnected) this.renderError(error.message);
     }
   },
 
@@ -130,17 +123,19 @@ const Riwayat = {
     if (this.kategoriAktif === kategori) return;
 
     this.kategoriAktif = kategori;
+    this.updateCategoryTabs();
+    await this.loadHistory();
+  },
 
+  updateCategoryTabs() {
     document.querySelectorAll("[data-riwayat-tab]").forEach((button) => {
-      const active = button.dataset.riwayatTab === kategori;
+      const active = button.dataset.riwayatTab === this.kategoriAktif;
 
       button.classList.toggle("active", active);
       button.setAttribute("aria-selected", String(active));
     });
 
-    this.setText("#riwayatKategoriLabel", this.getCategoryLabel(kategori));
-
-    await this.loadHistory();
+    this.setText("#riwayatKategoriLabel", this.getCategoryLabel(this.kategoriAktif));
   },
 
   /* =====================================
@@ -148,7 +143,11 @@ const Riwayat = {
   ===================================== */
 
   async loadHistory() {
-    if (!this.nbm) return;
+    const root = document.querySelector(".riwayat-page");
+    if (!this.nbm || !root) return;
+    const requestId = ++this.historyRequestId;
+    this.detailRequestId++;
+    const isCurrent = () => root.isConnected && requestId === this.historyRequestId;
     this.currentPage = 1;
 
     const mulai = document.getElementById("riwayatTanggalMulai")?.value || "";
@@ -172,6 +171,7 @@ const Riwayat = {
           tanggalAkhir: akhir,
         },
       });
+      if (!isCurrent()) return;
 
       if (!response || response.success !== true) {
         throw new Error(
@@ -185,6 +185,7 @@ const Riwayat = {
 
       this.renderList();
     } catch (error) {
+      if (!isCurrent()) return;
       console.error("[Riwayat] Load error:", error);
       this.renderError(error.message);
     }
@@ -195,19 +196,25 @@ const Riwayat = {
 ===================================== */
 
   async showDetail(idLaporan) {
-    if (!idLaporan || !this.nbm) return;
+    const root = document.querySelector(".riwayat-page");
+    if (!idLaporan || !this.nbm || !root) return;
+    const requestId = ++this.detailRequestId;
+    const kategori = this.kategoriAktif;
+    const isCurrent = () => root.isConnected && requestId === this.detailRequestId &&
+      kategori === this.kategoriAktif;
 
     try {
       if (typeof Modal === "undefined") {
         throw new Error("Modal Engine tidak tersedia.");
       }
 
-      const endpoint = this.detailEndpoints[this.kategoriAktif];
+      const endpoint = this.detailEndpoints[kategori];
 
       const response = await API.post(endpoint, {
         idLaporan,
         nbm: this.nbm,
       });
+      if (!isCurrent()) return;
 
       if (!response || response.success !== true) {
         throw new Error(response?.message || "Gagal mengambil detail laporan.");
@@ -219,10 +226,9 @@ const Riwayat = {
         throw new Error("Data laporan tidak ditemukan.");
       }
 
-      console.log("[Riwayat] Detail laporan:", data);
-
       this.renderDetail(data);
     } catch (error) {
+      if (!isCurrent()) return;
       console.error("[Riwayat] Detail error:", error);
       Toast.error(error.message);
     }
@@ -350,8 +356,8 @@ const Riwayat = {
         ${field("NBM", data.NBM)}
       </div>
 
-      <div class="riwayat-detail-section">
-        <h3>Rekap Kehadiran</h3>
+      ${this.kategoriAktif === "GURU_KELAS" ? `<div class="riwayat-detail-section">
+        <h3>Rekap Ketidakhadiran</h3>
 
         <div class="riwayat-detail-attendance">
           <div>
@@ -367,7 +373,7 @@ const Riwayat = {
             <span>Alpa</span>
           </div>
         </div>
-      </div>
+      </div>` : ""}
 
       <div class="riwayat-detail-section">
         <h3>Informasi Pembelajaran</h3>

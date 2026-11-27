@@ -15,15 +15,6 @@ const LaporanRepository = {
   },
 
   /**
-   * Mengambil statistik seluruh laporan.
-   */
-  async getStatistics(filters = {}) {
-    return API.post("admin.laporan.getStatistics", {
-      filters: filters,
-    });
-  },
-
-  /**
    * Mengambil detail laporan berdasarkan ID
    * dan kategori laporan.
    */

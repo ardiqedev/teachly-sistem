@@ -42,7 +42,7 @@ const AdminAuth = {
      LOGIN
   ===================================== */
 
-  async login(username, password) {
+  async login(username, password, { isCurrent = () => true } = {}) {
     const normalizedUsername = String(username || "").trim();
     const normalizedPassword = String(password || "");
 
@@ -59,6 +59,7 @@ const AdminAuth = {
         username: normalizedUsername,
         password: normalizedPassword,
       });
+      if (!isCurrent()) return null;
 
       if (!response || response.success !== true) {
         return (

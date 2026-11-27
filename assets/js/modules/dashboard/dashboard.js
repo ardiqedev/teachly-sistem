@@ -267,6 +267,7 @@ const Dashboard = {
       const draft = {
         id: this.reportDraftId || revision,
         revision,
+        submissionId: this.reportSubmissionId || revision,
         savedAt: Date.now(),
         fields,
         groups: this.selectedReportGroups,
@@ -341,6 +342,7 @@ const Dashboard = {
     this.reportUploads = {};
     this.reportAttendance = null;
     this.reportDraftId = draft?.id;
+    this.reportSubmissionId = draft?.submissionId || (draft?.id === "legacy" ? draft.revision : draft?.id);
 
     Modal.open({
       title: `
@@ -1223,6 +1225,7 @@ const Dashboard = {
 
     const payload = {
       NBM: nbm,
+      ID_PENGIRIMAN: draft.submissionId || (draft.id === "legacy" ? draft.revision : draft.id),
     };
 
     const getValue = (id) => String(draft.fields[id]?.value ?? "").trim();

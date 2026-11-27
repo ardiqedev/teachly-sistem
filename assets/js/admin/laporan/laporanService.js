@@ -40,29 +40,6 @@ const LaporanService = {
   },
 
   // ==================================================
-  // AMBIL STATISTIK
-  // ==================================================
-
-  async getStatistics(filters = {}) {
-    const response = await LaporanRepository.getStatistics(filters);
-
-    if (!response || response.success !== true) {
-      throw new Error(
-        response?.message || "Gagal mengambil statistik laporan.",
-      );
-    }
-
-    const data = response.data || {};
-
-    return {
-      total: Number(data.total) || 0,
-      guruKelas: Number(data.guruKelas) || 0,
-      guruMapel: Number(data.guruMapel) || 0,
-      guruNgaji: Number(data.guruNgaji) || 0,
-    };
-  },
-
-  // ==================================================
   // DETAIL LAPORAN
   // ==================================================
 

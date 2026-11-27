@@ -1,25 +1,20 @@
 const AdminLogin = {
-  initialized: false,
   isSubmitting: false,
 
   elements: {},
 
   init() {
-    if (this.initialized) return;
+    const form = document.getElementById("adminLoginForm");
+    if (!form || this.elements.form === form) return;
 
     this.cacheElements();
-
-    if (!this.elements.form) {
-      console.warn("[AdminLogin] Form login admin tidak ditemukan.");
-      return;
-    }
 
     if (typeof AdminAuth !== "undefined") {
       AdminAuth.init();
     }
 
     this.bindEvents();
-    this.initialized = true;
+    this.setLoading(this.isSubmitting);
 
     console.log("[AdminLogin] Module initialized.");
   },
@@ -41,7 +36,9 @@ const AdminLogin = {
   async handleSubmit(event) {
     event.preventDefault();
 
-    if (this.isSubmitting) return;
+    const form = event.currentTarget;
+    const isCurrent = () => form.isConnected && form === this.elements.form;
+    if (this.isSubmitting || !isCurrent()) return;
 
     const username = this.elements.username.value.trim();
     const password = this.elements.password.value;
@@ -56,7 +53,8 @@ const AdminLogin = {
     this.clearMessage();
 
     try {
-      const response = await AdminAuth.login(username, password);
+      const response = await AdminAuth.login(username, password, { isCurrent });
+      if (!isCurrent()) return;
 
       if (!response || response.success !== true) {
         throw new Error(response?.message || "Login administrator gagal.");
@@ -68,6 +66,7 @@ const AdminLogin = {
 
       await Router.navigate("admin");
     } catch (error) {
+      if (!isCurrent()) return;
       this.showMessage(
         error.message || "Terjadi kesalahan saat login.",
         "error",
@@ -77,7 +76,7 @@ const AdminLogin = {
       this.elements.password.focus();
     } finally {
       this.isSubmitting = false;
-      this.setLoading(false);
+      if (this.elements.form?.isConnected) this.setLoading(false);
     }
   },
 
@@ -119,9 +118,4 @@ const AdminLogin = {
     }
   },
 
-  destroy() {
-    this.initialized = false;
-    this.isSubmitting = false;
-    this.elements = {};
-  },
 };
